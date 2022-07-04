@@ -11,6 +11,18 @@ import SelectAsset from "./components/nft/SelectAsset";
 
 import './App.css'
 
+/*
+const { useState } = require("react");
+const { Text, Container, Center, Grid, Col, Paper, Button, Divider } = require('@mantine/core');
+const { connect, link } = require('beet-js');
+const {useLocalStorageState} = require('use-local-storage-state');
+
+const Upload = require("./components/nft/Upload");
+const Wizard = require("./components/nft/Wizard");
+const Offchain = require("./components/nft/Offchain");
+const DRM = require("./components/nft/DRM");
+const SelectAsset = require("./components/nft/SelectAsset");
+*/
 function App() {
 
   const [connection, setConnection] = useState(null);
@@ -108,14 +120,14 @@ function App() {
   let topText;
   let mainPrompt;
   if (!connection) {
-    initPrompt = <Button
-                sx={{marginTop: '15px'}}
-                onClick={() => {
-                  connectToBeet()
-                }}
-              >
-                Connect to Beet
-              </Button>;
+    initPrompt = <span><Button
+                    sx={{marginTop: '15px'}}
+                    onClick={() => {
+                      connectToBeet()
+                    }}
+                  >
+                    Connect to Beet
+                  </Button></span>;
     topText = "This tool is designed for use with the Bitshares BEET Wallet. Launch it then click the button to proceed.";
   } else if (connection && !isLinked) {
     initPrompt = <span>

@@ -11,18 +11,6 @@ import SelectAsset from "./components/nft/SelectAsset";
 
 import './App.css'
 
-/*
-const { useState } = require("react");
-const { Text, Container, Center, Grid, Col, Paper, Button, Divider } = require('@mantine/core');
-const { connect, link } = require('beet-js');
-const {useLocalStorageState} = require('use-local-storage-state');
-
-const Upload = require("./components/nft/Upload");
-const Wizard = require("./components/nft/Wizard");
-const Offchain = require("./components/nft/Offchain");
-const DRM = require("./components/nft/DRM");
-const SelectAsset = require("./components/nft/SelectAsset");
-*/
 function App() {
 
   const [connection, setConnection] = useState(null);

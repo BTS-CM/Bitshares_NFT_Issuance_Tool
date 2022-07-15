@@ -3,43 +3,118 @@ import { useEffect, useState } from 'react';
 import { TextInput, Checkbox, Button, Group, Box, Text, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
+import { TransactionBuilder } from 'bitsharesjs';
+import { Apis } from "bitsharesjs-ws";
+
 export default function Wizard(properties) {
   const connection = properties.connection;
-  const [complete, setComplete] = useState(null);
+  const [broadcastResult, setBroadcastResult] = useState();
 
   const images = properties.images;
-  const image = properties.image;
-
-  const setImage = properties.setImage;
   const setImages = properties.setImages;
-  const setOnchain = properties.setOnchain;
-  const setIPFS = properties.setIPFS;
+
+  const environment = properties.environment;
+  const wsURL = properties.wsURL;
+  const nodes = properties.nodes;
+  const setNodes = properties.setNodes;
+  const setProdConnection = properties.setProdConnection;
+  const setTestnetConnection = properties.setTestnetConnection;
 
   function back() {
-    setImage();
     setImages();
-    setOnchain();
-    setIPFS();
   }
 
-  function processForm(values) {
+  function changeURL() {
+    let nodesToChange = nodes;
+    nodesToChange.push(nodesToChange.shift()); // Moving misbehaving node to end
+    setNodes(nodesToChange);
+    console.log(`Setting new node connection to: ${nodesToChange[0]}`)
+    if (environment === 'production') {
+      setProdConnection(nodesToChange[0]);
+    } else {
+      setTestnetConnection(nodesToChange[0]);
+    }
+  }
+
+  async function processForm(values) {
     console.log(values);
+
     /*
+
+      values.acknowledgements
+      artist
+      attestation
+      encoding
+      holder_license
+      license
+      narrative
+      title
+      tags
+      type
+      main
+      market
+      short_name
+      symbol
+      max_supply
+      precision
+      cer_base_amount
+      cer_base_asset_id
+      cer_quote_amount
+      cer_quote_asset_id
+      perm_charge_market_fee
+      perm_white_list
+      perm_override_authority
+      perm_transfer_restricted
+      perm_disable_confidential
+      flag_charge_market_fee
+      flag_white_list
+      flag_override_authority
+      flag_transfer_restricted
+      flag_disable_confidential
+      issuer
+      sig_pubkey_or_address
+      market_fee_percent
+      max_market_fee
+
+    */
+
+    let TXBuilder = connection.inject(TransactionBuilder, {sign: true, broadcast: true});
+
+    try {
+      await Apis.instance(
+          wsURL,
+          true,
+          10000,
+          {enableCrypto: false, enableOrders: true},
+          (error) => console.log(error),
+      ).init_promise;
+    } catch (error) {
+      console.log(`api instance: ${error}`);
+      changeURL();
+      return processForm(values);
+    }
+
+    let tr = new TXBuilder();
+
     let nft_object = {
-        acknowledgements: "This NFT's images were generated from a combination of positive & negative text prompts with VQGAN and CLIP (z+quantize method).",
-        artist: "nft.artist",
-        attestation: "This is original artwork for which no prior tokenization exists or has been authorized by me.",
-        encoding: "ipfs",
-        holder_license: "CC BY-4.0",
-        license: "CC BY-NC-SA-4.0",
-        media_png_multihash: nftJSON.media_png_multihash,
-        narrative: `Input: ${nftJSON.inputs.positive[0]}. Style: ${nftJSON.inputs.positive[1]}`,
-        sig_pubkey_or_address: "BTS67jhuEUeWqSDi3R1Hq4ZPZPZspN5d2nApy2HRueJEkJTt6udVw",
-        title: nftJSON.name,
-        tags: "VQGAN,CLIP,Artificial Intelligence,Machine Learning",
-        type: "NFT/ART/VISUAL"
+        acknowledgements: values.acknowledgements,
+        artist: values.artist,
+        attestation: values.attestation,
+        encoding: values.encoding,
+        holder_license: values.holder_license,
+        license: values.license,
+        narrative: values.narrative,
+        sig_pubkey_or_address: values.sig_pubkey_or_address,
+        title: values.title,
+        tags: values.tags,
+        type: values.type
       };
     
+      // TODO: IMPROVE BELOW! Could be many types of file types, always on IPFS though
+      if (values.media_png_multihash) {
+        nft_object['media_png_multihash'] = values.media_png_multihash;
+      }
+
       let nft_signature = Signature.signBuffer(Buffer.from(JSON.stringify(nft_object)), pMemoKey);
     
       let description = JSON.stringify({
@@ -83,7 +158,42 @@ export default function Wizard(properties) {
         is_prediction_market: false,
         extensions: null
       };
+
+      tr.add_type_operation("asset_create", operationJSON);
+
+      /*
+      try {
+        await tr.update_head_block();
+      } catch (error) {
+        console.error(error);
+        return;
+      }
       */
+  
+      try {
+        tr.add_signer("inject_wif");
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+      
+      /*
+      console.log(
+        "serialized transaction:",
+        tr.serialize().operations
+      );
+      */
+
+      let result;
+      try {
+        result = await tr.broadcast();
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+
+      console.log(JSON.stringify(result));
+      setBroadcastResult(result);
   }
 
   const form = useForm({

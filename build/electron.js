@@ -1,10 +1,6 @@
-
-const { app, BrowserWindow } = require('electron')
-const path = require('path')
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const path = require('path');
 const url = require("url");
-
-//import { app, BrowserWindow } from 'electron';
-//import path from 'path';
 
 const createWindow = () => {
   // Create the browser window.
@@ -14,6 +10,7 @@ const createWindow = () => {
     webPreferences: {
        nodeIntegration: true,
        enableRemoteModule:true,
+       preload: path.join(__dirname, "preload.js")
     }
   })
 
@@ -39,27 +36,16 @@ const createWindow = () => {
   }
 }
 
-// Setup a local proxy to adjust the paths of requested files when loading
-// them from the local production bundle (e.g.: local fonts, etc...).
-function setupLocalFilesNormalizerProxy() {
-  protocol.registerHttpProtocol(
-    "file",
-    (request, callback) => {
-      const url = request.url.substr(8);
-      callback({ path: path.normalize(`${__dirname}/${url}`) });
-    },
-    (error) => {
-      if (error) console.error("Failed to register protocol");
-    }
-  );
-}
+ipcMain.on('openGallery', (event, arg) => {
+  event.returnValue = 'Opening gallery!'
+  shell.openExternal("https://nftea.gallery/gallery");
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
-  //setupLocalFilesNormalizerProxy();
   
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the

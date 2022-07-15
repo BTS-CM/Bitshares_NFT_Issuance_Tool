@@ -4,9 +4,8 @@ import { TextInput, Checkbox, Button, Group, Box, Text, Divider } from '@mantine
 import { Dropzone, DropzoneStatus, MIME_TYPES } from '@mantine/dropzone';
 
 export default function Offchain(properties) {
-  const setImage = properties.setImage;
   const setImages = properties.setImages;
-  const setIPFS = properties.setIPFS;
+  const setMode = properties.setMode;
 
   const [value, setValue] = useState('');
   const [listItems, setListItems] = useState([]);
@@ -29,7 +28,6 @@ export default function Offchain(properties) {
 
   function proceed() {
     console.log('proceed')
-    setImage(listItems[0]);
     setImages(listItems);
   }
 
@@ -91,7 +89,7 @@ export default function Offchain(properties) {
       <Button
         sx={{marginTop: '15px'}}
         onClick={() => {
-          setIPFS()
+          setMode()
         }}
       >
         Back

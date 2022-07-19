@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Group, Box, Text, Divider } from '@mantine/core';
-import { connect, link } from 'beet-js';
+import { link } from 'beet-js';
 
 export default function BeetLink(properties) {
   const setIsLinked = properties.setIsLinked;

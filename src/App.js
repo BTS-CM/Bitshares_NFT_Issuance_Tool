@@ -162,8 +162,10 @@ function App() {
                   />
   } else if (images) {
     topText = "Ready to issue NFTs on the Bitshares blockchain!";
+    let userID = identity.requested.account.id;
     initPrompt = <Wizard
                     connection={connection}
+                    userID={userID}
                     images={images}
                     setImages={setImages}
                     wsURL={wsURL}

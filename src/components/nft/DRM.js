@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Group, Box, Text, Divider } from '@mantine/core';
+import { Button, Box, Text } from '@mantine/core';
 import { Apis } from "bitsharesjs-ws";
 
 /*
@@ -175,11 +175,11 @@ export default function DRM(properties) {
   let topText;
   if (!nodes) {
     topText = <Text size="sm" weight={600}>
-                  Finding fastest BTS nodes
+                  Finding the fastest BTS nodes
               </Text>;
   } else if (!balances) {
     topText = <Text size="sm" weight={600}>
-                  Checking your Bitshares account balances...
+                  Checking your Bitshares account...
               </Text>;
   } else {
     topText = <span>

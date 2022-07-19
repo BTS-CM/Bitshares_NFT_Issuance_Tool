@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { TextInput, Checkbox, Button, Group, Box, Text, Divider } from '@mantine/core';
+import { TextInput, Checkbox, Button, Box, Text, Divider } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 import { TransactionBuilder } from 'bitsharesjs';
@@ -8,6 +8,8 @@ import { Apis } from "bitsharesjs-ws";
 
 export default function Wizard(properties) {
   const connection = properties.connection;
+  const userID = properties.userID;
+  
   const [broadcastResult, setBroadcastResult] = useState();
 
   const images = properties.images;
@@ -36,49 +38,13 @@ export default function Wizard(properties) {
     }
   }
 
-  async function processForm(values) {
-    console.log(values);
-
-    /*
-
-      values.acknowledgements
-      artist
-      attestation
-      encoding
-      holder_license
-      license
-      narrative
-      title
-      tags
-      type
-      main
-      market
-      short_name
-      symbol
-      max_supply
-      precision
-      cer_base_amount
-      cer_base_asset_id
-      cer_quote_amount
-      cer_quote_asset_id
-      perm_charge_market_fee
-      perm_white_list
-      perm_override_authority
-      perm_transfer_restricted
-      perm_disable_confidential
-      flag_charge_market_fee
-      flag_white_list
-      flag_override_authority
-      flag_transfer_restricted
-      flag_disable_confidential
-      issuer
-      sig_pubkey_or_address
-      market_fee_percent
-      max_market_fee
-
-    */
-
+  /**
+   * broadcast the create asset operation
+   * @param {Object} operationJSON 
+   */
+  async function broadcastOperation(operationJSON) {
     let TXBuilder = connection.inject(TransactionBuilder, {sign: true, broadcast: true});
+    let tr = new TXBuilder();
 
     try {
       await Apis.instance(
@@ -91,110 +57,127 @@ export default function Wizard(properties) {
     } catch (error) {
       console.log(`api instance: ${error}`);
       changeURL();
-      return processForm(values);
+      return broadcastOperation(operationJSON);
     }
 
-    let tr = new TXBuilder();
+    tr.add_type_operation("asset_create", operationJSON);
 
-    let nft_object = {
-        acknowledgements: values.acknowledgements,
-        artist: values.artist,
-        attestation: values.attestation,
-        encoding: values.encoding,
-        holder_license: values.holder_license,
-        license: values.license,
-        narrative: values.narrative,
-        sig_pubkey_or_address: values.sig_pubkey_or_address,
-        title: values.title,
-        tags: values.tags,
-        type: values.type
-      };
-    
-      // TODO: IMPROVE BELOW! Could be many types of file types, always on IPFS though
-      if (values.media_png_multihash) {
-        nft_object['media_png_multihash'] = values.media_png_multihash;
-      }
+    /*
+    try {
+      await tr.update_head_block();
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+    */
 
-      let nft_signature = Signature.signBuffer(Buffer.from(JSON.stringify(nft_object)), pMemoKey);
-    
-      let description = JSON.stringify({
-          main: `${nftJSON.symbol} is an NFT created by nft.artist, deployed on the BitShares network. To view this token and others, visit https://nftea.gallery`,
-          market: "BTS",
-          nft_object: nft_object,
-          nft_signature: nft_signature.toHex(),
-          short_name: nftJSON.symbol
-      });
-    
-      let operationJSON = {
-        issuer: "1.2.1803677",
-        symbol: nftJSON.symbol,
-        precision: 0,
-        common_options: {
-            max_supply: 1,
-            market_fee_percent: 0,
-            max_market_fee: 0,
-            issuer_permissions: 0,
-            flags: 0,
-            core_exchange_rate: {
-                base: {
-                    amount: 100000,
-                    asset_id: "1.3.0"
-                },
-                quote: {
-                    amount: 1,
-                    asset_id: "1.3.1"
-                }
-            },
-            whitelist_authorities: [],
-            blacklist_authorities: [],
-            whitelist_markets: [],
-            blacklist_markets: [],
-            description: description,
-            extensions: {
-              reward_percent: 0,
-              whitelist_market_fee_sharing: []
-            }
-        },
-        is_prediction_market: false,
-        extensions: null
-      };
+    try {
+      tr.add_signer("inject_wif");
+    } catch (error) {
+      console.error(error);
+      return;
+    }
 
-      tr.add_type_operation("asset_create", operationJSON);
+    let result;
+    try {
+      result = await tr.broadcast();
+    } catch (error) {
+      console.error(error);
+      return;
+    }
 
-      /*
-      try {
-        await tr.update_head_block();
-      } catch (error) {
-        console.error(error);
-        return;
-      }
-      */
-  
-      try {
-        tr.add_signer("inject_wif");
-      } catch (error) {
-        console.error(error);
-        return;
-      }
-      
-      /*
-      console.log(
-        "serialized transaction:",
-        tr.serialize().operations
-      );
-      */
-
-      let result;
-      try {
-        result = await tr.broadcast();
-      } catch (error) {
-        console.error(error);
-        return;
-      }
-
-      console.log(JSON.stringify(result));
-      setBroadcastResult(result);
+    console.log(JSON.stringify(result));
+    setBroadcastResult(result);
   }
+
+  
+  /**
+   * Asking user to broadcast asset create operation with 
+   * @param {Object} values 
+   * @param {Object} nft_object 
+   * @param {Object} signedPayload 
+   */
+  async function submitForm(values, nft_object, signedPayload) {
+    let description = JSON.stringify({
+        main: values.main,
+        market: values.market,
+        nft_object: nft_object,
+        nft_signature: signedPayload,
+        //nft_signature: nft_signature.toHex(),
+        short_name: values.short_name
+    });
+
+    let operationJSON = {
+      issuer: userID,
+      symbol: nftJSON.symbol,
+      precision: values.precision,
+      common_options: {
+          max_supply: values.max_supply,
+          market_fee_percent: values.market_fee_percent,
+          max_market_fee: values.max_market_fee,
+          issuer_permissions: 0,
+          flags: 0,
+          core_exchange_rate: {
+              base: {
+                  amount: values.cer_base_amount,
+                  asset_id: values.cer_base_asset_id
+              },
+              quote: {
+                  amount: values.cer_quote_amount,
+                  asset_id: values.cer_quote_asset_id
+              }
+          },
+          whitelist_authorities: [],
+          blacklist_authorities: [],
+          whitelist_markets: [],
+          blacklist_markets: [],
+          description: description,
+          extensions: {
+            reward_percent: 0,
+            whitelist_market_fee_sharing: []
+          }
+      },
+      is_prediction_market: false,
+      extensions: null
+    };
+
+    await broadcastOperation(operationJSON);
+  }
+
+  /**
+   * Signing primary form values with memo key prior to broadcast
+   * @param {Object} values 
+   */
+  async function processForm(values) {
+      let nft_object = {
+          acknowledgements: values.acknowledgements,
+          artist: values.artist,
+          attestation: values.attestation,
+          encoding: images[0].type,
+          holder_license: values.holder_license,
+          license: values.license,
+          narrative: values.narrative,
+          sig_pubkey_or_address: values.sig_pubkey_or_address,
+          title: values.title,
+          tags: values.tags,
+          type: values.type
+      };
+    
+      nft_object[`media_${images[0].type}_multihash`] = images[0].url;
+      nft_object[`media_${images[0].type}_multihashes`] = images.map(image => image.url);
+
+      let signedPayload;
+      try {
+        signedPayload = await connection.signNFT(nft_object);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+     
+      console.log(signedPayload);
+      return;
+      //return await submitForm(values, nft_object, signedPayload);
+   }
 
   const form = useForm({
     initialValues: {
@@ -232,16 +215,15 @@ export default function Wizard(properties) {
         flag_transfer_restricted: false,
         flag_disable_confidential: false,
         // operationsJSON
-        issuer: "1.2.1803677", // fetch from getaccount
+        issuer: userID, // fetch from getaccount
         sig_pubkey_or_address: '', // fetch from getaccount
         market_fee_percent: 0,
         max_market_fee: 0
     },
     validate: {
-        acknowledgements: (value) => (value instanceof String ? null : 'Invalid'),
-        artist: (value) => (value instanceof String  ? null : 'Invalid'),
-        attestation: (value) => (value instanceof String  ? null : 'Invalid'),
-        encoding: (value) => (value instanceof String  ? null : 'Invalid'),
+        acknowledgements: (value) => (value.length > 0 ? null : 'Invalid'),
+        artist: (value) => (value.length > 0 ? null : 'Invalid'),
+        attestation: (value) => (value instanceof String ? null : 'Invalid'),
         holder_license: (value) => (value instanceof String  ? null : 'Invalid'),
         license: (value) => (value instanceof String  ? null : 'Invalid'),
         narrative: (value) => (value instanceof String  ? null : 'Invalid'),

@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Text, Container, Center, Grid, Col, Paper, Button, Divider } from '@mantine/core'
+import { Text, Container, Center, Group, Grid, Col, Paper, Button, Divider } from '@mantine/core'
 import { connect, link } from 'beet-js';
 import useLocalStorageState from 'use-local-storage-state';
 
-import Upload from "./components/nft/Upload";
-import Wizard from "./components/nft/Wizard";
-import Offchain from "./components/nft/Offchain";
-import DRM from "./components/nft/DRM";
-import BeetLink from "./components/nft/BeetLink";
-import SelectAsset from "./components/nft/SelectAsset";
+import Connect from "./components/Connect";
+import BeetLink from "./components/BeetLink";
+import DRM from "./components/DRM";
+import Mode from "./components/Mode";
+import Offchain from "./components/Offchain";
+//import Upload from "./components/Upload";
+import SelectAsset from "./components/SelectAsset";
+import Wizard from "./components/Wizard";
 
 import './App.css'
 
@@ -55,55 +57,20 @@ function App() {
     setNodes();
   }
 
-  async function connectToBeet() {
-    let connected;
-    try {
-      connected = await connect(
-        "NFT Issuance tool",
-        "Application",
-        "localhost",
-        connection ? connection : null,
-        connection && connection.identity ? connection.identity : null
-      );
-    } catch (error) {
-      console.error(error)
-    }
-
-    if (!connected) {
-      console.error("Couldn't connect to Beet");
-      //console.log(beetConnection)
-      setConnection(null);
-      setAuthenticated(null);
-      return;
-    }
-
-    setConnection(connected);
-    setAuthenticated(connected.authenticated);
-  }
-
   let initPrompt;
-  let topText;
-  let mainPrompt;
   if (!connection) {
-    initPrompt = <span>
-                    <Button
-                      sx={{marginTop: '15px'}}
-                      onClick={() => {
-                        connectToBeet()
-                      }}
-                    >
-                      Connect to Beet
-                    </Button>
-                  </span>;
-    topText = "This tool is designed for use with the Bitshares BEET Wallet. Launch it then click the button to proceed.";
-  } else if (connection && !isLinked) {
+    initPrompt = <Connect
+                    connection={connection}
+                    setConnection={setConnection}
+                    setAuthenticated={setAuthenticated}
+                  />;
+  } else if (connection && authenticated && !isLinked) {
     initPrompt = <BeetLink
                     connection={connection}
                     setIsLinked={setIsLinked}
                     setIdentity={setIdentity}
                     setCrypto={setCrypto}
                   />;
-    topText = "Connected to Beet wallet successfully. Now proceed to link this app to the Beet wallet below.";
   } else if (!cdkey && isLinked && identity) {
     let userID = identity.requested.account.id;
     initPrompt = <DRM
@@ -119,27 +86,8 @@ function App() {
                     setIdentity={setIdentity}
                     setCrypto={setCrypto}
                   />;
-    topText = "Checking your Bitshares account for NFT tool eligibility.";
   } else if (!mode) {
-    initPrompt = <span>
-      <Button
-        sx={{marginTop: '15px', marginRight: '5px', marginLeft: '5px'}}
-        onClick={() => {
-          setMode('create');
-        }}
-      >
-        Creating
-      </Button>
-      <Button
-        sx={{marginTop: '15px', marginRight: '5px'}}
-        onClick={() => {
-          setMode('edit');
-        }}
-      >
-        Editing
-      </Button>
-    </span>;
-    topText = "Are you creating a new NFT or editing an existing one?";
+    initPrompt = <Mode setMode={setMode} />;
   } else if (mode === 'edit' && !asset) {
     let userID = identity.requested.account.id;
     initPrompt = <SelectAsset
@@ -153,15 +101,12 @@ function App() {
                     setMode={setMode}
                     setNodes={setNodes}
                   />
-    topText = "Made a mistake during issuance? Edit it!";
   } else if (!images) {
-    topText = "";
     initPrompt = <Offchain
                     setImages={setImages}
                     setMode={setMode}
                   />
   } else if (images) {
-    topText = "Ready to issue NFTs on the Bitshares blockchain!";
     let userID = identity.requested.account.id;
     initPrompt = <Wizard
                     connection={connection}
@@ -176,30 +121,35 @@ function App() {
                     setTestnetConnection={setTestnetConnection}
                   />;
   } else {
-    topText = "An issue was encountered, reset and try again.";
-    initPrompt = <Text size="md">An error ocurred</Text>
+    initPrompt = <Text size="md">An issue was encountered, reset and try again.</Text>
   }
 
   return (
     <div className="App">
       <header className="App-header">
+        <Container>
           <Grid key={"about"} grow>
             <Col span={12}>
+              <Text size="lg">
+                Bitshares NFT Issuance tool
+              </Text>
+            </Col>
+            
+            <Col span={12}>
               <Paper padding="sm" shadow="xs">
-                <Text size="lg">
-                  Bitshares NFT Issuance tool
-                </Text>
-                <Text size="md">
-                  {topText}
-                </Text>
                 {
                   initPrompt
                 }
-                {
+              </Paper>
+            </Col>
+
+            <Col span={12}>
+            {
                   isLinked
                   ? <span>
                       <Divider></Divider>
-                      <Button
+                      <Button 
+                        variant="default" color="dark"
                         sx={{marginTop: '15px', marginRight: '5px'}}
                         onClick={() => {
                           openGallery()
@@ -207,7 +157,8 @@ function App() {
                       >
                         NFTEA Gallery
                       </Button>
-                      <Button
+                      <Button 
+                        variant="outline" color="dark"
                         sx={{marginTop: '15px', marginBottom: '5px'}}
                         onClick={() => {
                           reset()
@@ -218,9 +169,9 @@ function App() {
                     </span>
                   : null
                 }
-              </Paper>
             </Col>
           </Grid>
+        </Container>
       </header>
     </div>
   );

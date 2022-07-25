@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Box, Text } from '@mantine/core';
+import { Button, Box, Text, Loader } from '@mantine/core';
 import { Apis } from "bitsharesjs-ws";
 
 /*
@@ -138,7 +138,6 @@ export default function DRM(properties) {
         } catch (error) {
           console.log(error);
           changeURL();
-          fetchBalances();
           return;
         }
         
@@ -178,16 +177,22 @@ export default function DRM(properties) {
                   Finding the fastest BTS nodes
               </Text>;
   } else if (!balances) {
-    topText = <Text size="sm" weight={600}>
-                  Checking your Bitshares account...
-              </Text>;
+    topText = <span>
+                <Loader variant="dots" />
+                <Text size="sm" weight={600}>
+                    Checking your Bitshares account...
+                </Text>
+              </span>;
   } else {
     topText = <span>
                 <Text size="sm" weight={600}>
-                    This tool is reserved for owners of <a onClick={() => openGallery()}>NFTEA NFTs</a> on the production bitshares blockchain. If available, you can acquire them directly on the Bitshares DEX.
+                    Only owners of <a onClick={() => openGallery()}>NFTEA NFTs</a> on the Bitshares DEX can use this tool.
                 </Text>
                 <Text size="sm" weight={600}>
-                    This tool is however available for all on the Bitshares testnet.
+                    If still available, they can be acquired directly on the Bitshares DEX.
+                </Text>
+                <Text size="sm" weight={600}>
+                    Everyone is free to use this tool on the Bitshares testnet.
                 </Text>
               </span>
   }
@@ -209,7 +214,7 @@ export default function DRM(properties) {
                       increaseTries()
                     }}
                   >
-                    Try again
+                    Check again
                   </Button>
                 </span>;
   }

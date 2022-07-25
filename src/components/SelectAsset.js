@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Button, Group, Box, Text, Divider } from '@mantine/core';
+import { Button, Group, Box, Text, Divider, Loader } from '@mantine/core';
 import { Apis } from "bitsharesjs-ws";
 
 export default function SelectAsset(properties) {
@@ -17,16 +17,23 @@ export default function SelectAsset(properties) {
   const wsURL = properties.wsURL;
 
   const [account, setAccount] = useState();
+  const [tries, setTries] = useState(0);
+
+  function increaseTries() {
+    let newTries = tries + 1;
+    setAccount();
+    setTries(newTries);
+  }
   
   function changeURL() {
     let nodesToChange = nodes;
     nodesToChange.push(nodesToChange.shift()); // Moving misbehaving node to end
     setNodes(nodesToChange);
-    console.log(`Setting new node connection to: ${nodesToChange[0]}`)
+    console.log(`Setting new node connection to: ${nodesToChange[0].url}`)
     if (environment === 'production') {
-      setProdConnection(nodesToChange[0]);
+      setProdConnection(nodesToChange[0].url);
     } else {
-      setTestnetConnection(nodesToChange[0]);
+      setTestnetConnection(nodesToChange[0].url);
     }
   }
 
@@ -37,7 +44,7 @@ export default function SelectAsset(properties) {
       } catch (error) {
         console.log(error);
         changeURL();
-        return fetchAccounts();
+        return;
       }
       
       let fullAccounts;
@@ -49,7 +56,6 @@ export default function SelectAsset(properties) {
       }
       
       let accountAssets = fullAccounts[0][1].assets;
-      console.log(accountAssets);
 
       let assetsDetails;
       try {
@@ -60,25 +66,43 @@ export default function SelectAsset(properties) {
       }
 
       setAccount(assetsDetails);
-
-      console.log(assetsDetails)
     }
     fetchAccounts();
-  }, [userID]);
+  }, [userID, tries]);
   
   let topText;
   if (!account) {
-    topText = <Text size="sm" weight={600}>
-                Retrieving info on your Bitshares account
-              </Text>;
+    topText = <span>
+                <Loader variant="dots" />
+                <Text size="md">
+                  Retrieving info on your Bitshares account
+                </Text>
+              </span>;
   } else if (!account.length) {
-    topText = <Text size="sm" weight={600}>
-                You don't seem to be the issuer of any NFTs on Bitshares. Go back and select create instead of edit.
-              </Text>
+    topText = <span>
+                <Text size="md">
+                  Nothing to edit
+                </Text>
+                <Text size="sm" weight={600}>
+                  This Bitshares account hasn't issued any NFTs on the BTS DEX.
+                </Text>
+                <Text size="sm" weight={600}>
+                  You can either create a new NFT or switch Bitshares account.
+                </Text>
+                <Text size="sm" weight={600}>
+                  Note: Buying and owning an NFT on the BTS DEX doesn't automatically grant you NFT editing rights.
+                </Text>
+              </span>
+              
   } else {
-    topText = <Text size="sm" weight={600}>
-                Select the NFT you wish to edit.
-              </Text>
+    topText = <span>
+                <Text size="md">
+                  Made a mistake during issuance? Edit it!
+                </Text>
+                <Text size="sm" weight={600}>
+                  Select the NFT you wish to edit.
+                </Text>
+              </span>
   }
 
   let buttonList = account
@@ -106,6 +130,14 @@ export default function SelectAsset(properties) {
       {
         buttonList
       }
+      <Button
+        sx={{marginTop: '15px', marginRight: '5px'}}
+        onClick={() => {
+          increaseTries()
+        }}
+      >
+        Refresh
+      </Button>
       <Button
         sx={{marginTop: '15px'}}
         onClick={() => {

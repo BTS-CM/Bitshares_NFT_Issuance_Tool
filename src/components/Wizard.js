@@ -157,14 +157,13 @@ export default function Wizard(properties) {
           holder_license: values.holder_license,
           license: values.license,
           narrative: values.narrative,
-          sig_pubkey_or_address: values.sig_pubkey_or_address,
           title: values.title,
           tags: values.tags,
           type: values.type
       };
     
-      nft_object[`media_${images[0].type}_multihash`] = images[0].url;
-      nft_object[`media_${images[0].type}_multihashes`] = images.map(image => image.url);
+      //nft_object[`media_${images[0].type}_multihash`] = images[0].url;
+      //nft_object[`media_${images[0].type}_multihashes`] = images.map(image => image.url);
 
       let signedPayload;
       try {
@@ -184,15 +183,15 @@ export default function Wizard(properties) {
         acknowledgements: '',
         artist: '',
         attestation: '',
-        encoding: '',
+        encoding: 'ipfs',
         holder_license: '',
         license: '',
         narrative: '',
         title: '',
         tags: '',
-        type: '',
+        type: 'NFT/ART/VISUAL',
         main: '',
-        market: '',
+        market: 'BTS',
         short_name: '',
         symbol: '', // check
         max_supply: 1,
@@ -216,37 +215,29 @@ export default function Wizard(properties) {
         flag_disable_confidential: false,
         // operationsJSON
         issuer: userID, // fetch from getaccount
-        sig_pubkey_or_address: '', // fetch from getaccount
         market_fee_percent: 0,
         max_market_fee: 0
     },
     validate: {
-        acknowledgements: (value) => (value.length > 0 ? null : 'Invalid'),
         artist: (value) => (value.length > 0 ? null : 'Invalid'),
-        attestation: (value) => (value instanceof String ? null : 'Invalid'),
-        holder_license: (value) => (value instanceof String  ? null : 'Invalid'),
-        license: (value) => (value instanceof String  ? null : 'Invalid'),
-        narrative: (value) => (value instanceof String  ? null : 'Invalid'),
-        title: (value) => (value instanceof String  ? null : 'Invalid'),
-        tags: (value) => (value instanceof String  ? null : 'Invalid'),
-        type: (value) => (value instanceof String  ? null : 'Invalid'),
-        main: (value) => (value instanceof String  ? null : 'Invalid'),
-        market: (value) => (value instanceof String  ? null : 'Invalid'),
-        short_name: (value) => (value instanceof String  ? null : 'Invalid'),
-        symbol: (value) => (value instanceof String  ? null : 'Invalid'),
+        attestation: (value) => (value.length > 0 ? null : 'Invalid'),
+        title: (value) => (value.length > 0  ? null : 'Invalid'),
+        main: (value) => (value.length > 0  ? null : 'Invalid'),
+        market: (value) => (value.length > 0  ? null : 'Invalid'),
+        short_name: (value) => (value.length > 0  ? null : 'Invalid'),
+        symbol: (value) => (value.length > 0  ? null : 'Invalid'),
         max_supply: (value) => (value >= 0 ? null : 'Invalid'),
         precision: (value) => (value >= 0 ? null : 'Invalid'),
-        sig_pubkey_or_address: (value) => (value instanceof String  ? null : 'Invalid'),
-        //
         market_fee_percent: (value) => (value >= 0 && value <= 100  ? null : 'Invalid'),
-        max_market_fee: (value) => (value >= 0 && value <= 100  ? null : 'Invalid'),
-        issuer_permissions: (value) => (value instanceof String  ? null : 'Invalid'),
-        flags: (value) => (value instanceof String  ? null : 'Invalid'),
+        max_market_fee: (value) => (value >= 0 && value <= 100  ? null : 'Invalid')
     }
   });
 
   return (
     <Box sx={{ maxWidth: 300 }} mx="auto">
+      <Text size="md">
+        Ready to issue NFTs on the Bitshares blockchain!
+      </Text>
       <form onSubmit={form.onSubmit((values) => processForm(values))}>
         <br/>
         <Text size="md">
@@ -340,12 +331,6 @@ export default function Wizard(properties) {
         />
         <TextInput
           required
-          label="NFT type"
-          placeholder="Type of NFT"
-          {...form.getInputProps('type')}
-        />
-        <TextInput
-          required
           label="NFT tags"
           placeholder="comma,separated,tags"
           {...form.getInputProps('tags')}
@@ -373,12 +358,6 @@ export default function Wizard(properties) {
           label="NFT license"
           placeholder="License"
           {...form.getInputProps('license')}
-        />
-        <TextInput
-          required
-          label="sig_pubkey_or_address"
-          placeholder="Public key or address used for NFT signature"
-          {...form.getInputProps('sig_pubkey_or_address')}
         />
         <Divider sx={{marginTop: '15px', marginBottom: '5px'}}></Divider>
         <Text size="md">

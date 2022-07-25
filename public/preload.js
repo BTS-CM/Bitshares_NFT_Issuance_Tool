@@ -75,6 +75,10 @@ async function _galleryLink(target) {
     ipcRenderer.send('openGallery', target);
 }
 
+async function _beetLink(target) {
+    ipcRenderer.send('beetDownload', target);
+}
+
 /*
  * Testing node latencies for requested blockchain
  */
@@ -94,6 +98,9 @@ contextBridge.exposeInMainWorld(
         },
         openGallery: async (target) => {
             return _galleryLink(target);
+        },
+        beetDownload: async (target) => {
+            return _beetLink(target);
         }
     }
 );

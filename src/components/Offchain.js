@@ -12,16 +12,16 @@ export default function Offchain(properties) {
 
   function addListItem() {
     let currentListItems = listItems;
-    if (!listItems.includes(value)) {
-      // .map(item => item.type)
-
+    let existingListItem = listItems.filter(listItem => listItem.url === value);
+    if (!existingListItem.length) {
       let fileType;
-      if (value.includes('.png') || value.includes('.PNG')) {
+      let valueSlice = value.substr(value.length - 5);
+      if (valueSlice.includes('.png') || valueSlice.includes('.PNG')) {
         fileType = 'PNG';
-      } else if (value.includes('.jpeg') || value.includes('.JPEG')) {
-        fileType = 'JPEG';
-      } else if (value.includes('.gif') || value.includes('.GIF')) {
+      } else if (valueSlice.includes('.gif') || valueSlice.includes('.GIF')) {
         fileType = 'GIF';
+      } else if (valueSlice.includes('.jpeg') || valueSlice.includes('.JPEG')) {
+        fileType = 'JPEG';
       } else {
         console.log('Unsupported filetype');
         return;
@@ -72,7 +72,12 @@ export default function Offchain(properties) {
   let ipfsButton = value
   ? <Button
       onClick={() => {
-        addListItem()
+        let four = value.substr(value.length - 4);
+        let five = value.substr(value.length - 5);
+        let fileTypes = [".png", ".PNG", ".gif", ".GIF", ".jpg", ".JPG", ".jpeg", ".JPEG"]
+        if (fileTypes.includes(four) || fileTypes.includes(five)) {
+          addListItem()
+        }
       }}
     >
       Add IPFS url
@@ -99,13 +104,13 @@ export default function Offchain(properties) {
       </Text>
         {
           listItems.map(item => {
-            return <Group key={item.url.split(".")[0]} sx={{margin: '5px'}}>
-                      <Text size="sm">{item.url}</Text>
+            return <Group key={item.url} sx={{margin: '5px'}}>
+                      <Text size="sm">{item.url} ({item.type})</Text>
                       <Button
                         compact
                         variant="outline"
                         onClick={() => {
-                          removeListItem(item)
+                          removeListItem(item.url)
                         }}
                       >
                         ❌

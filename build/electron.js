@@ -41,7 +41,10 @@ ipcMain.on('openGallery', (event, arg) => {
   shell.openExternal("https://nftea.gallery/gallery");
 })
 
-
+ipcMain.on('beetDownload', (event, arg) => {
+  event.returnValue = 'Opening github!'
+  shell.openExternal("https://github.com/bitshares/beet/releases");
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -49,7 +52,7 @@ ipcMain.on('openGallery', (event, arg) => {
 app.whenReady().then(() => {
   createWindow()
   
-  app.commandLine.appendSwitch('ignore-certificate-errors');
+  //app.commandLine.appendSwitch('ignore-certificate-errors');
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the

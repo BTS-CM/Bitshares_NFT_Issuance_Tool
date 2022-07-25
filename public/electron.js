@@ -41,7 +41,10 @@ ipcMain.on('openGallery', (event, arg) => {
   shell.openExternal("https://nftea.gallery/gallery");
 })
 
-
+ipcMain.on('beetDownload', (event, arg) => {
+  event.returnValue = 'Opening github!'
+  shell.openExternal("https://github.com/bitshares/beet/releases");
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

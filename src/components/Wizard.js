@@ -9,6 +9,7 @@ import { Apis } from "bitsharesjs-ws";
 export default function Wizard(properties) {
   const connection = properties.connection;
   const userID = properties.userID;
+  const asset = properties.asset;
   
   const [broadcastResult, setBroadcastResult] = useState();
 
@@ -178,24 +179,26 @@ export default function Wizard(properties) {
       //return await submitForm(values, nft_object, signedPayload);
    }
 
+  let description = asset ? JSON.parse(asset.options.description) : null;
+
   const form = useForm({
     initialValues: {
-        acknowledgements: '',
-        artist: '',
-        attestation: '',
-        encoding: 'ipfs',
-        holder_license: '',
-        license: '',
-        narrative: '',
-        title: '',
-        tags: '',
-        type: 'NFT/ART/VISUAL',
-        main: '',
-        market: 'BTS',
-        short_name: '',
-        symbol: '', // check
-        max_supply: 1,
-        precision: 0,
+        acknowledgements: description ? description.acknowledgements : '',
+        artist:  description ? description.acknowledgements : '',
+        attestation:  description ? description.acknowledgements : '',
+        encoding:  description ? description.acknowledgements : 'ipfs',
+        holder_license:  description ? description.acknowledgements : '',
+        license:  description ? description.acknowledgements : '',
+        narrative:  description ? description.acknowledgements : '',
+        title:  description ? description.acknowledgements : '',
+        tags:  description ? description.acknowledgements : '',
+        type:  description ? description.acknowledgements : 'NFT/ART/VISUAL',
+        main:  description ? description.acknowledgements : '',
+        market:  description ? description.acknowledgements : 'BTS',
+        short_name:  description ? description.acknowledgements : '',
+        symbol:  asset ? asset.symbol : '', // check
+        max_supply: asset ? asset.options.max_supply : 1,
+        precision: asset ? asset.precision : 0,
         // core_exchange_rate
         cer_base_amount: 100000,
         cer_base_asset_id: "1.3.0",

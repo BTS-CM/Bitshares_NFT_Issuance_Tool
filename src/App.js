@@ -111,6 +111,7 @@ function App() {
     initPrompt = <Wizard
                     connection={connection}
                     userID={userID}
+                    asset={asset}
                     images={images}
                     setImages={setImages}
                     wsURL={wsURL}

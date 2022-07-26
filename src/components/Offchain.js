@@ -6,9 +6,11 @@ export default function Offchain(properties) {
   const setImages = properties.setImages;
   const setMode = properties.setMode;
 
+  let allowedFileTypes = [".png", ".PNG", ".gif", ".GIF", ".jpg", ".JPG", ".jpeg", ".JPEG"];
+
   const [value, setValue] = useState('');
   const [listItems, setListItems] = useState([]);
-  const [fileTypes, setFileTypes] = useState();
+  const [chosenFileType, setChosenFileType] = useState();
 
   function addListItem() {
     let currentListItems = listItems;
@@ -27,12 +29,12 @@ export default function Offchain(properties) {
         return;
       }
 
-      if (fileTypes && fileType === fileTypes) {
+      if (chosenFileType && fileType !== chosenFileType) {
         console.log('All files must have the same file format.');
         return;
       }
 
-      setFileTypes(fileType);
+      setChosenFileType(fileType);
       currentListItems.push({url: value, type: fileType});
       setListItems(currentListItems);
     }
@@ -40,6 +42,12 @@ export default function Offchain(properties) {
   }
 
   function removeListItem(item) {
+    if (listItems.length === 1) {
+      setListItems();
+      setFileTypes();
+      return;
+    }
+
     let currentListItems = listItems;
     let newListItems = currentListItems.filter(listItem => listItem.url != item);
     setListItems(newListItems);
@@ -74,8 +82,7 @@ export default function Offchain(properties) {
       onClick={() => {
         let four = value.substr(value.length - 4);
         let five = value.substr(value.length - 5);
-        let fileTypes = [".png", ".PNG", ".gif", ".GIF", ".jpg", ".JPG", ".jpeg", ".JPEG"]
-        if (fileTypes.includes(four) || fileTypes.includes(five)) {
+        if (allowedFileTypes.includes(four) || allowedFileTypes.includes(five)) {
           addListItem()
         }
       }}
@@ -105,7 +112,6 @@ export default function Offchain(properties) {
         {
           listItems.map(item => {
             return <Group key={item.url} sx={{margin: '5px'}}>
-                      <Text size="sm">{item.url} ({item.type})</Text>
                       <Button
                         compact
                         variant="outline"
@@ -115,6 +121,12 @@ export default function Offchain(properties) {
                       >
                         ❌
                       </Button>
+                      <Text size="sm">
+                        {
+                          item.url.length > 50
+                            ? item.url.substring(0, 50) + "..."
+                            : item.url
+                        } ({item.type})</Text>
                     </Group>;
           })
         }

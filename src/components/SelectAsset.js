@@ -37,6 +37,14 @@ export default function SelectAsset(properties) {
     }
   }
 
+  /**
+   * User has selected an asset to edit
+   * @param {Object} asset 
+   */
+  function chosenAsset(asset) {
+    setAsset(asset);    
+  }
+
   useEffect(() => {
     async function fetchAccounts() {
       try {
@@ -113,7 +121,7 @@ export default function SelectAsset(properties) {
                     sx={{margin: '2px'}}
                     variant="outline"
                     onClick={() => {
-                      setAsset(asset.id)
+                      chosenAsset(asset)
                     }}
                   >
                     {asset.symbol}: {asset.id}

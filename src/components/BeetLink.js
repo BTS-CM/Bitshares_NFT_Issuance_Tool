@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Group, Box, Text, Divider, Loader } from '@mantine/core';
+import { Button, Group, Box, Text, Divider, Loader, Col, Paper } from '@mantine/core';
 import { link } from 'beet-js';
 
 export default function BeetLink(properties) {
@@ -75,8 +75,12 @@ export default function BeetLink(properties) {
     </span>;
 
   return (
-    <Box mx="auto" sx={{padding: '10px'}}>
-      {linkContents}
-    </Box>
+    <Col span={12}>
+      <Paper padding="sm" shadow="xs">
+        <Box mx="auto" sx={{padding: '10px'}}>
+          {linkContents}
+        </Box>
+      </Paper>
+    </Col>
   );
 }

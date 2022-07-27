@@ -1,12 +1,13 @@
 
 import { useEffect, useState } from 'react';
-import { Button, Group, Box, Text, Divider, Loader } from '@mantine/core';
+import { Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper } from '@mantine/core';
 import { Apis } from "bitsharesjs-ws";
 
 export default function SelectAsset(properties) {
   const setAsset = properties.setAsset;
   const setMode = properties.setMode;
   const setNodes = properties.setNodes;
+  const setImages = properties.setImages;
 
   const setProdConnection = properties.setProdConnection;
   const setTestnetConnection = properties.setTestnetConnection;
@@ -16,12 +17,13 @@ export default function SelectAsset(properties) {
   const userID = properties.userID;
   const wsURL = properties.wsURL;
 
-  const [account, setAccount] = useState();
+  const [issuedAssets, setIssuedAssets] = useState();
   const [tries, setTries] = useState(0);
+  const [inProgress, setInProgress] = useState(false);
 
   function increaseTries() {
     let newTries = tries + 1;
-    setAccount();
+    setIssuedAssets();
     setTries(newTries);
   }
   
@@ -42,16 +44,32 @@ export default function SelectAsset(properties) {
    * @param {Object} asset 
    */
   function chosenAsset(asset) {
+    let description = JSON.parse(asset.options.description);
+
+    let output;
+    if (description.nft_object.media_png_multihashes) {
+      output = description.nft_object.media_png_multihashes.map(value => { return {url: value.url, type: 'PNG'}});
+    } else if (description.nft_object.media_gif_multihashes) {
+      output = description.nft_object.media_gif_multihashes.map(value => { return {url: value.url, type: 'GIF'}});
+    } else if (description.nft_object.media_jpeg_multihash) {
+      output = description.nft_object.media_jpeg_multihash.map(value => { return {url: value.url, type: 'JPEG'}});
+    }
+    
+    setImages(output);
     setAsset(asset);    
   }
 
   useEffect(() => {
-    async function fetchAccounts() {
+    async function fetchIssuedAssets() {
+      setInProgress(true);
+      setIssuedAssets();
+
       try {
         await Apis.instance(wsURL, true).init_promise;
       } catch (error) {
         console.log(error);
         changeURL();
+        setInProgress(false);
         return;
       }
       
@@ -60,6 +78,7 @@ export default function SelectAsset(properties) {
         fullAccounts = await Apis.instance().db_api().exec( "get_full_accounts", [[userID], true])
       } catch (error) {
         console.log(error);
+        setInProgress(false);
         return;
       }
       
@@ -70,23 +89,40 @@ export default function SelectAsset(properties) {
         assetsDetails = await Apis.instance().db_api().exec( "get_assets", [accountAssets, true])
       } catch (error) {
         console.log(error);
+        setInProgress(false);
         return;
       }
 
-      setAccount(assetsDetails);
+      let identifiedNFTs = assetsDetails.filter(asset => {
+        if (
+            asset.options &&
+            asset.options.description &&
+            asset.options.description.length &&
+            asset.options.description.includes("media_png_multihashes") ||
+            asset.options.description.includes("media_gif_multihashes") ||
+            asset.options.description.includes("media_jpeg_multihash")
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+
+      setIssuedAssets(identifiedNFTs);
+      setInProgress(false);
     }
-    fetchAccounts();
+    fetchIssuedAssets();
   }, [userID, tries]);
   
   let topText;
-  if (!account) {
+  if (!issuedAssets) {
     topText = <span>
                 <Loader variant="dots" />
                 <Text size="md">
                   Retrieving info on your Bitshares account
                 </Text>
               </span>;
-  } else if (!account.length) {
+  } else if (!issuedAssets.length) {
     topText = <span>
                 <Text size="md">
                   Nothing to edit
@@ -105,55 +141,58 @@ export default function SelectAsset(properties) {
   } else {
     topText = <span>
                 <Text size="md">
-                  Made a mistake during issuance? Edit it!
-                </Text>
-                <Text size="sm" weight={600}>
-                  Select the NFT you wish to edit.
+                  Select the NFT you wish to edit
                 </Text>
               </span>
   }
 
-  let buttonList = account
-      ? account.map(asset => {
-          return <span position="center" key={`button.${asset.id}`}>
-                  <Button
-                    compact
-                    sx={{margin: '2px'}}
-                    variant="outline"
-                    onClick={() => {
-                      chosenAsset(asset)
-                    }}
-                  >
-                    {asset.symbol}: {asset.id}
-                  </Button>
-                </span>
-        })
-      : null;
+  let buttonList = issuedAssets
+                    ? issuedAssets.map(asset => {
+                        return <Button
+                                  compact
+                                  sx={{margin: '2px'}}
+                                  variant="outline"
+                                  key={`button.${asset.id}`}
+                                  onClick={() => {
+                                    chosenAsset(asset)
+                                  }}
+                                >
+                                  {asset.symbol}: {asset.id}
+                                </Button>
+                      })
+                    : null;
 
   return (
-    <Box mx="auto" sx={{padding: '10px'}}>
-      {
-        topText
-      }
-      {
-        buttonList
-      }
-      <Button
-        sx={{marginTop: '15px', marginRight: '5px'}}
-        onClick={() => {
-          increaseTries()
-        }}
-      >
-        Refresh
-      </Button>
-      <Button
-        sx={{marginTop: '15px'}}
-        onClick={() => {
-          setMode()
-        }}
-      >
-        Back
-      </Button>
-    </Box>
+    <Col span={12}>
+      <Paper padding="sm" shadow="xs">
+        <Box mx="auto" sx={{padding: '10px'}}>
+          {
+            topText
+          }
+          <SimpleGrid cols={3} sx={{marginTop: '10px'}}>
+            {
+              buttonList
+            }
+          </SimpleGrid>
+
+          <Button
+            sx={{marginTop: '15px', marginRight: '5px'}}
+            onClick={() => {
+              increaseTries()
+            }}
+          >
+            Refresh
+          </Button>
+          <Button
+            sx={{marginTop: '15px'}}
+            onClick={() => {
+              setMode()
+            }}
+          >
+            Back
+          </Button>
+        </Box>
+      </Paper>
+    </Col>
   );
 }

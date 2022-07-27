@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import { TextInput, Checkbox, Button, Box, Text, Divider } from '@mantine/core';
+import { TextInput, Checkbox, Button, Box, Text, Divider, Col, Paper, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 import { TransactionBuilder } from 'bitsharesjs';
 import { Apis } from "bitsharesjs-ws";
+import SelectAsset from './SelectAsset';
 
 export default function Wizard(properties) {
   const connection = properties.connection;
@@ -15,6 +16,9 @@ export default function Wizard(properties) {
 
   const images = properties.images;
   const setImages = properties.setImages;
+  const setAsset = properties.setAsset;
+  const setMode = properties.setMode;
+  const setChangingImages = properties.setChangingImages;
 
   const environment = properties.environment;
   const wsURL = properties.wsURL;
@@ -24,7 +28,13 @@ export default function Wizard(properties) {
   const setTestnetConnection = properties.setTestnetConnection;
 
   function back() {
+    setAsset();
     setImages();
+    setMode();
+  }
+
+  function changeImages() {
+    setChangingImages(true);
   }
 
   function changeURL() {
@@ -114,8 +124,8 @@ export default function Wizard(properties) {
       precision: values.precision,
       common_options: {
           max_supply: values.max_supply,
-          market_fee_percent: values.market_fee_percent,
-          max_market_fee: values.max_market_fee,
+          market_fee_percent: 0,
+          max_market_fee: 0,
           issuer_permissions: 0,
           flags: 0,
           core_exchange_rate: {
@@ -150,76 +160,89 @@ export default function Wizard(properties) {
    * @param {Object} values 
    */
   async function processForm(values) {
-      let nft_object = {
-          acknowledgements: values.acknowledgements,
-          artist: values.artist,
-          attestation: values.attestation,
-          encoding: images[0].type,
-          holder_license: values.holder_license,
-          license: values.license,
-          narrative: values.narrative,
-          title: values.title,
-          tags: values.tags,
-          type: values.type
-      };
-    
-      //nft_object[`media_${images[0].type}_multihash`] = images[0].url;
-      //nft_object[`media_${images[0].type}_multihashes`] = images.map(image => image.url);
 
-      let signedPayload;
-      try {
-        signedPayload = await connection.signNFT(nft_object);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-     
-      console.log(signedPayload);
+    const imageType = images[0].type;
+
+    let nft_object = {
+        acknowledgements: values.acknowledgements,
+        artist: values.artist,
+        attestation: values.attestation,
+        encoding: 'ipfs',
+        holder_license: values.holder_license,
+        license: values.license,
+        narrative: values.narrative,
+        title: values.title,
+        tags: values.tags,
+        type: values.type
+    };
+
+    nft_object[`media_${imageType}_multihash`] = images[0].url;
+    nft_object[`media_${imageType}_multihashes`] = images.map(image => {
+      return {url: image.url}
+    });
+
+    console.log(nft_object)
+
+    let signedPayload;
+    try {
+      signedPayload = await connection.signNFT(nft_object);
+    } catch (error) {
+      console.log(error);
       return;
-      //return await submitForm(values, nft_object, signedPayload);
-   }
+    }
+    
+    console.log(signedPayload)
 
-  let description = asset ? JSON.parse(asset.options.description) : null;
+    //return await submitForm(values, nft_object, signedPayload);
+  }
+
+  let options = asset && asset.options ? asset.options : null;
+  let description = options ? JSON.parse(options.description) : null;
+  let nft_object = description ? description.nft_object : null;
+
+  console.log(description)
 
   const form = useForm({
     initialValues: {
-        acknowledgements: description ? description.acknowledgements : '',
-        artist:  description ? description.acknowledgements : '',
-        attestation:  description ? description.acknowledgements : '',
-        encoding:  description ? description.acknowledgements : 'ipfs',
-        holder_license:  description ? description.acknowledgements : '',
-        license:  description ? description.acknowledgements : '',
-        narrative:  description ? description.acknowledgements : '',
-        title:  description ? description.acknowledgements : '',
-        tags:  description ? description.acknowledgements : '',
-        type:  description ? description.acknowledgements : 'NFT/ART/VISUAL',
-        main:  description ? description.acknowledgements : '',
-        market:  description ? description.acknowledgements : 'BTS',
-        short_name:  description ? description.acknowledgements : '',
+        acknowledgements: nft_object ? nft_object.acknowledgements : '',
+        artist:  nft_object ? nft_object.artist : '',
+        attestation:  nft_object ? nft_object.attestation : '',
+        holder_license:  nft_object ? nft_object.holder_license : '',
+        license:  nft_object ? nft_object.license : '',
+        narrative:  nft_object ? nft_object.narrative : '',
+        title:  nft_object ? nft_object.title : '',
+        tags:  nft_object ? nft_object.tags : '',
+        type:  nft_object ? nft_object.type : '',
+        main:  description ? description.main : '',
+        //
+        market:  description ? description.market : 'BTS',
+        short_name:  description ? description.short_name : '',
         symbol:  asset ? asset.symbol : '', // check
-        max_supply: asset ? asset.options.max_supply : 1,
         precision: asset ? asset.precision : 0,
+        max_supply: options ? options.max_supply : 1,
+
         // core_exchange_rate
-        cer_base_amount: 100000,
-        cer_base_asset_id: "1.3.0",
-        cer_quote_amount: 1,
-        cer_quote_asset_id: "1.3.1",
+        cer_base_amount: options ? options.core_exchange_rate.base.amount : 1,
+        cer_base_asset_id: options ? options.core_exchange_rate.base.asset_id : "1.3.0",
+        cer_quote_amount: options ? options.core_exchange_rate.quote.amount : 1,
+        cer_quote_asset_id: options ? options.core_exchange_rate.quote.asset_id : "1.3.1",
+        
         // permissions
         perm_charge_market_fee: true,
         perm_white_list: true,
         perm_override_authority: true,
         perm_transfer_restricted: true,
         perm_disable_confidential: true,
+        
         // flags
         flag_charge_market_fee: false,
         flag_white_list: false,
         flag_override_authority: false,
         flag_transfer_restricted: false,
         flag_disable_confidential: false,
+        
         // operationsJSON
-        issuer: userID, // fetch from getaccount
-        market_fee_percent: 0,
-        max_market_fee: 0
+        issuer: userID
     },
     validate: {
         artist: (value) => (value.length > 0 ? null : 'Invalid'),
@@ -230,34 +253,63 @@ export default function Wizard(properties) {
         short_name: (value) => (value.length > 0  ? null : 'Invalid'),
         symbol: (value) => (value.length > 0  ? null : 'Invalid'),
         max_supply: (value) => (value >= 0 ? null : 'Invalid'),
-        precision: (value) => (value >= 0 ? null : 'Invalid'),
-        market_fee_percent: (value) => (value >= 0 && value <= 100  ? null : 'Invalid'),
-        max_market_fee: (value) => (value >= 0 && value <= 100  ? null : 'Invalid')
+        precision: (value) => (value >= 0 ? null : 'Invalid')
     }
   });
 
-  return (
-    <Box sx={{ maxWidth: 300 }} mx="auto">
-      <Text size="md">
-        Ready to issue NFTs on the Bitshares blockchain!
-      </Text>
-      <form onSubmit={form.onSubmit((values) => processForm(values))}>
-        <br/>
+  return ([
+    <Col span={12} key="Top">
+      <Paper sx={{padding: '5px'}} shadow="xs">
+          <Text size="md">
+            Ready to issue NFTs on the Bitshares blockchain!
+          </Text>
+          <Text size="sm">
+            Make sure you have enough Bitshares tokens to cover the network fees.
+          </Text>
+          <Text size="sm">
+            To save on fees consider getting a Bitshares lifetime membership.
+          </Text>
+          <Button
+            onClick={() => {
+              back()
+            }}
+          >
+            Go back
+          </Button>   
+      </Paper>
+    </Col>,
+    <Col span={12} key="ImageDetails">
+      <Paper sx={{padding: '5px'}} shadow="xs">
         <Text size="md">
             Image details
         </Text>
         <Text size="sm">
-            
+          This NFT currently contains the following {images && images.length} images:
         </Text>
+        {
+          images
+          ? images.map(item => {
+              return <Group key={item.url} sx={{margin: '5px'}}>
+                        <Text size="sm">
+                          {
+                            item.url
+                          }
+                        </Text>
+                      </Group>;
+            })
+          : null
+        }
         <Button
           onClick={() => {
-            back()
+            changeImages()
           }}
         >
-          Go back
-        </Button>
-
-        <br/>
+          Change images
+        </Button>   
+      </Paper>
+    </Col>,
+    <Col span={12} key="Asset Details">
+      <Paper sx={{padding: '5px'}} shadow="xs">
         <Text size="md">
             Asset details
         </Text>
@@ -304,7 +356,10 @@ export default function Wizard(properties) {
           placeholder="1"
           {...form.getInputProps('precision')}
         />
-        <Divider sx={{marginTop: '15px', marginBottom: '5px'}}></Divider>
+      </Paper>
+    </Col>,
+    <Col span={12} key="NFT Details">
+      <Paper sx={{padding: '5px'}} shadow="xs">
         <Text size="md">
             NFT details
         </Text>
@@ -325,12 +380,6 @@ export default function Wizard(properties) {
           label="NFT narrative"
           placeholder="Narrative"
           {...form.getInputProps('narrative')}
-        />
-        <TextInput
-          required
-          label="NFT encoding"
-          placeholder="Image encoding format e.g. PNG"
-          {...form.getInputProps('encoding')}
         />
         <TextInput
           required
@@ -362,7 +411,10 @@ export default function Wizard(properties) {
           placeholder="License"
           {...form.getInputProps('license')}
         />
-        <Divider sx={{marginTop: '15px', marginBottom: '5px'}}></Divider>
+      </Paper>
+    </Col>,
+    <Col span={12} key="CER">
+      <Paper sx={{padding: '5px'}} shadow="xs">
         <Text size="md">
             Core Exchange Rate
         </Text>
@@ -390,7 +442,10 @@ export default function Wizard(properties) {
           placeholder="cer_quote_asset_id"
           {...form.getInputProps('cer_quote_asset_id')}
         />
-        <Divider sx={{marginTop: '15px', marginBottom: '5px'}}></Divider>
+      </Paper>
+    </Col>,
+    <Col span={12} key="Perms">
+      <Paper sx={{padding: '5px'}} shadow="xs">
         <Text size="md">
             Permissions
         </Text>
@@ -422,7 +477,10 @@ export default function Wizard(properties) {
           label="disable_confidential"
           {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
         />
-        <Divider sx={{marginTop: '15px', marginBottom: '5px'}}></Divider>
+      </Paper>
+    </Col>,
+    <Col span={12} key="Flags">
+      <Paper sx={{padding: '5px'}} shadow="xs">
         <Text size="md">
             Flags
         </Text>
@@ -454,26 +512,17 @@ export default function Wizard(properties) {
           label="disable_confidential"
           {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
         />
-        <TextInput
-          required
-          label="market_fee_percent"
-          placeholder="0"
-          {...form.getInputProps('market_fee_percent')}
-        />
-        <TextInput
-          required
-          label="max_market_fee"
-          placeholder="0"
-          {...form.getInputProps('max_market_fee')}
-        />
-        <span>
-            <br/>
-            <Text color="red" size="md">
-                    Complete the fields in the above form.
-            </Text>
-            <Button type="submit">Submit</Button>
-        </span>       
-      </form>
-    </Box>
-  );
+      </Paper>
+    </Col>,
+    <Col span={12} key="SubmitBox">
+      <Paper sx={{padding: '5px'}} shadow="xs">
+        <Text color="red" size="md">
+                Complete the fields in the above form.
+        </Text>
+        <form onSubmit={form.onSubmit((values) => processForm(values))}>
+          <Button type="submit">Submit</Button>
+        </form>
+      </Paper>
+    </Col>
+  ]);
 }

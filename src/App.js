@@ -26,6 +26,7 @@ function App() {
   const [mode, setMode] = useState();
   const [asset, setAsset] = useState();
   const [images, setImages] = useState();
+  const [changingImages, setChangingImages] = useState(false);
 
   const [identity, setIdentity] = useLocalStorageState(
     'beetIdentity', {defaultValue: null}
@@ -100,11 +101,15 @@ function App() {
                     setAsset={setAsset}
                     setMode={setMode}
                     setNodes={setNodes}
+                    setImages={setImages}
                   />
-  } else if (!images) {
+  } else if (!images || changingImages === true) {
     initPrompt = <Offchain
+                    images={images}
                     setImages={setImages}
                     setMode={setMode}
+                    changingImages={changingImages}
+                    setChangingImages={setChangingImages}
                   />
   } else if (images) {
     let userID = identity.requested.account.id;
@@ -114,6 +119,9 @@ function App() {
                     asset={asset}
                     images={images}
                     setImages={setImages}
+                    setAsset={setAsset}
+                    setMode={setMode}
+                    setChangingImages={setChangingImages}
                     wsURL={wsURL}
                     nodes={nodes}
                     setNodes={setNodes}
@@ -136,13 +144,9 @@ function App() {
               </Text>
             </Col>
             
-            <Col span={12}>
-              <Paper padding="sm" shadow="xs">
-                {
-                  initPrompt
-                }
-              </Paper>
-            </Col>
+            {
+              initPrompt
+            }
 
             <Col span={12}>
             {

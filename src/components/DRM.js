@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Box, Text, Loader } from '@mantine/core';
+import { Button, Box, Text, Loader, Col, Paper } from '@mantine/core';
 import { Apis } from "bitsharesjs-ws";
 
 export default function DRM(properties) {
@@ -155,21 +155,25 @@ export default function DRM(properties) {
   }
 
   return (
-    <Box mx="auto" sx={{padding: '10px'}}>
-      {
-        topText
-      }
-      {
-        tryAgain
-      }
-      <Button
-        sx={{marginTop: '15px'}}
-        onClick={() => {
-          back()
-        }}
-      >
-        Back
-      </Button>
-    </Box>
+    <Col span={12}>
+      <Paper padding="sm" shadow="xs">
+        <Box mx="auto" sx={{padding: '10px'}}>
+          {
+            topText
+          }
+          {
+            tryAgain
+          }
+          <Button
+            sx={{marginTop: '15px'}}
+            onClick={() => {
+              back()
+            }}
+          >
+            Back
+          </Button>
+        </Box>
+      </Paper>
+    </Col>
   );
 }

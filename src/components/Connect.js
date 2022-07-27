@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Group, Box, Text, Divider, Loader } from '@mantine/core';
+import { Button, Group, Box, Text, Divider, Loader, Col, Paper } from '@mantine/core';
 import { connect } from 'beet-js';
 
 export default function Connect(properties) {
@@ -41,43 +41,61 @@ export default function Connect(properties) {
     setAuthenticated(connected.authenticated);
   }
 
-
+  let response;
+  if (inProgress === false && !connection) {
+    response = <span>
+                <Col span={12}>
+                  <Paper padding="sm" shadow="xs">
+                    <Box mx="auto" sx={{padding: '10px'}}>
+                      <Text size="md">
+                        This tool is designed for use with the Bitshares BEET Wallet.
+                      </Text>
+                      <Text size="md">
+                        Launch and unlock it, then click the connect button below to proceed.
+                      </Text>
+                      <Button
+                        sx={{marginTop: '15px'}}
+                        onClick={() => {
+                          connectToBeet()
+                        }}
+                      >
+                        Connect to Beet
+                      </Button>  
+                    </Box>
+                  </Paper>
+                </Col>
+                <Col span={12}>
+                  <Paper padding="sm" shadow="xs">
+                    <Box mx="auto" sx={{padding: '10px', paddingTop: '10px'}}>
+                      <Text size="md">
+                        Don't yet have the Bitshares BEET wallet installed? Follow the link below.
+                      </Text>
+                      <Text size="md">
+                        Once installed, create a wallet for the Bitshares NFT issuing account and proceed to connect above.
+                      </Text>
+                      <Button
+                        sx={{marginTop: '15px', marginRight: '5px'}}
+                        onClick={() => {
+                          beetDownload()
+                        }}
+                      >
+                        Download BEET
+                      </Button>
+                    </Box>
+                  </Paper>
+                </Col>              
+              </span>;
+  } else {
+    response = <Box mx="auto" sx={{padding: '10px'}}>
+                  <span>
+                    <Loader variant="dots" />
+                    <Text size="md">
+                      Connecting to BEET
+                    </Text>
+                  </span>
+                </Box>;
+    
+  }
   
-  return (
-    <Box mx="auto" sx={{padding: '10px'}}>
-      {
-        inProgress === false && !connection
-          ? <span>
-              <Text size="md">
-                This tool is designed for use with the Bitshares BEET Wallet.
-              </Text>
-              <Text size="md">
-                Launch and unlock it, then click the connect button below to proceed.
-              </Text>
-              <Button
-                sx={{marginTop: '15px', marginRight: '5px'}}
-                onClick={() => {
-                  beetDownload()
-                }}
-              >
-                Download BEET
-              </Button>
-              <Button
-                sx={{marginTop: '15px'}}
-                onClick={() => {
-                  connectToBeet()
-                }}
-              >
-                Connect to Beet
-              </Button>
-            </span>
-          : <span>
-              <Loader variant="dots" />
-              <Text size="md">
-                Connecting to BEET
-              </Text>
-            </span>
-      }
-    </Box>
-  );
+  return (response);
 }

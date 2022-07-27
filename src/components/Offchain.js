@@ -1,33 +1,47 @@
-
 import { useState } from 'react';
-import { TextInput, Button, Group, Box, Text, Divider } from '@mantine/core';
+import { Textarea, Button, Group, Box, Text, Divider, Col, Paper } from '@mantine/core';
 
 export default function Offchain(properties) {
+  const images = properties.images;
   const setImages = properties.setImages;
   const setMode = properties.setMode;
 
+  const changingImages = properties.changingImages;
+  const setChangingImages = properties.setChangingImages;
+
   let allowedFileTypes = [".png", ".PNG", ".gif", ".GIF", ".jpg", ".JPG", ".jpeg", ".JPEG"];
 
+  function getFileType(ipfsURL) {
+    let fileType;
+    let valueSlice = ipfsURL.substr(ipfsURL.length - 5);
+    if (valueSlice.includes('.png') || valueSlice.includes('.PNG')) {
+      fileType = 'PNG';
+    } else if (valueSlice.includes('.gif') || valueSlice.includes('.GIF')) {
+      fileType = 'GIF';
+    } else if (valueSlice.includes('.jpeg') || valueSlice.includes('.JPEG')) {
+      fileType = 'JPEG';
+    } else {
+      console.log('Unsupported filetype');
+      return;
+    }
+    return fileType;
+  }
+
+  console.log(`changingImages: ${changingImages} images: ${images}`)
+
   const [value, setValue] = useState('');
-  const [listItems, setListItems] = useState([]);
-  const [chosenFileType, setChosenFileType] = useState();
+  const [listItems, setListItems] = useState(
+          changingImages && images && images.length
+            ? images
+            : []
+        );
+  const [chosenFileType, setChosenFileType] = useState(changingImages && images && images.length ? images[0].type : null);
 
   function addListItem() {
     let currentListItems = listItems;
     let existingListItem = listItems.filter(listItem => listItem.url === value);
     if (!existingListItem.length) {
-      let fileType;
-      let valueSlice = value.substr(value.length - 5);
-      if (valueSlice.includes('.png') || valueSlice.includes('.PNG')) {
-        fileType = 'PNG';
-      } else if (valueSlice.includes('.gif') || valueSlice.includes('.GIF')) {
-        fileType = 'GIF';
-      } else if (valueSlice.includes('.jpeg') || valueSlice.includes('.JPEG')) {
-        fileType = 'JPEG';
-      } else {
-        console.log('Unsupported filetype');
-        return;
-      }
+      let fileType = getFileType(value);
 
       if (chosenFileType && fileType !== chosenFileType) {
         console.log('All files must have the same file format.');
@@ -42,9 +56,9 @@ export default function Offchain(properties) {
   }
 
   function removeListItem(item) {
-    if (listItems.length === 1) {
-      setListItems();
-      setFileTypes();
+    if (listItems && listItems.length === 1) {
+      setListItems([]);
+      setChosenFileType();
       return;
     }
 
@@ -53,15 +67,24 @@ export default function Offchain(properties) {
     setListItems(newListItems);
 
     if (!listItems.length) {
-      setFileTypes();
+      setChosenFileType();
     }
   }
 
   function proceed() {
+    setChangingImages(false);
     setImages(listItems);
   }
 
-  let proceedButton = listItems.length
+  function back() {
+    if (changingImages) {
+      setChangingImages(false);
+    } else {
+      setMode();
+    }
+  }
+
+  let proceedButton = listItems && listItems.length
       ? <Button
           sx={{margin: '5px'}}
           onClick={() => {
@@ -94,54 +117,70 @@ export default function Offchain(properties) {
     </Button>;
 
   return (
-    <Box mx="auto" sx={{padding: '10px'}}>
-      <Text size="sm">
-        At the moment only PNG, JPEG and GIF files are supported.
-      </Text>
-      <Group sx={{marginTop: '10px', marginBottom: '10px'}}>
-        <TextInput value={value} onChange={(event) => setValue(event.currentTarget.value)} />
-        {ipfsButton}
-      </Group>
-      <Text size="sm" weight={600}>
-        {
-          listItems.length
-            ? "IPFS URLs"
-            : null
-        }
-      </Text>
-        {
-          listItems.map(item => {
-            return <Group key={item.url} sx={{margin: '5px'}}>
-                      <Button
-                        compact
-                        variant="outline"
-                        onClick={() => {
-                          removeListItem(item.url)
-                        }}
-                      >
-                        ❌
-                      </Button>
-                      <Text size="sm">
-                        {
-                          item.url.length > 50
-                            ? item.url.substring(0, 50) + "..."
-                            : item.url
-                        } ({item.type})</Text>
-                    </Group>;
-          })
-        }
-      <Divider sx={{marginTop: '15px', marginBottom: '5px'}}></Divider>
+    <span>
+      <Col span={12}>
+        <Paper padding="sm" shadow="xs">
+          <Box mx="auto" sx={{padding: '10px'}}>
+            <Text size="sm">
+              This tool enables creation of NFTs which use IPFS as their media storage.
+            </Text>
+            <Text size="sm">
+              At the moment only PNG, JPEG and GIF files are supported, however multiple images can be stored in the one NFT.
+            </Text>
+            <Textarea
+              label="IPFS content identification URL for an individual file:"
+              placeholder="/ipfs/CID/fileName.png"
+              value={value}
+              autosize
+              minRows={1}
+              maxRows={1}
+              onChange={(event) => setValue(event.currentTarget.value)}
+              sx={{marginTop: '10px', marginBottom: '10px'}}
+            />
+            {ipfsButton}
+            <Button
+              sx={{marginTop: '5px', marginLeft: '5px'}}
+              onClick={() => {
+                setMode()
+              }}
+            >
+              Back
+            </Button>
+          </Box>
+        </Paper>
+      </Col>
       {
-        proceedButton
+        listItems && listItems.length
+        ? <Col span={12}>
+            <Paper padding="sm" shadow="xs">
+              <Box mx="auto" sx={{padding: '10px'}}>
+                <Text size="sm" weight={600}>
+                  IPFS URLs
+                </Text>
+                {listItems.map(item => {
+                  return <Group key={item.url} sx={{margin: '5px'}}>
+                            <Button
+                              compact
+                              variant="outline"
+                              onClick={() => {
+                                removeListItem(item.url)
+                              }}
+                            >
+                              ❌
+                            </Button>
+                            <Text size="sm">
+                              { item.url } ({item.type})
+                            </Text>
+                          </Group>;
+                })}
+                {
+                  proceedButton
+                }
+              </Box>
+            </Paper>
+          </Col>
+        : null
       }
-      <Button
-        sx={{marginTop: '15px'}}
-        onClick={() => {
-          setMode()
-        }}
-      >
-        Back
-      </Button>
-    </Box>
+    </span>
   );
 }

@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Textarea, Button, Group, Box, Text, Divider, Col, Paper } from '@mantine/core';
 
+function openLink(target) {
+  window.electron.ipfs(target);
+}
+
 export default function Offchain(properties) {
   const images = properties.images;
   const setImages = properties.setImages;
@@ -26,8 +30,6 @@ export default function Offchain(properties) {
     }
     return fileType;
   }
-
-  console.log(`changingImages: ${changingImages} images: ${images}`)
 
   const [value, setValue] = useState('');
   const [listItems, setListItems] = useState(
@@ -128,7 +130,7 @@ export default function Offchain(properties) {
               At the moment only PNG, JPEG and GIF files are supported, however multiple images can be stored in the one NFT.
             </Text>
             <Textarea
-              label="IPFS content identification URL for an individual file:"
+              label="Full IPFS URL for an individual file:"
               placeholder="/ipfs/CID/fileName.png"
               value={value}
               autosize
@@ -179,7 +181,90 @@ export default function Offchain(properties) {
               </Box>
             </Paper>
           </Col>
-        : null
+        : <Col span={12}>
+            <Paper padding="sm" shadow="xs">
+              <Box mx="auto" sx={{padding: '10px'}}>
+                <Text size="sm">
+                  Not yet uploaded your NFT images to IPFS?
+                </Text>
+                <Text size="sm">
+                  Then check out the following IPFS pinning services:
+                </Text>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://www.pinata.cloud/')
+                  }}
+                >
+                  Pinata
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://nft.storage/')
+                  }}
+                >
+                  NFT.Storage
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://web3.storage/')
+                  }}
+                >
+                  Web3.Storage
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://fleek.co/ipfs-gateway/')
+                  }}
+                >
+                  Fleek
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://infura.io/product/ipfs')
+                  }}
+                >
+                  Infura
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://landing.storj.io/permanently-pin-with-storj-dcs')
+                  }}
+                >
+                  Storj DCS
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://www.eternum.io/')
+                  }}
+                >
+                  Eternum
+                </Button>
+                <Button
+                  compact
+                  sx={{margin: '2px'}}
+                  onClick={() => {
+                    openLink('https://blog.ipfs.io/2021-04-05-storing-nfts-on-ipfs/')
+                  }}
+                >
+                  IPFS NFT Docs
+                </Button>
+              </Box>
+            </Paper>
+          </Col>
       }
     </span>
   );

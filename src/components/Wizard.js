@@ -1,11 +1,139 @@
 import { useState } from 'react';
-
-import { TextInput, Checkbox, Button, Box, Text, Divider, Col, Paper, Group } from '@mantine/core';
+import { TextInput, Checkbox, Button, Box, Text, Divider, Col, Paper, Group, Tooltip } from '@mantine/core';
 import { useForm } from '@mantine/form';
-
 import { TransactionBuilder } from 'bitsharesjs';
 import { Apis } from "bitsharesjs-ws";
-import SelectAsset from './SelectAsset';
+
+const permission_flags = {
+  charge_market_fee: 0x01 /**< an issuer-specified percentage of all market trades in this asset is paid to the issuer */,
+  white_list: 0x02 /**< accounts must be whitelisted in order to hold this asset */,
+  override_authority: 0x04 /**< issuer may transfer asset back to himself */,
+  transfer_restricted: 0x08 /**< require the issuer to be one party to every transfer */,
+  disable_force_settle: 0x10 /**< disable force settling */,
+  global_settle: 0x20 /**< allow the bitasset issuer to force a global settling -- this may be set in permissions, but not flags */,
+  disable_confidential: 0x40 /**< allow the asset to be used with confidential transactions */,
+  witness_fed_asset: 0x80 /**< allow the asset to be fed by witnesses */,
+  committee_fed_asset: 0x100 /**< allow the asset to be fed by the committee */,
+  lock_max_supply: 0x200, ///< the max supply of the asset can not be updated
+  disable_new_supply: 0x400, ///< unable to create new supply for the asset
+  disable_mcr_update: 0x800, ///< the bitasset owner can not update MCR, permission only
+  disable_icr_update: 0x1000, ///< the bitasset owner can not update ICR, permission only
+  disable_mssr_update: 0x2000, ///< the bitasset owner can not update MSSR, permission only
+  disable_bsrm_update: 0x4000, ///< the bitasset owner can not update BSRM, permission only
+  disable_collateral_bidding: 0x8000 ///< Can not bid collateral after a global settlement
+};
+
+const uia_permission_mask = [
+  "charge_market_fee",
+  "white_list",
+  "override_authority",
+  "transfer_restricted",
+  "disable_confidential"
+];
+
+function openLink() {
+  window.electron.ipfs('https://github.com/Bit20-Creative-Group/BitShares-NFT-Specification');
+}
+
+/**
+ * 
+ * @param {String} mask 
+ * @param {Boolean} isBitAsset 
+ * @returns Object
+ */
+function getFlagBooleans(mask, isBitAsset = false) {
+  let booleans = {
+      charge_market_fee: false,
+      white_list: false,
+      override_authority: false,
+      transfer_restricted: false,
+      disable_force_settle: false,
+      global_settle: false,
+      disable_confidential: false,
+      witness_fed_asset: false,
+      committee_fed_asset: false,
+      lock_max_supply: false,
+      disable_new_supply: false,
+      disable_mcr_update: false,
+      disable_icr_update: false,
+      disable_mssr_update: false,
+      disable_bsrm_update: false,
+      disable_collateral_bidding: false
+  };
+
+  if (mask === "all") {
+      for (let flag in booleans) {
+          if (
+              !isBitAsset &&
+              uia_permission_mask.indexOf(flag) === -1
+          ) {
+              delete booleans[flag];
+          } else {
+              booleans[flag] = true;
+          }
+      }
+      return booleans;
+  }
+
+  for (let flag in booleans) {
+      if (
+          !isBitAsset &&
+          uia_permission_mask.indexOf(flag) === -1
+      ) {
+          delete booleans[flag];
+      } else {
+          if (mask & permission_flags[flag]) {
+              booleans[flag] = true;
+          }
+      }
+  }
+
+  return booleans;
+}
+
+/**
+ * Given form values return the asset flag value
+ * @param {Array} flagBooleans 
+ * @returns Integer
+ */
+function getFlags(flagBooleans) {
+  let keys = Object.keys(permission_flags);
+
+  let flags = 0;
+
+  keys.forEach(key => {
+      if (flagBooleans[key] && key !== "global_settle") {
+          flags += permission_flags[key];
+      }
+  });
+
+  return flags;
+}
+
+/**
+ * Given form values return the asset permissions value
+ * @param {Array} flagBooleans 
+ * @param {Boolean} isBitAsset 
+ * @returns Integer
+ */
+function getPermissions(flagBooleans, isBitAsset = false) {
+  let permissions = isBitAsset
+      ? Object.keys(permission_flags)
+      : uia_permission_mask;
+  let flags = 0;
+  permissions.forEach(permission => {
+      if (flagBooleans[permission] && permission !== "global_settle") {
+          flags += permission_flags[permission];
+      }
+  });
+
+  if (isBitAsset && flagBooleans["global_settle"]) {
+      flags += permission_flags["global_settle"];
+  }
+
+  return flags;
+}
+
 
 export default function Wizard(properties) {
   const connection = properties.connection;
@@ -105,22 +233,22 @@ export default function Wizard(properties) {
   /**
    * Asking user to broadcast asset create operation with 
    * @param {Object} values 
-   * @param {Object} nft_object 
-   * @param {Object} signedPayload 
+   * @param {Object} signedPayload
+   * @param {Int} issuer_permissions 
+   * @param {Int} flags 
    */
-  async function submitForm(values, nft_object, signedPayload) {
+  async function submitForm(values, signedPayload, issuer_permissions, flags) {
     let description = JSON.stringify({
         main: values.main,
         market: values.market,
-        nft_object: nft_object,
-        nft_signature: signedPayload,
-        //nft_signature: nft_signature.toHex(),
+        nft_object: signedPayload.signed,
+        nft_signature: signedPayload.signature,
         short_name: values.short_name
     });
 
     let operationJSON = {
       issuer: userID,
-      symbol: nftJSON.symbol,
+      symbol: values.symbol,
       precision: values.precision,
       common_options: {
           max_supply: values.max_supply,
@@ -152,7 +280,7 @@ export default function Wizard(properties) {
       extensions: null
     };
 
-    await broadcastOperation(operationJSON);
+    //await broadcastOperation(operationJSON);
   }
 
   /**
@@ -161,6 +289,22 @@ export default function Wizard(properties) {
    */
   async function processForm(values) {
 
+    let permissionBooleans = {
+      "charge_market_fee": values.perm_charge_market_fee,
+      "white_list": values.perm_white_list,
+      "override_authority": values.perm_override_authority,
+      "transfer_restricted": values.perm_transfer_restricted,
+      "disable_confidential": values.perm_disable_confidential
+    };
+
+    let flagBooleans = {
+      "charge_market_fee": values.flag_charge_market_fee,
+      "white_list": values.flag_white_list,
+      "override_authority": values.flag_override_authority,
+      "transfer_restricted": values.flag_transfer_restricted,
+      "disable_confidential": values.flag_disable_confidential
+    };
+    
     const imageType = images[0].type;
 
     let nft_object = {
@@ -181,7 +325,11 @@ export default function Wizard(properties) {
       return {url: image.url}
     });
 
-    console.log(nft_object)
+    let issuer_permissions = getPermissions(permissionBooleans, false);
+    let flags = getFlags(flagBooleans);
+    
+    console.log({issuer_permissions: issuer_permissions, flags: flags})
+    return;
 
     let signedPayload;
     try {
@@ -191,16 +339,32 @@ export default function Wizard(properties) {
       return;
     }
     
-    console.log(signedPayload)
-
-    //return await submitForm(values, nft_object, signedPayload);
+    return await submitForm(values, signedPayload, permissionBooleans, flagBooleans);
   }
 
   let options = asset && asset.options ? asset.options : null;
   let description = options ? JSON.parse(options.description) : null;
   let nft_object = description ? description.nft_object : null;
 
-  console.log(description)
+  let permissionBooleans = options
+                            ? getFlagBooleans(options.issuer_permissions, false)
+                            : {
+                                "charge_market_fee": true,
+                                "white_list": true,
+                                "override_authority": true,
+                                "transfer_restricted": true,
+                                "disable_confidential": true
+                              };
+
+  let flagBooleans = options
+                      ? getFlagBooleans(options.flags, false)
+                      : {
+                          "charge_market_fee": false,
+                          "white_list": false,
+                          "override_authority": false,
+                          "transfer_restricted": false,
+                          "disable_confidential": false
+                        };
 
   const form = useForm({
     initialValues: {
@@ -228,18 +392,18 @@ export default function Wizard(properties) {
         cer_quote_asset_id: options ? options.core_exchange_rate.quote.asset_id : "1.3.1",
         
         // permissions
-        perm_charge_market_fee: true,
-        perm_white_list: true,
-        perm_override_authority: true,
-        perm_transfer_restricted: true,
-        perm_disable_confidential: true,
+        perm_charge_market_fee: permissionBooleans.charge_market_fee,
+        perm_white_list: permissionBooleans.white_list,
+        perm_override_authority: permissionBooleans.override_authority,
+        perm_transfer_restricted: permissionBooleans.transfer_restricted,
+        perm_disable_confidential: permissionBooleans.disable_confidential,
         
         // flags
-        flag_charge_market_fee: false,
-        flag_white_list: false,
-        flag_override_authority: false,
-        flag_transfer_restricted: false,
-        flag_disable_confidential: false,
+        flag_charge_market_fee: flagBooleans.charge_market_fee,
+        flag_white_list: flagBooleans.white_list,
+        flag_override_authority: flagBooleans.override_authority,
+        flag_transfer_restricted: flagBooleans.transfer_restricted,
+        flag_disable_confidential: flagBooleans.disable_confidential,
         
         // operationsJSON
         issuer: userID
@@ -253,8 +417,14 @@ export default function Wizard(properties) {
         short_name: (value) => (value.length > 0  ? null : 'Invalid'),
         symbol: (value) => (value.length > 0  ? null : 'Invalid'),
         max_supply: (value) => (value >= 0 ? null : 'Invalid'),
-        precision: (value) => (value >= 0 ? null : 'Invalid')
-    }
+        precision: (value) => (value >= 0 ? null : 'Invalid'),
+        flag_charge_market_fee: (value, values) => (value === true && !values.perm_charge_market_fee ? 'Invalid' : null),
+        flag_white_list: (value, values) => (value === true && !values.perm_white_list ? 'Invalid' : null),
+        flag_override_authority: (value, values) => (value === true && !values.perm_override_authority ? 'Invalid' : null),
+        flag_transfer_restricted: (value, values) => (value === true && !values.perm_transfer_restricted ? 'Invalid' : null),
+        flag_disable_confidential: (value, values) => (value === true && !values.perm_disable_confidential ? 'Invalid' : null)
+    },
+    validateInputOnChange: true
   });
 
   return ([
@@ -269,6 +439,14 @@ export default function Wizard(properties) {
           <Text size="sm">
             To save on fees consider getting a Bitshares lifetime membership.
           </Text>
+          <Button
+            sx={{margin: '5px'}}
+            onClick={() => {
+              openLink()
+            }}
+          >
+            BTS NFT Spec
+          </Button> 
           <Button
             onClick={() => {
               back()
@@ -452,31 +630,110 @@ export default function Wizard(properties) {
         <Text size="sm">
             Note: Disabling permissions is a permanent decision.
         </Text>
-        <Checkbox
-          mt="md"
-          label="charge_market_fee"
-          {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="white_list"
-          {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="override_authority"
-          {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="transfer_restricted"
-          {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="disable_confidential"
-          {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
-        />
+        {
+          !permissionBooleans.charge_market_fee
+          ? <Tooltip
+              label="The charge_market_fee permission was permanently disabled."
+              color="gray"
+              withArrow
+            >
+              <Checkbox
+                mt="md"
+                disabled
+                label="Enable market fee (charge_market_fee)"
+                {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
+              />
+            </Tooltip>
+          : <Checkbox
+              mt="md"
+              label="Enable market fee (charge_market_fee)"
+              {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
+            />
+        }
+        <br/>
+        {
+          !permissionBooleans.white_list
+            ? <Tooltip
+                label="The white_list permission was permanently disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Require holders to be white-listed (white_list)"
+                  {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Require holders to be white-listed (white_list)"
+                {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.override_authority
+            ? <Tooltip
+                label="The override_authority permission was permanently disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Asset owner may transfer asset back to himself (override_authority)"
+                  {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Asset owner may transfer asset back to himself (override_authority)"
+                {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.transfer_restricted
+            ? <Tooltip
+                label="The transfer_restricted permission was permanently disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Asset owner must approve all transfers (transfer_restricted)"
+                  {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Asset owner must approve all transfers (transfer_restricted)"
+                {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.disable_confidential
+            ? <Tooltip
+                label="The disable_confidential permission was permanently disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Disable confidential transactions (disable_confidential)"
+                  {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Disable confidential transactions (disable_confidential)"
+                {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
+              />
+        }
       </Paper>
     </Col>,
     <Col span={12} key="Flags">
@@ -487,31 +744,111 @@ export default function Wizard(properties) {
         <Text size="sm">
             If a related permission above is enabled, these flags can be changed at any time. 
         </Text>
-        <Checkbox
-          mt="md"
-          label="charge_market_fee"
-          {...form.getInputProps('flag_charge_market_fee', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="white_list"
-          {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="override_authority"
-          {...form.getInputProps('flag_override_authority', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="transfer_restricted"
-          {...form.getInputProps('flag_transfer_restricted', { type: 'checkbox' })}
-        />
-        <Checkbox
-          mt="md"
-          label="disable_confidential"
-          {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
-        />
+        {
+          !permissionBooleans.charge_market_fee// || form.values.perm_charge_market_fee === false
+            ? <Tooltip
+                label="Relavent permission was disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Enable charging a market fee (charge_market_fee)"
+                  {...form.getInputProps('flag_charge_market_fee', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Enable charging a market fee (charge_market_fee)"
+                {...form.getInputProps('flag_charge_market_fee', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.white_list// || form.values.perm_white_list === false
+            ? <Tooltip
+                label="Relavent permission was disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Require holders to be white-listed (white_list)"
+                  {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Require holders to be white-listed (white_list)"
+                {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.override_authority// || form.values.perm_override_authority === false
+            ? <Tooltip
+                label="Relavent permission was disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Asset owner may transfer asset back to himself (override_authority)"
+                  {...form.getInputProps('flag_override_authority', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Asset owner may transfer asset back to himself (override_authority)"
+                {...form.getInputProps('flag_override_authority', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.transfer_restricted// || form.values.perm_transfer_restricted === false
+            ? <Tooltip
+                label="Relavent permission was disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  label="Asset owner must approve all transfers (transfer_restricted)"
+                  {...form.getInputProps('flag_transfer_restricted', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Asset owner must approve all transfers (transfer_restricted)"
+                {...form.getInputProps('flag_transfer_restricted', { type: 'checkbox' })}
+              />
+        }
+        <br/>
+        {
+          !permissionBooleans.disable_confidential// || form.values.perm_disable_confidential === false
+            ? <Tooltip
+                label="Relavent permission was disabled."
+                color="gray"
+                withArrow
+              >
+                <Checkbox
+                  mt="md"
+                  disabled
+                  placeholder={false}
+                  label="Disable confidential transactions (disable_confidential)"
+                  {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
+                />
+              </Tooltip>
+            : <Checkbox
+                mt="md"
+                label="Disable confidential transactions (disable_confidential)"
+                {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
+              />
+        }
       </Paper>
     </Col>,
     <Col span={12} key="SubmitBox">
@@ -519,7 +856,7 @@ export default function Wizard(properties) {
         <Text color="red" size="md">
                 Complete the fields in the above form.
         </Text>
-        <form onSubmit={form.onSubmit((values) => processForm(values))}>
+        <form onSubmit={form.onSubmit((values) => processForm(values, permissionBooleans, flagBooleans))}>
           <Button type="submit">Submit</Button>
         </form>
       </Paper>

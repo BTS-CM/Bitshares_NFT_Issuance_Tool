@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Button, Group, Box, Text, Divider, Loader, Col, Paper } from '@mantine/core';
-import { connect } from 'beet-js';
+import { Button, Group, Box, Text, Divider, Loader, Col, Paper, Checkbox } from '@mantine/core';
+import { connect, checkBeet } from 'beet-js';
 
 export default function Connect(properties) {
   const connection = properties.connection;
@@ -15,18 +15,31 @@ export default function Connect(properties) {
 
   async function connectToBeet() {
     setInProgress(true);
+
+    let beetOnline;
+    try {
+      beetOnline = await checkBeet(true);
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (!beetOnline) {
+      setInProgress(false);
+      return;
+    }
+
     let connected;
     try {
       connected = await connect(
         "NFT Issuance tool",
         "Application",
-        "localhost",
-        connection ? connection : null,
-        connection && connection.identity ? connection.identity : null
+        "localhost"
       );
     } catch (error) {
       console.error(error)
     }
+
+    console.log('after')
 
     if (!connected) {
       console.error("Couldn't connect to Beet");

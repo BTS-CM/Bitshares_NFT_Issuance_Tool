@@ -46,6 +46,11 @@ ipcMain.on('beetDownload', (event, arg) => {
   shell.openExternal("https://github.com/bitshares/beet/releases");
 })
 
+ipcMain.on('ipfs', (event, arg) => {
+  event.returnValue = 'Opening ipfs resource!'
+  shell.openExternal(arg);
+})
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

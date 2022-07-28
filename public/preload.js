@@ -79,6 +79,10 @@ async function _beetLink(target) {
     ipcRenderer.send('beetDownload', target);
 }
 
+async function _IPFSLink(target) {
+    ipcRenderer.send('ipfs', target);
+}
+
 /*
  * Testing node latencies for requested blockchain
  */
@@ -101,6 +105,9 @@ contextBridge.exposeInMainWorld(
         },
         beetDownload: async (target) => {
             return _beetLink(target);
+        },
+        ipfs: async (target) => {
+            return _IPFSLink(target);
         }
     }
 );

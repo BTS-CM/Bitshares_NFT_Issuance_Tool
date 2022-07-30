@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Textarea, Button, Group, Box, Text, Divider, Col, Paper } from '@mantine/core';
 
-function openLink(target) {
-  window.electron.ipfs(target);
+function openURL(target) {
+  window.electron.openURL(target);
 }
 
 export default function Offchain(properties) {
@@ -194,7 +194,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://www.pinata.cloud/')
+                    openURL('ipfs_pinata')
                   }}
                 >
                   Pinata
@@ -203,7 +203,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://nft.storage/')
+                    openURL('ipfs_nft_storage')
                   }}
                 >
                   NFT.Storage
@@ -212,7 +212,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://web3.storage/')
+                    openURL('ipfs_web3_storage')
                   }}
                 >
                   Web3.Storage
@@ -221,7 +221,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://fleek.co/ipfs-gateway/')
+                    openURL('ipfs_fleek')
                   }}
                 >
                   Fleek
@@ -230,7 +230,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://infura.io/product/ipfs')
+                    openURL('ipfs_infura')
                   }}
                 >
                   Infura
@@ -239,7 +239,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://landing.storj.io/permanently-pin-with-storj-dcs')
+                    openURL('ipfs_storj')
                   }}
                 >
                   Storj DCS
@@ -248,7 +248,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://www.eternum.io/')
+                    openURL('ipfs_eternum')
                   }}
                 >
                   Eternum
@@ -257,7 +257,7 @@ export default function Offchain(properties) {
                   compact
                   sx={{margin: '2px'}}
                   onClick={() => {
-                    openLink('https://blog.ipfs.io/2021-04-05-storing-nfts-on-ipfs/')
+                    openURL('ipfs_docs')
                   }}
                 >
                   IPFS NFT Docs

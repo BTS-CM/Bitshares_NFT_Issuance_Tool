@@ -68,9 +68,10 @@ function App() {
   } else if (connection && authenticated && !isLinked) {
     initPrompt = <BeetLink
                     connection={connection}
+                    setCrypto={setCrypto}
+                    setEnvironment={setEnvironment}
                     setIsLinked={setIsLinked}
                     setIdentity={setIdentity}
-                    setCrypto={setCrypto}
                   />;
   } else if (!cdkey && isLinked && identity) {
     let userID = identity.requested.account.id;
@@ -120,6 +121,7 @@ function App() {
                     images={images}
                     setImages={setImages}
                     setAsset={setAsset}
+                    mode={mode}
                     setMode={setMode}
                     setChangingImages={setChangingImages}
                     wsURL={wsURL}

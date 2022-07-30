@@ -36,20 +36,26 @@ const createWindow = () => {
   }
 }
 
-ipcMain.on('openGallery', (event, arg) => {
-  event.returnValue = 'Opening gallery!'
-  shell.openExternal("https://nftea.gallery/gallery");
-})
+let allowed = {
+  "github": "https://github.com/bitshares/beet/releases",
+  "gallery": "https://nftea.gallery/gallery",
+  "ipfs_pinata": "https://www.pinata.cloud/",
+  "ipfs_nft_storage": "https://nft.storage/",
+  "ipfs_web3_storage": "https://web3.storage/",
+  "ipfs_fleek": "https://fleek.co/ipfs-gateway/",
+  "ipfs_infura": "https://infura.io/product/ipfs",
+  "ipfs_storj": "https://landing.storj.io/permanently-pin-with-storj-dcs",
+  "ipfs_eternum": "https://www.eternum.io/",
+  "ipfs_docs": "https://blog.ipfs.io/2021-04-05-storing-nfts-on-ipfs/",
+  "nft_spec": "https://github.com/Bit20-Creative-Group/BitShares-NFT-Specification"
+}
 
-ipcMain.on('beetDownload', (event, arg) => {
-  event.returnValue = 'Opening github!'
-  shell.openExternal("https://github.com/bitshares/beet/releases");
-})
-
-ipcMain.on('ipfs', (event, arg) => {
-  event.returnValue = 'Opening ipfs resource!'
-  shell.openExternal(arg);
-})
+ipcMain.on('openURL', (event, arg) => {
+  if (allowed.hasOwnProperty(arg)) {
+    event.returnValue = 'Opening url!'
+    shell.openExternal(allowed[arg]);
+  }
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

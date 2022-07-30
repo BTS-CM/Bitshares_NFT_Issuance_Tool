@@ -3,6 +3,7 @@ import { Button, Group, Box, Text, Divider, Loader, Col, Paper } from '@mantine/
 import { link } from 'beet-js';
 
 export default function BeetLink(properties) {
+  const setEnvironment = properties.setEnvironment;
   const setIsLinked = properties.setIsLinked;
   const setIdentity = properties.setIdentity;
   const setCrypto = properties.setCrypto;
@@ -36,6 +37,8 @@ export default function BeetLink(properties) {
     }
 
     console.log('Successfully linked');
+    
+    setEnvironment(target === "BTS" ? 'production' : 'testnet');
     setIsLinked(true);
     setInProgress(false);
     setIdentity(connection.identity);

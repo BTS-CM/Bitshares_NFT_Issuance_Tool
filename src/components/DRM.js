@@ -49,7 +49,7 @@ export default function DRM(properties) {
   }
   
   function openGallery() {
-    window.electron.openGallery('launch');
+    window.electron.openURL('gallery');
   }
 
   useEffect(() => {

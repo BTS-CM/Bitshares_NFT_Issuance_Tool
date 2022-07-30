@@ -10,7 +10,7 @@ export default function Connect(properties) {
   const [inProgress, setInProgress] = useState(false);
 
   function beetDownload() {
-    window.electron.beetDownload('launch');
+    window.electron.openURL('github');
   }
 
   async function connectToBeet() {

@@ -218,16 +218,16 @@ export default function Wizard(properties) {
     }
 
     try {
-      await tr.set_expire_seconds(1024)
+      await tr.update_head_block();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return;
     }
 
     try {
-      await tr.update_head_block();
+      await tr.set_expire_seconds(1024)
     } catch (error) {
-      console.error(error);
+      console.log(error);
       return;
     }
 
@@ -318,39 +318,75 @@ export default function Wizard(properties) {
         short_name: values.short_name
       });
 
-      return await broadcastOperation({
-        issuer: userID,
-        symbol: values.symbol,
-        precision: values.precision,
-        common_options: {
-            max_supply: values.max_supply,
-            market_fee_percent: 0,
-            max_market_fee: 0,
-            issuer_permissions: issuer_permissions,
-            flags: flags,
-            core_exchange_rate: {
-                base: {
-                    amount: values.cer_base_amount,
-                    asset_id: values.cer_base_asset_id
-                },
-                quote: {
-                    amount: values.cer_quote_amount,
-                    asset_id: values.cer_quote_asset_id
-                }
-            },
-            whitelist_authorities: [],
-            blacklist_authorities: [],
-            whitelist_markets: [],
-            blacklist_markets: [],
-            description: description,
-            extensions: {
-              reward_percent: 0,
-              whitelist_market_fee_sharing: []
-            }
-        },
-        is_prediction_market: false,
-        extensions: null
-      });
+      let operation = mode === 'create'
+                      ? {
+                          issuer: userID,
+                          symbol: values.symbol,
+                          precision: values.precision,
+                          common_options: {
+                              max_supply: values.max_supply,
+                              market_fee_percent: 0,
+                              max_market_fee: 0,
+                              issuer_permissions: issuer_permissions,
+                              flags: flags,
+                              core_exchange_rate: {
+                                  base: {
+                                      amount: values.cer_base_amount,
+                                      asset_id: values.cer_base_asset_id
+                                  },
+                                  quote: {
+                                      amount: values.cer_quote_amount,
+                                      asset_id: values.cer_quote_asset_id
+                                  }
+                              },
+                              whitelist_authorities: [],
+                              blacklist_authorities: [],
+                              whitelist_markets: [],
+                              blacklist_markets: [],
+                              description: description,
+                              extensions: {
+                                reward_percent: 0,
+                                whitelist_market_fee_sharing: []
+                              }
+                          },
+                          is_prediction_market: false,
+                          extensions: null
+                        }
+                      : {
+                        issuer: userID,
+                        asset_to_update: asset.id,
+                        new_options: {
+                            max_supply: parseInt(values.max_supply),
+                            market_fee_percent: 0,
+                            max_market_fee: 0,
+                            issuer_permissions: issuer_permissions,
+                            flags: flags,
+                            core_exchange_rate: {
+                                base: {
+                                    amount: parseInt(values.cer_base_amount),
+                                    asset_id: values.cer_base_asset_id
+                                },
+                                quote: {
+                                    amount: parseInt(values.cer_quote_amount),
+                                    asset_id: values.cer_quote_asset_id
+                                }
+                            },
+                            whitelist_authorities: [],
+                            blacklist_authorities: [],
+                            whitelist_markets: [],
+                            blacklist_markets: [],
+                            description: description,
+                            extensions: {
+                              reward_percent: 0,
+                              whitelist_market_fee_sharing: []
+                            }
+                        },
+                        is_prediction_market: false,
+                        extensions: null
+                      };
+
+      console.log(operation)
+      return await broadcastOperation(operation);
     } else {
       console.log("An issue with signing the nft_object occurred");
       return;
@@ -889,7 +925,7 @@ export default function Wizard(properties) {
         <Col span={12} key="Top">
           <Paper sx={{padding: '5px'}} shadow="xs">
               <Text size="md">
-                Successfully {mode === 'create' ? 'created' : 'updated'} your NFT on the Bitshares blockchain!
+                Successfully {mode === 'create' ? 'created' : 'updated'} your NFT on the {environment === 'production' ? 'Bitshares' : 'BTS Testnet'} blockchain!
               </Text>
               <Button
                 onClick={() => {

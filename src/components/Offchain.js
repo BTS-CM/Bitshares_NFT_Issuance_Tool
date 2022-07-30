@@ -19,11 +19,11 @@ export default function Offchain(properties) {
     let fileType;
     let valueSlice = ipfsURL.substr(ipfsURL.length - 5);
     if (valueSlice.includes('.png') || valueSlice.includes('.PNG')) {
-      fileType = 'PNG';
+      fileType = 'png';
     } else if (valueSlice.includes('.gif') || valueSlice.includes('.GIF')) {
-      fileType = 'GIF';
+      fileType = 'gif';
     } else if (valueSlice.includes('.jpeg') || valueSlice.includes('.JPEG')) {
-      fileType = 'JPEG';
+      fileType = 'jpeg';
     } else {
       console.log('Unsupported filetype');
       return;

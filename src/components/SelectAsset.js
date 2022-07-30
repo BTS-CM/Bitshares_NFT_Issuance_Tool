@@ -47,12 +47,15 @@ export default function SelectAsset(properties) {
     let description = JSON.parse(asset.options.description);
 
     let output;
-    if (description.nft_object.media_png_multihashes) {
-      output = description.nft_object.media_png_multihashes.map(value => { return {url: value.url, type: 'PNG'}});
-    } else if (description.nft_object.media_gif_multihashes) {
-      output = description.nft_object.media_gif_multihashes.map(value => { return {url: value.url, type: 'GIF'}});
-    } else if (description.nft_object.media_jpeg_multihash) {
-      output = description.nft_object.media_jpeg_multihash.map(value => { return {url: value.url, type: 'JPEG'}});
+    if (description.nft_object.media_png_multihashes || description.nft_object.media_PNG_multihashes) {
+      let hashes = description.nft_object.media_png_multihashes ?? description.nft_object.media_PNG_multihashes;
+      output = hashes.map(value => { return {url: value.url, type: 'PNG'}});
+    } else if (description.nft_object.media_gif_multihashes || description.nft_object.media_GIF_multihashes) {
+      let hashes = description.nft_object.media_png_multihashes ?? description.nft_object.media_PNG_multihashes;
+      output = hashes.map(value => { return {url: value.url, type: 'GIF'}});
+    } else if (description.nft_object.media_jpeg_multihash || description.nft_object.media_JPEG_multihash) {
+      let hashes = description.nft_object.media_jpeg_multihash ?? description.nft_object.media_JPEG_multihash;
+      output = hashes.map(value => { return {url: value.url, type: 'JPEG'}});
     }
     
     setImages(output);
@@ -84,6 +87,7 @@ export default function SelectAsset(properties) {
       
       let accountAssets = fullAccounts[0][1].assets;
 
+
       let assetsDetails;
       try {
         assetsDetails = await Apis.instance().db_api().exec( "get_assets", [accountAssets, true])
@@ -98,9 +102,9 @@ export default function SelectAsset(properties) {
             asset.options &&
             asset.options.description &&
             asset.options.description.length &&
-            asset.options.description.includes("media_png_multihashes") ||
-            asset.options.description.includes("media_gif_multihashes") ||
-            asset.options.description.includes("media_jpeg_multihash")
+            asset.options.description.includes("media_png_multihashes") || asset.options.description.includes("media_PNG_multihashes") ||
+            asset.options.description.includes("media_gif_multihashes") || asset.options.description.includes("media_GIF_multihashes") ||
+            asset.options.description.includes("media_jpeg_multihash") || asset.options.description.includes("media_JPEG_multihash")
         ) {
           return true;
         } else {

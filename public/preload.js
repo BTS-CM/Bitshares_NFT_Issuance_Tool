@@ -71,16 +71,8 @@ async function _testNodes(target) {
     });
 }
 
-async function _galleryLink(target) {
-    ipcRenderer.send('openGallery', target);
-}
-
-async function _beetLink(target) {
-    ipcRenderer.send('beetDownload', target);
-}
-
-async function _IPFSLink(target) {
-    ipcRenderer.send('ipfs', target);
+async function _openURL(target) {
+    ipcRenderer.send('openURL', target);
 }
 
 /*
@@ -100,14 +92,8 @@ contextBridge.exposeInMainWorld(
         testConnections: async (target) => {
             return _testNodes(target);
         },
-        openGallery: async (target) => {
-            return _galleryLink(target);
-        },
-        beetDownload: async (target) => {
-            return _beetLink(target);
-        },
-        ipfs: async (target) => {
-            return _IPFSLink(target);
+        openURL: async (target) => {
+            return _openURL(target);
         }
     }
 );

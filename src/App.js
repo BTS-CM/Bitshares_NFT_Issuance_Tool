@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, Container, Center, Group, Grid, Col, Paper, Button, Divider } from '@mantine/core'
+import { Text, Container, Center, Group, Grid, Col, Paper, Button, Divider, Image } from '@mantine/core'
 import { connect, link } from 'beet-js';
 import useLocalStorageState from 'use-local-storage-state';
 
@@ -13,6 +13,10 @@ import SelectAsset from "./components/SelectAsset";
 import Wizard from "./components/Wizard";
 
 import './App.css'
+
+function openURL() {
+  window.electron.openURL('gallery');
+}
 
 function App() {
 
@@ -141,9 +145,14 @@ function App() {
         <Container>
           <Grid key={"about"} grow>
             <Col span={12}>
-              <Text size="lg">
-                Bitshares NFT Issuance tool
-              </Text>
+              <div style={{ width: 350, marginLeft: 'auto', marginRight: 'auto' }}>
+                <Image
+                  radius="md"
+                  src="./logo2.png"
+                  alt="Bitshares logo"
+                  caption="NFT Issuance tool - Created by NFTEA Gallery"
+                />
+              </div>
             </Col>
             
             {
@@ -151,31 +160,31 @@ function App() {
             }
 
             <Col span={12}>
-            {
+              <span>
+                <Divider></Divider>
+                <Button 
+                  variant="default" color="dark"
+                  sx={{marginTop: '15px', marginRight: '5px'}}
+                  onClick={() => {
+                    openURL()
+                  }}
+                >
+                  NFTEA Gallery
+                </Button>
+                {
                   isLinked
-                  ? <span>
-                      <Divider></Divider>
-                      <Button 
-                        variant="default" color="dark"
-                        sx={{marginTop: '15px', marginRight: '5px'}}
-                        onClick={() => {
-                          openGallery()
-                        }}
-                      >
-                        NFTEA Gallery
-                      </Button>
-                      <Button 
-                        variant="outline" color="dark"
-                        sx={{marginTop: '15px', marginBottom: '5px'}}
-                        onClick={() => {
-                          reset()
-                        }}
-                      >
-                        Reset app
-                      </Button>
-                    </span>
+                  ? <Button 
+                      variant="outline" color="dark"
+                      sx={{marginTop: '15px', marginBottom: '5px'}}
+                      onClick={() => {
+                        reset()
+                      }}
+                    >
+                      Reset app
+                    </Button>
                   : null
                 }
+              </span>
             </Col>
           </Grid>
         </Container>

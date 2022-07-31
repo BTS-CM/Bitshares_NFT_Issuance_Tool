@@ -14,21 +14,14 @@ const createWindow = () => {
     }
   })
 
-  // and load the index.html of the app.
-  //mainWindow.loadFile('../src/index.html')
-
-  // In production, set the initial browser path to the local bundle generated
-  // by the Create React App build process.
-  // In development, set it to localhost to allow live/hot-reloading.
-  const appURL = app.isPackaged
-    //? `file:///${__dirname}/index.html`
+  const indexURL = app.isPackaged
     ? url.format({
         pathname: path.join(__dirname, './index.html'),
         protocol: 'file:',
         slashes: true
       })
     : "http://localhost:3000";
-  mainWindow.loadURL(appURL);
+  mainWindow.loadURL(indexURL);
 
   // Automatically open Chrome's DevTools in development mode.
   if (!app.isPackaged) {
@@ -61,9 +54,7 @@ ipcMain.on('openURL', (event, arg) => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow()
-  
-  //app.commandLine.appendSwitch('ignore-certificate-errors');
+  createWindow();
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -76,7 +67,7 @@ app.whenReady().then(() => {
     // and we then say "it is all fine - true" to the callback
     event.preventDefault();
     callback(true);
-});
+  });
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

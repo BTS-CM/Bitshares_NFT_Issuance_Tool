@@ -73,7 +73,7 @@ export default function BeetLink(properties) {
   : <span>
       <Loader variant="dots" />
       <Text size="md">
-        Waiting for user to respond to BEET prompt
+        Waiting on respond from BEET prompt
       </Text>
     </span>;
 

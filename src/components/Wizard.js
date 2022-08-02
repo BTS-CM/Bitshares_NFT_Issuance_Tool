@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput, Checkbox, Button, Box, Text, Divider, Col, Paper, Group, Tooltip } from '@mantine/core';
+import { TextInput, Checkbox, Button, Box, Text, Divider, Col, Paper, Group, Tooltip, Loader } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { TransactionBuilder } from 'bitsharesjs';
 import { Apis } from "bitsharesjs-ws";
@@ -141,6 +141,7 @@ export default function Wizard(properties) {
   const asset = properties.asset;
   
   const [broadcastResult, setBroadcastResult] = useState();
+  const [inProgress, setInProgress] = useState(false);
 
   const images = properties.images;
   const setImages = properties.setImages;
@@ -188,6 +189,7 @@ export default function Wizard(properties) {
       TXBuilder = connection.inject(TransactionBuilder, {sign: true, broadcast: true});
     } catch (error) {
       console.log(error);
+      setInProgress(false);
       return;
     }
 
@@ -202,6 +204,7 @@ export default function Wizard(properties) {
     } catch (error) {
       console.log(`api instance: ${error}`);
       changeURL();
+      setInProgress(false);
       return;
     }
 
@@ -214,6 +217,7 @@ export default function Wizard(properties) {
       );
     } catch (error) {
       console.error(error);
+      setInProgress(false);
       return;
     }
 
@@ -221,13 +225,15 @@ export default function Wizard(properties) {
       await tr.update_head_block();
     } catch (error) {
       console.error(error);
+      setInProgress(false);
       return;
     }
 
     try {
-      await tr.set_expire_seconds(1024)
+      await tr.set_expire_seconds(1024);
     } catch (error) {
       console.log(error);
+      setInProgress(false);
       return;
     }
 
@@ -235,6 +241,7 @@ export default function Wizard(properties) {
       await tr.set_required_fees();
     } catch (error) {
       console.error(error);
+      setInProgress(false);
       return;
     }
 
@@ -242,6 +249,7 @@ export default function Wizard(properties) {
       tr.add_signer("inject_wif");
     } catch (error) {
       console.error(error);
+      setInProgress(false);
       return;
     }
 
@@ -250,11 +258,13 @@ export default function Wizard(properties) {
       result = await tr.broadcast();
     } catch (error) {
       console.error(error);
+      setInProgress(false);
       return;
     }
 
-    console.log(JSON.stringify(result));
+    setInProgress(false);
     setBroadcastResult(result);
+    setInProgress(false);
   }
 
   /**
@@ -262,6 +272,7 @@ export default function Wizard(properties) {
    * @param {Object} values 
    */
   async function processForm(values) {
+    setInProgress(true);
     let permissionBooleans = {
       "charge_market_fee": values.perm_charge_market_fee,
       "white_list": values.perm_white_list,
@@ -306,6 +317,7 @@ export default function Wizard(properties) {
       signedPayload = await connection.signNFT(nft_object);
     } catch (error) {
       console.log(error);
+      setInProgress(false);
       return;
     }
     
@@ -389,6 +401,7 @@ export default function Wizard(properties) {
       return await broadcastOperation(operation);
     } else {
       console.log("An issue with signing the nft_object occurred");
+      setInProgress(false);
       return;
     }
   }
@@ -912,12 +925,23 @@ export default function Wizard(properties) {
         </Col>,
         <Col span={12} key="SubmitBox">
           <Paper sx={{padding: '5px'}} shadow="xs">
-            <Text color="red" size="md">
-                    Complete the fields in the above form.
-            </Text>
-            <form onSubmit={form.onSubmit((values) => processForm(values, permissionBooleans, flagBooleans))}>
-              <Button type="submit">Submit</Button>
-            </form>
+            {
+              !inProgress
+                ? <span>
+                    <Text color="red" size="md">
+                      Complete the fields in the above form.
+                    </Text>
+                    <form onSubmit={form.onSubmit((values) => processForm(values, permissionBooleans, flagBooleans))}>
+                      <Button type="submit">Submit</Button>
+                    </form>
+                  </span>
+                : <span>
+                    <Loader variant="dots" />
+                    <Text size="md">
+                      Waiting on responses from BEET prompts
+                    </Text>
+                  </span>
+            }
           </Paper>
         </Col>
       ]

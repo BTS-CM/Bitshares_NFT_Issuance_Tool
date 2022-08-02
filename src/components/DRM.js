@@ -108,9 +108,12 @@ export default function DRM(properties) {
   
   let topText;
   if (!nodes) {
-    topText = <Text size="sm" weight={600}>
-                  Finding the fastest BTS nodes
-              </Text>;
+    topText = <span>
+                <Loader variant="dots" />
+                <Text size="sm" weight={600}>
+                    Finding the fastest node to connect to...
+                </Text>
+              </span>;
   } else if (!balances) {
     topText = <span>
                 <Loader variant="dots" />
@@ -121,7 +124,7 @@ export default function DRM(properties) {
   } else {
     topText = <span>
                 <Text size="sm" weight={600}>
-                    Only owners of <a onClick={() => openGallery()}>NFTEA NFTs</a> on the Bitshares DEX can use this tool.
+                    Only owners of <a onClick={() => openGallery()}>NFTEA NFTs</a> on the Bitshares DEX can use this tool on the production blockchain.
                 </Text>
                 <Text size="sm" weight={600}>
                     If still available, they can be acquired directly on the Bitshares DEX.

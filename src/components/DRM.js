@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import { Button, Box, Text, Loader, Col, Paper } from '@mantine/core';
 import { Apis } from "bitsharesjs-ws";
 
+const accessPasses = {
+  "BTS": 100000,
+  "NFTEA": 1
+}
+
 export default function DRM(properties) {
   const setCDKey = properties.setCDKey;
   const userID = properties.userID;
@@ -91,10 +96,26 @@ export default function DRM(properties) {
           console.log(error);
           return;
         }
-        
-        let filteredSymbols = balanceSymbols.map(balance => balance.symbol).filter(symbol => symbol.startsWith("NFTEA."));
-        if (filteredSymbols.length || userID === '1.2.1803677') {
-          let ownedCDKEY = filteredSymbols.length ? filteredSymbols[0] : 'admin';
+
+        let mergedResult = balanceResult.map((balance) => {
+          let symbolData = balanceSymbols.find(symbol => symbol.id === balance.asset_id);
+          symbolData.amount = balance.amount;
+          symbolData.preciseAmount = balance.amount > 0 ? balance.amount / Math.pow(10, symbolData.precision) : 0
+          return symbolData;
+        })
+
+        let filteredAssets = mergedResult.map((res) => {
+          return {symbol: res.symbol.split('.')[0], amount: res.preciseAmount}
+        }).filter((balance) => {
+          if (accessPasses[balance.symbol] && balance.amount > accessPasses[balance.symbol]) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+
+        if (filteredAssets.length) {
+          let ownedCDKEY = filteredAssets[0];
           setCDKey(ownedCDKEY);
           console.log("Authorized to use application");
         } else {
@@ -124,13 +145,13 @@ export default function DRM(properties) {
   } else {
     topText = <span>
                 <Text size="sm" weight={600}>
-                    Only owners of <a onClick={() => openGallery()}>NFTEA NFTs</a> on the Bitshares DEX can use this tool on the production blockchain.
+                    Unfortunately, your Bitshares account cannot access this tool at this time.
                 </Text>
                 <Text size="sm" weight={600}>
-                    If still available, they can be acquired directly on the Bitshares DEX.
+                    Your account must either have 100,000 BTS or an NFTEA NFT in its portfolio to proceed.
                 </Text>
                 <Text size="sm" weight={600}>
-                    Everyone is free to use this tool on the Bitshares testnet.
+                    Everyone is however entirely free to use this tool on the Bitshares testnet blockchain.
                 </Text>
               </span>
   }

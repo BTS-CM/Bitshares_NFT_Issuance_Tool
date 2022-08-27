@@ -1,270 +1,33 @@
 import { useState } from 'react';
 import { TextInput, Checkbox, Button, Box, Text, Divider, Col, Paper, Group, Tooltip, Loader } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { TransactionBuilder } from 'bitsharesjs';
-import { Apis } from "bitsharesjs-ws";
 
-const permission_flags = {
-  charge_market_fee: 0x01 /**< an issuer-specified percentage of all market trades in this asset is paid to the issuer */,
-  white_list: 0x02 /**< accounts must be whitelisted in order to hold this asset */,
-  override_authority: 0x04 /**< issuer may transfer asset back to himself */,
-  transfer_restricted: 0x08 /**< require the issuer to be one party to every transfer */,
-  disable_force_settle: 0x10 /**< disable force settling */,
-  global_settle: 0x20 /**< allow the bitasset issuer to force a global settling -- this may be set in permissions, but not flags */,
-  disable_confidential: 0x40 /**< allow the asset to be used with confidential transactions */,
-  witness_fed_asset: 0x80 /**< allow the asset to be fed by witnesses */,
-  committee_fed_asset: 0x100 /**< allow the asset to be fed by the committee */,
-  lock_max_supply: 0x200, ///< the max supply of the asset can not be updated
-  disable_new_supply: 0x400, ///< unable to create new supply for the asset
-  disable_mcr_update: 0x800, ///< the bitasset owner can not update MCR, permission only
-  disable_icr_update: 0x1000, ///< the bitasset owner can not update ICR, permission only
-  disable_mssr_update: 0x2000, ///< the bitasset owner can not update MSSR, permission only
-  disable_bsrm_update: 0x4000, ///< the bitasset owner can not update BSRM, permission only
-  disable_collateral_bidding: 0x8000 ///< Can not bid collateral after a global settlement
-};
-
-const uia_permission_mask = [
-  "charge_market_fee",
-  "white_list",
-  "override_authority",
-  "transfer_restricted",
-  "disable_confidential"
-];
+import { appStore, beetStore } from '../../lib/states';
+import { getPermissions, getFlags, getFlagBooleans } from '../../lib/permissions';
+import { broadcastOperation } from '../../lib/broadcasts';
 
 function openLink() {
   window.electron.openURL('nft_spec');
 }
 
-/**
- * 
- * @param {String} mask 
- * @param {Boolean} isBitAsset 
- * @returns Object
- */
-function getFlagBooleans(mask, isBitAsset = false) {
-  let booleans = {
-      charge_market_fee: false,
-      white_list: false,
-      override_authority: false,
-      transfer_restricted: false,
-      disable_force_settle: false,
-      global_settle: false,
-      disable_confidential: false,
-      witness_fed_asset: false,
-      committee_fed_asset: false,
-      lock_max_supply: false,
-      disable_new_supply: false,
-      disable_mcr_update: false,
-      disable_icr_update: false,
-      disable_mssr_update: false,
-      disable_bsrm_update: false,
-      disable_collateral_bidding: false
-  };
-
-  if (mask === "all") {
-      for (let flag in booleans) {
-          if (
-              !isBitAsset &&
-              uia_permission_mask.indexOf(flag) === -1
-          ) {
-              delete booleans[flag];
-          } else {
-              booleans[flag] = true;
-          }
-      }
-      return booleans;
-  }
-
-  for (let flag in booleans) {
-      if (
-          !isBitAsset &&
-          uia_permission_mask.indexOf(flag) === -1
-      ) {
-          delete booleans[flag];
-      } else {
-          if (mask & permission_flags[flag]) {
-              booleans[flag] = true;
-          }
-      }
-  }
-
-  return booleans;
-}
-
-/**
- * Given form values return the asset flag value
- * @param {Array} flagBooleans 
- * @returns Integer
- */
-function getFlags(flagBooleans) {
-  let keys = Object.keys(permission_flags);
-
-  let flags = 0;
-
-  keys.forEach(key => {
-      if (flagBooleans[key] && key !== "global_settle") {
-          flags += permission_flags[key];
-      }
-  });
-
-  return flags;
-}
-
-/**
- * Given form values return the asset permissions value
- * @param {Array} flagBooleans 
- * @param {Boolean} isBitAsset 
- * @returns Integer
- */
-function getPermissions(flagBooleans, isBitAsset = false) {
-  let permissions = isBitAsset
-      ? Object.keys(permission_flags)
-      : uia_permission_mask;
-  let flags = 0;
-  permissions.forEach(permission => {
-      if (flagBooleans[permission] && permission !== "global_settle") {
-          flags += permission_flags[permission];
-      }
-  });
-
-  if (isBitAsset && flagBooleans["global_settle"]) {
-      flags += permission_flags["global_settle"];
-  }
-
-  return flags;
-}
-
-
 export default function Wizard(properties) {
-  const connection = properties.connection;
   const userID = properties.userID;
-  const asset = properties.asset;
   
   const [broadcastResult, setBroadcastResult] = useState();
   const [inProgress, setInProgress] = useState(false);
 
-  const images = properties.images;
-  const setImages = properties.setImages;
-  const setAsset = properties.setAsset;
-  const mode = properties.mode;
-  const setMode = properties.setMode;
-  const setChangingImages = properties.setChangingImages;
+  let connection = beetStore((state) => state.connection);
+  let asset = appStore((state) => state.asset);
+  let asset_images = appStore((state) => state.asset_images);
+  let back = appStore((state) => state.back);
 
-  const environment = properties.environment;
-  const wsURL = properties.wsURL;
-  const nodes = properties.nodes;
-  const setNodes = properties.setNodes;
-  const setProdConnection = properties.setProdConnection;
-  const setTestnetConnection = properties.setTestnetConnection;
+  let environment = appStore((state) => state.environment);
+  let mode = appStore((state) => state.mode);
 
-  function back() {
-    setAsset();
-    setImages();
-    setMode();
-  }
+  let setChangingImages = appStore((state) => state.setChangingImages);
 
   function changeImages() {
     setChangingImages(true);
-  }
-
-  function changeURL() {
-    let nodesToChange = nodes;
-    nodesToChange.push(nodesToChange.shift()); // Moving misbehaving node to end
-    setNodes(nodesToChange);
-    console.log(`Setting new node connection to: ${nodesToChange[0]}`)
-    if (environment === 'production') {
-      setProdConnection(nodesToChange[0]);
-    } else {
-      setTestnetConnection(nodesToChange[0]);
-    }
-  }
-
-  /**
-   * broadcast the create asset operation
-   * @param {Object} operationJSON 
-   */
-  async function broadcastOperation(operationJSON) {
-    let TXBuilder;
-    try {
-      TXBuilder = connection.inject(TransactionBuilder, {sign: true, broadcast: true});
-    } catch (error) {
-      console.log(error);
-      setInProgress(false);
-      return;
-    }
-
-    try {
-      await Apis.instance(
-          wsURL,
-          true,
-          10000,
-          {enableCrypto: false, enableOrders: true},
-          (error) => console.log(error),
-      ).init_promise;
-    } catch (error) {
-      console.log(`api instance: ${error}`);
-      changeURL();
-      setInProgress(false);
-      return;
-    }
-
-    let tr = new TXBuilder();
-
-    try {
-      tr.add_type_operation(
-        mode === "create" ? "asset_create" : "asset_update",
-        operationJSON
-      );
-    } catch (error) {
-      console.error(error);
-      setInProgress(false);
-      return;
-    }
-
-    try {
-      await tr.update_head_block();
-    } catch (error) {
-      console.error(error);
-      setInProgress(false);
-      return;
-    }
-
-    try {
-      await tr.set_expire_seconds(1024);
-    } catch (error) {
-      console.log(error);
-      setInProgress(false);
-      return;
-    }
-
-    try {
-      await tr.set_required_fees();
-    } catch (error) {
-      console.error(error);
-      setInProgress(false);
-      return;
-    }
-
-    try {
-      tr.add_signer("inject_wif");
-    } catch (error) {
-      console.error(error);
-      setInProgress(false);
-      return;
-    }
-
-    let result;
-    try {
-      result = await tr.broadcast();
-    } catch (error) {
-      console.error(error);
-      setInProgress(false);
-      return;
-    }
-
-    setInProgress(false);
-    setBroadcastResult(result);
-    setInProgress(false);
   }
 
   /**
@@ -289,7 +52,7 @@ export default function Wizard(properties) {
       "disable_confidential": values.flag_disable_confidential
     };
     
-    const imageType = images[0].type;
+    const imageType = asset_images[0].type;
 
     let nft_object = {
         acknowledgements: values.acknowledgements,
@@ -304,8 +67,8 @@ export default function Wizard(properties) {
         type: values.type
     };
 
-    nft_object[`media_${imageType}_multihash`] = images[0].url;
-    nft_object[`media_${imageType}_multihashes`] = images.map(image => {
+    nft_object[`media_${imageType}_multihash`] = asset_images[0].url;
+    nft_object[`media_${imageType}_multihashes`] = asset_images.map(image => {
       return {url: image.url}
     });
 
@@ -331,7 +94,7 @@ export default function Wizard(properties) {
       });
 
       let operation = mode === 'create'
-                      ? {
+                      ? { // create asset json
                           issuer: userID,
                           symbol: values.symbol,
                           precision: values.precision,
@@ -364,7 +127,7 @@ export default function Wizard(properties) {
                           is_prediction_market: false,
                           extensions: null
                         }
-                      : {
+                      : { // edit asset json
                         issuer: userID,
                         asset_to_update: asset.id,
                         new_options: {
@@ -398,7 +161,17 @@ export default function Wizard(properties) {
                       };
 
       console.log(operation)
-      return await broadcastOperation(operation);
+      let tx;
+      try {
+        tx = await broadcastOperation(operation);
+      } catch (error) {
+        console.log(error);
+        setInProgress(false);
+        return;
+      }
+
+      setBroadcastResult(tx);
+      setInProgress(false);
     } else {
       console.log("An issue with signing the nft_object occurred");
       setInProgress(false);
@@ -528,11 +301,11 @@ export default function Wizard(properties) {
                 Image details
             </Text>
             <Text size="sm">
-              This NFT currently contains the following {images && images.length} images:
+              This NFT currently contains the following {asset_images && asset_images.length} images:
             </Text>
             {
-              images
-              ? images.map(item => {
+              asset_images
+              ? asset_images.map(item => {
                   return <Group key={item.url} sx={{margin: '5px'}}>
                             <Text size="sm">
                               {
@@ -910,7 +683,6 @@ export default function Wizard(properties) {
                     <Checkbox
                       mt="md"
                       disabled
-                      placeholder={false}
                       label="Disable confidential transactions (disable_confidential)"
                       {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
                     />

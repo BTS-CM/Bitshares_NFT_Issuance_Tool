@@ -1,8 +1,9 @@
 import { Button, Box, Text, Col, Paper } from '@mantine/core';
+import { appStore } from '../../lib/states';
 
 export default function Mode(properties) {
-  const setMode = properties.setMode;
-  
+  const setMode = appStore((state) => state.setMode);
+
   return (
     <Col span={12}>
       <Paper padding="sm" shadow="xs">

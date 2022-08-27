@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Textarea, Button, Group, Box, Text, Divider, Col, Paper } from '@mantine/core';
+import { appStore, beetStore, identitiesStore } from '../../lib/states';
 
 function openURL(target) {
   window.electron.openURL(target);
 }
 
 export default function Offchain(properties) {
-  const images = properties.images;
-  const setImages = properties.setImages;
-  const setMode = properties.setMode;
+  let setMode = appStore((state) => state.setMode);
+  let asset_images = appStore((state) => state.asset_images);
+  let setAssetImages = appStore((state) => state.setAssetImages);
+  let setAsset = appStore((state) => state.setAsset);
 
-  const changingImages = properties.changingImages;
-  const setChangingImages = properties.setChangingImages;
+  let changing_images = appStore((state) => state.changing_images);
+  let setChangingImages = appStore((state) => state.setChangingImages);
 
   let allowedFileTypes = [".png", ".PNG", ".gif", ".GIF", ".jpg", ".JPG", ".jpeg", ".JPEG"];
 
@@ -33,11 +35,15 @@ export default function Offchain(properties) {
 
   const [value, setValue] = useState('');
   const [listItems, setListItems] = useState(
-          changingImages && images && images.length
-            ? images
+          changing_images && asset_images && asset_images.length
+            ? asset_images
             : []
         );
-  const [chosenFileType, setChosenFileType] = useState(changingImages && images && images.length ? images[0].type : null);
+  const [chosenFileType, setChosenFileType] = useState(
+    changing_images && asset_images && asset_images.length
+      ? asset_images[0].type
+      : null
+  );
 
   function addListItem() {
     let currentListItems = listItems;
@@ -75,14 +81,15 @@ export default function Offchain(properties) {
 
   function proceed() {
     setChangingImages(false);
-    setImages(listItems);
+    setAssetImages(listItems);
   }
 
   function back() {
-    if (changingImages) {
+    if (changing_images) {
       setChangingImages(false);
     } else {
       setMode();
+      setAsset();
     }
   }
 

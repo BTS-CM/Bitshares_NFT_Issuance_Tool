@@ -1,48 +1,36 @@
 import { useEffect, useState } from 'react';
 import { Button, Group, Box, Text, Divider, Loader, Col, Paper } from '@mantine/core';
-import { link } from 'beet-js';
+import { appStore, beetStore } from '../../lib/states';
 
 export default function BeetLink(properties) {
-  const setEnvironment = properties.setEnvironment;
-  const setIsLinked = properties.setIsLinked;
-  const setIdentity = properties.setIdentity;
-  const setCrypto = properties.setCrypto;
-  const connection = properties.connection;
+  let environment = appStore((state) => state.environment);
+  let setMode = appStore((state) => state.setMode);
+
+  let link = beetStore((state) => state.link);
+  let setConnection = beetStore((state) => state.setConnection);
+  let setAuthenticated = beetStore((state) => state.setAuthenticated); 
 
   const [inProgress, setInProgress] = useState(false);
+
+  function back() {
+    setConnection();
+    setAuthenticated();
+    setMode();
+  }
 
   /*
    * After connection attempt to link app to Beet client
    */
-  async function _linkToBeet(target = "BTS") {
-    if (!connection) {
-      console.log("Missing Beet connection");
-      return;
-    }
-    
+  async function _linkToBeet() {  
     setInProgress(true);
-    let linkAttempt;
+
     try {
-      linkAttempt = await link(target, connection);
+      await link(environment);
     } catch (error) {
       console.error(error)
-      setInProgress(false);
-      return;
     }
-
-    if (!connection.identity) {
-      console.log("Link rejected");
-      setInProgress(false);
-      return;
-    }
-
-    console.log('Successfully linked');
     
-    setEnvironment(target === "BTS" ? 'production' : 'testnet');
-    setIsLinked(true);
     setInProgress(false);
-    setIdentity(connection.identity);
-    setCrypto(target)
   }
   
   let linkContents = inProgress === false
@@ -56,18 +44,10 @@ export default function BeetLink(properties) {
       <Button
         sx={{marginTop: '15px', marginRight: '5px'}}
         onClick={() => {
-          _linkToBeet('BTS')
+          _linkToBeet()
         }}
       >
-        Link to production Bitshares
-      </Button>
-      <Button
-        sx={{marginTop: '15px'}}
-        onClick={() => {
-          _linkToBeet('BTS_TEST')
-        }}
-      >
-        Link to testnet Bitshares
+        Link to Beet
       </Button>
     </span>
   : <span>
@@ -82,6 +62,14 @@ export default function BeetLink(properties) {
       <Paper padding="sm" shadow="xs">
         <Box mx="auto" sx={{padding: '10px'}}>
           {linkContents}
+          <Button
+            sx={{marginTop: '15px', marginRight: '5px'}}
+            onClick={() => {
+              back()
+            }}
+          >
+            Back
+          </Button>
         </Box>
       </Paper>
     </Col>

@@ -1,21 +1,21 @@
 {
   "name": "nft_tool",
   "version": "1.0.0",
-  "author": "",
-  "description": "An NFT issuance tool for Bitshares",
+  "author": "https://nftea.gallery",
+  "description": "An NFT issuance tool for Bitshares, created by nftea.gallery",
   "homepage": "./",
   "private": true,
-  "main": "./build/electron.js",
+  "main": "./dist/electron.js",
   "scripts": {
-    "start": "cross-env BROWSER=none react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
-    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
+    "start": "vite --port=3000",
+    "build": "vite build",
+    "dev": "concurrently -k \"cross-env BROWSER=none npm start\"",
     "electron": "electron .",
-    "electron:start": "concurrently -k \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electronmon .\"",
-    "electron:package:mac": "yarn build && electron-builder -m -c.extraMetadata.main=build/electron.js",
-    "electron:package:win": "yarn build && electron-builder -w -c.extraMetadata.main=build/electron.js",
-    "electron:package:linux": "yarn build && electron-builder -l -c.extraMetadata.main=build/electron.js"
+    "electron:start": "concurrently -k \"cross-env BROWSER=none vite preview --port 3000\" \"wait-on http://localhost:3000 && electronmon .\"",
+    "test": "concurrently -k \"cross-env BROWSER=none vite build\" \"electron-builder -w -c.extraMetadata.main=dist/electron.js\"",
+    "electron:package:mac": "yarn build && electron-builder -m -c.extraMetadata.main=dist/electron.js",
+    "electron:package:win": "yarn build && electron-builder -w -c.extraMetadata.main=dist/electron.js",
+    "electron:package:linux": "yarn build && electron-builder -l -c.extraMetadata.main=dist/electron.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "appId": "com.electron.nft_tool",
     "productName": "NFT Tool",
     "files": [
-      "build/**/*",
+      "dist/**/*",
       "./src/index.html",
       "./src/*.js",
       "node_modules/**/*"
@@ -48,25 +48,37 @@
     }
   },
   "dependencies": {
-    "@mantine/core": "^4.2.12",
-    "@mantine/dropzone": "^4.2.12",
-    "@mantine/form": "^4.2.12",
-    "@mantine/hooks": "^4.2.12",
+    "@babel/core": "^7.18.10",
+    "@emotion/react": "^11.10.0",
+    "@mantine/core": "^5.2.3",
+    "@mantine/form": "^5.2.3",
+    "@mantine/hooks": "^5.2.3",
+    "@vitejs/plugin-react": "^2.0.1",
+    "assert": "^2.0.0",
     "beet-js": "https://github.com/bitshares/beet-js#develop",
     "bitsharesjs": "^6.0.0",
     "bitsharesjs-ws": "^6.0.0",
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
+    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "4.0.3",
     "simple-websocket": "^9.1.0",
-    "use-local-storage-state": "^18.1.0"
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.4",
+    "vite": "^3.0.9",
+    "zustand": "^4.1.1"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "concurrently": "^7.3.0",
     "cross-env": "^7.0.3",
-    "electron": "^19.0.8",
-    "electron-builder": "^23.1.0",
+    "electron": "^20.1.0",
+    "electron-builder": "^23.3.3",
     "electronmon": "^2.0.2",
+    "esbuild": "^0.15.5",
+    "vite-plugin-electron": "^0.9.1",
     "wait-on": "^6.0.1"
   },
   "browserslist": {

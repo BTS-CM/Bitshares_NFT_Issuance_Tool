@@ -1,8 +1,7 @@
 {
   "name": "nft_tool",
   "version": "1.0.0",
-  "author": "https://nftea.gallery",
-  "email": "twitter:nftea_gallery",
+  "author": "https://nftea.gallery <nftea.gallery@gmail.com>",
   "description": "An NFT issuance tool for the Bitshares blockchain",
   "homepage": "./",
   "private": true,

@@ -43,8 +43,6 @@ async function lookup_asset_symbols(api, asset_ids, nonNFT = false) {
             return reject();
         }
 
-        console.log({symbols, asset_ids})
-
         symbols = symbols.filter(x => x !== null);
         if (!symbols || !symbols.length) {
             return resolve([]);
@@ -237,12 +235,7 @@ async function fetchObject(node, objectID) {
             return reject();
         }
 
-        const accessPasses = {
-            "BTS": 100000,
-            "NFTEA": 1
-        }
-
-        let filteredAssets = balanceResult.map((balance) => {
+        let mappedAssets = balanceResult.map((balance) => {
             let symbolData = balanceDetails.find(symbol => symbol.id === balance.asset_id);
             if (symbolData) {
                 const amount = parseInt(balance.amount)
@@ -253,11 +246,9 @@ async function fetchObject(node, objectID) {
                     ...balance, ...symbolData, preciseAmount, splitSymbol: symbolData.symbol.split('.')[0]
                 }
             }
-        })
-        .filter(x => x.preciseAmount > 0)
-        .filter(x => accessPasses.hasOwnProperty(x.splitSymbol) && x.preciseAmount >= accessPasses[x.splitSymbol]);
+        });
         
-        return resolve(filteredAssets);
+        return resolve(mappedAssets);
     });
 }
 

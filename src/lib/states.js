@@ -92,7 +92,7 @@ const appStore = create(
       },
       fetchIssuedAssets: async (accountID) => {
         /**
-         * Looking asset data from an ID
+         * Fetching the assets issued by the provided account ID
          * @param {String} accountID
          */
         const node = get().nodes[0];
@@ -102,9 +102,34 @@ const appStore = create(
         } catch (error) {
           console.log(error)
         }
-  
-        if (response) {
-          set({ assets: await response })
+        
+        if (!response || !response.length) {
+          set({ assets: [] })
+        }
+
+        let filteredAssets = [];
+        for (let i = 0; i < response.length; i++) {
+          let asset = response[i];
+          let currentDescription = JSON.parse(asset.options.description);
+          let nft_object = currentDescription.nft_object;
+
+          let images;
+          try {
+            images = await getImages(nft_object);
+          } catch (error) {
+            console.log(error);
+            return;
+          }
+
+          if (!images || !images.length) {
+            continue;
+          }
+
+          filteredAssets.push(asset);
+        }
+        
+        if (filteredAssets.length) {
+          set({ assets: filteredAssets })
         }
       },
       fetchKey: async (accountID) => {
@@ -118,12 +143,20 @@ const appStore = create(
           response = await fetchUserBalances(node, accountID);
         } catch (error) {
           console.log(error)
+          return;
         }
   
-        console.log(response)
+        const accessPasses = {
+          "BTS": 100000,
+          "NFTEA": 1
+        }
+
+        let filteredResponse = response.filter(x => 
+          accessPasses.hasOwnProperty(x.splitSymbol) && x.preciseAmount >= accessPasses[x.splitSymbol]
+        );
 
         if (response && response.length) {
-          set({ cdkey: await response[0] })
+          set({ cdkey: await filteredResponse[0].splitSymbol })
         }
       },
       changeURL: () => {

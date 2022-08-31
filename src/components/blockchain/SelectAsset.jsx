@@ -21,6 +21,11 @@ export default function SelectAsset(properties) {
     clearAssets();
     setTries(newTries);
   }
+
+  function goBack() {
+    setMode();
+    clearAssets();
+  }
   
   /**
    * User has selected an asset to edit
@@ -115,7 +120,7 @@ export default function SelectAsset(properties) {
           <Button
             sx={{marginTop: '15px'}}
             onClick={() => {
-              setMode()
+              goBack()
             }}
           >
             Back

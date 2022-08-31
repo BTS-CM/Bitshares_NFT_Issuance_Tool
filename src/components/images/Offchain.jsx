@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Textarea, Button, Group, Box, Text, Divider, Col, Paper } from '@mantine/core';
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import { getFileType } from '../../lib/helpers';
 
 function openURL(target) {
   window.electron.openURL(target);
@@ -17,22 +18,6 @@ export default function Offchain(properties) {
 
   let allowedFileTypes = [".png", ".PNG", ".gif", ".GIF", ".jpg", ".JPG", ".jpeg", ".JPEG"];
 
-  function getFileType(ipfsURL) {
-    let fileType;
-    let valueSlice = ipfsURL.substr(ipfsURL.length - 5);
-    if (valueSlice.includes('.png') || valueSlice.includes('.PNG')) {
-      fileType = 'png';
-    } else if (valueSlice.includes('.gif') || valueSlice.includes('.GIF')) {
-      fileType = 'gif';
-    } else if (valueSlice.includes('.jpeg') || valueSlice.includes('.JPEG')) {
-      fileType = 'jpeg';
-    } else {
-      console.log('Unsupported filetype');
-      return;
-    }
-    return fileType;
-  }
-
   const [value, setValue] = useState('');
   const [listItems, setListItems] = useState(
           changing_images && asset_images && asset_images.length
@@ -44,6 +29,14 @@ export default function Offchain(properties) {
       ? asset_images[0].type
       : null
   );
+
+  function goBack() {
+    if (changing_images) {
+      setChangingImages(false);
+    } else {
+      setMode();
+    }
+  }
 
   function addListItem() {
     let currentListItems = listItems;
@@ -150,7 +143,7 @@ export default function Offchain(properties) {
             <Button
               sx={{marginTop: '5px', marginLeft: '5px'}}
               onClick={() => {
-                setMode()
+                goBack();
               }}
             >
               Back

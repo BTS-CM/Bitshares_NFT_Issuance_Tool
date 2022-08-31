@@ -2,7 +2,7 @@
   "name": "nft_tool",
   "version": "1.0.0",
   "author": "https://nftea.gallery",
-  "description": "An NFT issuance tool for Bitshares, created by nftea.gallery",
+  "description": "An NFT issuance tool for the Bitshares blockchain",
   "homepage": "./",
   "private": true,
   "main": "./dist/electron.js",
@@ -27,7 +27,7 @@
   },
   "build": {
     "appId": "com.electron.nft_tool",
-    "productName": "NFT Tool",
+    "productName": "Bitshares NFT issuance tool",
     "files": [
       "dist/**/*",
       "./src/index.html",

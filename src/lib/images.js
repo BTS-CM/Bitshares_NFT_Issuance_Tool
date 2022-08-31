@@ -36,8 +36,7 @@ function getImages(nft_object) {
                 type: 'GIF'
             });
         } else {
-            console.log('Unsupported image type')
-            return reject();
+            return resolve();
         }
     });
 }

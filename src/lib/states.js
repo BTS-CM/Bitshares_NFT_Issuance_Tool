@@ -229,7 +229,7 @@ const beetStore = create((set, get) => ({
       let connected;
       try {
         connected = await connect(
-          "NFT Viewer",
+          "NFT Issuance Tool",
           "Application",
           "localhost",
           null,
@@ -263,8 +263,6 @@ const beetStore = create((set, get) => ({
        */
       let currentConnection = get().connection;
       let linkage = { isLinked: null, identity: null };
-
-      console.log(`link: ${environment}`)
 
       let linkAttempt;
       try {

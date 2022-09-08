@@ -137,12 +137,19 @@ const appStore = create(
          * Checking if the user can access this tool
          * @param {String} accountID
          */
+        const env = get().environment;
+        if (env === 'testnet') {
+          set({ cdkey: 'TESTNET' });
+          return;
+        }
+
         const node = get().nodes[0];
         let response;
         try {
           response = await fetchUserBalances(node, accountID);
         } catch (error) {
           console.log(error)
+          set({ cdkey: null });
           return;
         }
   
@@ -155,9 +162,11 @@ const appStore = create(
           accessPasses.hasOwnProperty(x.splitSymbol) && x.preciseAmount >= accessPasses[x.splitSymbol]
         );
 
-        if (response && response.length) {
-          set({ cdkey: await filteredResponse[0].splitSymbol })
-        }
+        set({
+          cdkey: filteredResponse && filteredResponse.length
+                  ? await filteredResponse[0].splitSymbol
+                  : null
+        })
       },
       changeURL: () => {
         /**
@@ -304,7 +313,10 @@ const identitiesStore = create(
 
       let currentIdentities = get().identities;
 
-      if (currentIdentities.find(id => id.identityHash === identity.identityHash)) {
+      if (currentIdentities.find(id => 
+        id.identityHash === identity.identityHash
+        && id.requested.account.id === identity.requested.account.id
+      )) {
         console.log('Account already linked')
         return;
       }
@@ -312,12 +324,12 @@ const identitiesStore = create(
       currentIdentities.push(identity);
       set({identities: currentIdentities});
     },
-    removeIdentity: (identityHash) => {
-      if (!identityHash) {
+    removeIdentity: (accountID) => {
+      if (!accountID) {
         return;
       }
       let currentIdentities = get().identities;
-      let newIdentities = currentIdentities.filter(x => x.identityHash === identityHash);
+      let newIdentities = currentIdentities.filter(x => x.requested.account.id != accountID);
       set({identities: newIdentities});
     }
   }))

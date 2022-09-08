@@ -27,7 +27,7 @@ export default function Connect(properties) {
    */
   function remove(rowIdentity) {
     try {
-      removeIdentity(rowIdentity.identityhash)
+      removeIdentity(rowIdentity.requested.account.id)
     } catch (error) {
       console.log(error)
     }

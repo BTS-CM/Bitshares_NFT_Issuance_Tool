@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@v1
+      uses: BTS-CM/action-gh-release@cd28b0f5ee8571b76cfdaa62a30d51d752317477
       with:
         name: ${{ github.ref_name }}
         draft: false
@@ -78,7 +78,7 @@ jobs:
           echo "::set-output name=debhash::$(sha256sum /home/runner/nft_tool.deb|cut -c-64)"
           echo "::set-output name=exehash::$(sha256sum /home/runner/nft_tool.exe|cut -c-64)"
     - name: Perform release
-      uses: softprops/action-gh-release@v1
+      uses: BTS-CM/action-gh-release@cd28b0f5ee8571b76cfdaa62a30d51d752317477
       with:
         files: |
             /home/runner/nft_tool.exe

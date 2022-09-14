@@ -24,14 +24,14 @@ jobs:
     needs: create_release
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         include:
           - os: windows-latest
             release_suffix: windows
             release_format: exe
-          #- os: macos-latest
-          #  release_suffix: macos
-          #  release_format: dmg
+          - os: macos-latest
+            release_suffix: macos
+            release_format: dmg
           - os: ubuntu-latest
             release_suffix: ubuntu
             release_format: deb
@@ -47,6 +47,9 @@ jobs:
         node-version: 18.x
         cache: 'yarn'
     
+    - name: Instruct yarn to use cache
+      run: yarn --prefer-offline
+    
     - run: yarn install
     - run: yarn run electron:package:${{ matrix.os }}
 
@@ -56,11 +59,21 @@ jobs:
         name: nft_tool.${{ matrix.release_format }}
         path: dist/nft_tool.${{ matrix.release_format }}
 
+    - run: ls dist
+
   generate:
     name: generate files
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: reqs
+      run: sudo apt-get install unzip
+    - name: Download VT
+      run: wget https://github.com/VirusTotal/vt-cli/releases/download/0.10.2/Linux64.zip
+    - name: Unzip VT
+      run: unzip Linux64.zip
+    - name: Prepare
+      run: chmod +x vt
     - name: Download exe
       id: download
       uses: actions/download-artifact@v3
@@ -72,10 +85,22 @@ jobs:
       with:
         name: nft_tool.deb
         path: ~/
+    - name: Download dmg
+      uses: actions/download-artifact@v3
+      with:
+        name: nft_tool.dmg
+        path: ~/
+    - name: scan
+      id: scan
+      run: |
+          echo "::set-output name=debVT::$(./vt scan file /home/runner/nft_tool.deb -k ${{ secrets.VT_API_KEY }}|cut -d' ' -f2)"
+          echo "::set-output name=exeVT::$(./vt scan file /home/runner/nft_tool.exe -k ${{ secrets.VT_API_KEY }}|cut -d' ' -f2)"
+          echo "::set-output name=dmgVT::$(./vt scan file /home/runner/nft_tool.dmg -k ${{ secrets.VT_API_KEY }}|cut -d' ' -f2)"
     - name: Calculate hashes
       id: calc_hash
       run: |
           echo "::set-output name=debhash::$(sha256sum /home/runner/nft_tool.deb|cut -c-64)"
+          echo "::set-output name=dmghash::$(sha256sum /home/runner/nft_tool.dmg|cut -c-64)"
           echo "::set-output name=exehash::$(sha256sum /home/runner/nft_tool.exe|cut -c-64)"
     - name: Perform release
       uses: BTS-CM/action-gh-release@cd28b0f5ee8571b76cfdaa62a30d51d752317477
@@ -83,16 +108,17 @@ jobs:
         files: |
             /home/runner/nft_tool.exe
             /home/runner/nft_tool.deb
-          #  ${{steps.download.outputs.download-path}}nft_tool.dmg
+            /home/runner/nft_tool.dmg
         tag_name: ${{ needs.create_release.outputs.tag-name }}
         body: |
                 Release Notes
                 _________________________________
                 Binaries for download
                 --------
-                | Platform | SHA256 Checksum |
-                |---|---|
-                |[Microsoft Windows](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.exe)|`${{steps.calc_hash.outputs.exehash}}`|
-                |[Linux](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.deb)|`${{steps.calc_hash.outputs.debhash}}`|
+                | Platform | SHA256 Checksum | VirusTotal Analyses |
+                |---|---|---|
+                |[Microsoft Windows](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.exe)|`${{steps.calc_hash.outputs.exehash}}`||[exe](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.exeVT}})|
+                |[Linux](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.deb)|`${{steps.calc_hash.outputs.debhash}}`|[deb](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.debVT}})|
+                |[MacOS](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.dmg)|`${{steps.calc_hash.outputs.dmghash}}`|[dmg](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.dmgVT}})|
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -13,9 +13,9 @@
     "electron": "electron .",
     "electron:start": "concurrently -k \"cross-env BROWSER=none vite preview --port 3000\" \"wait-on http://localhost:3000 && electronmon .\"",
     "test": "concurrently -k \"cross-env BROWSER=none vite build\" \"electron-builder -w -c.extraMetadata.main=dist/electron.js\"",
-    "electron:package:macos-latest": "yarn build && electron-builder -m -c.extraMetadata.main=dist/electron.js",
-    "electron:package:windows-latest": "yarn build && electron-builder -w -c.extraMetadata.main=dist/electron.js",
-    "electron:package:ubuntu-latest": "yarn build && electron-builder -l -c.extraMetadata.main=dist/electron.js"
+    "electron:package:macos-latest": "yarn build && electron-builder -m -c.extraMetadata.main=dist/electron.js --publish never",
+    "electron:package:windows-latest": "yarn build && electron-builder -w -c.extraMetadata.main=dist/electron.js --publish never",
+    "electron:package:ubuntu-latest": "yarn build && electron-builder -l -c.extraMetadata.main=dist/electron.js --publish never"
   },
   "repository": {
     "type": "git",

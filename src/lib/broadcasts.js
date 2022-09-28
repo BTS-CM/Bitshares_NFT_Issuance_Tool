@@ -3,9 +3,12 @@ import { Apis } from "bitsharesjs-ws";
 
 /**
  * broadcast the create asset operation
+ * @param {Object} connection
+ * @param {String} wsURL
+ * @param {String} mode
  * @param {Object} operationJSON 
  */
-async function broadcastOperation(operationJSON) {
+async function broadcastOperation(connection, wsURL, mode, operationJSON) {
     return new Promise(async (resolve, reject) => {
         let TXBuilder;
         try {

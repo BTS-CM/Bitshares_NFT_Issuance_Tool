@@ -23,6 +23,7 @@ export default function Wizard(properties) {
 
   let environment = appStore((state) => state.environment);
   let mode = appStore((state) => state.mode);
+  let wsURL = appStore((state) => state.nodes[0]);
 
   let setChangingImages = appStore((state) => state.setChangingImages);
 
@@ -163,7 +164,7 @@ export default function Wizard(properties) {
       console.log(operation)
       let tx;
       try {
-        tx = await broadcastOperation(operation);
+        tx = await broadcastOperation(connection, wsURL, mode, operation);
       } catch (error) {
         console.log(error);
         setInProgress(false);

@@ -117,7 +117,7 @@ jobs:
                 --------
                 | Platform | SHA256 Checksum | VirusTotal Analyses |
                 |---|---|---|
-                |[Microsoft Windows](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.exe)|`${{steps.calc_hash.outputs.exehash}}`||[exe](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.exeVT}})|
+                |[Microsoft Windows](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.exe)|`${{steps.calc_hash.outputs.exehash}}`|[exe](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.exeVT}})|
                 |[Linux](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.deb)|`${{steps.calc_hash.outputs.debhash}}`|[deb](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.debVT}})|
                 |[MacOS](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool/releases/download/${{ github.ref_name }}/nft_tool.dmg)|`${{steps.calc_hash.outputs.dmghash}}`|[dmg](https://www.virustotal.com/gui/file-analysis/${{steps.scan.outputs.dmgVT}})|
       env:

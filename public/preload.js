@@ -6,6 +6,28 @@ const Socket = require('simple-websocket');
 // Note: Changes to this file will require a build before electron:start works
 
 /**
+ * Call an async function with a maximum time limit (in milliseconds) for the timeout
+ * @param {Promise} asyncPromise An asynchronous promise to resolve
+ * @param {number} timeLimit Time limit to attempt function in milliseconds
+ * @returns {Promise | undefined} Resolved promise for async function call, or an error if time limit reached
+ */
+ const asyncCallWithTimeout = async (asyncPromise, timeLimit) => {
+    let timeoutHandle;
+
+    const timeoutPromise = new Promise((_resolve, reject) => {
+        timeoutHandle = setTimeout(
+            () => _resolve(null),
+            timeLimit
+        );
+    });
+
+    return Promise.race([asyncPromise, timeoutPromise]).then(result => {
+        clearTimeout(timeoutHandle);
+        return result;
+    })
+}
+
+/**
  * Test a wss url for successful connection.
  * @param {String} url
  * @returns {Object}
@@ -14,26 +36,45 @@ const Socket = require('simple-websocket');
     return new Promise(async (resolve, reject) => {
         let before = new Date();
         let beforeTS = before.getTime();
-        let connected;
+        let closing;
+
+        /**
+         * Exiting the url connection
+         * @param {Boolean} connected 
+         * @param {WebSocket} socket 
+         * @returns 
+         */
+        function _exitTest(connected, socket) {
+            if (closing || !connected && !socket) {
+                return;
+            }
+
+            if (socket) {
+                socket.destroy();
+            }
+
+            closing = true;
+            if (!connected) {
+                return resolve(null);
+            }
+
+            let now = new Date();
+            let nowTS = now.getTime();
+            return resolve({ url: url, lag: nowTS - beforeTS });
+        }
 
         let socket = new Socket(url);
-            socket.on('connect', () => {
-            connected = true;
-            socket.destroy();
+
+        socket.on('connect', () => {
+            return _exitTest(true, socket);
         });
 
         socket.on('error', (error) => {
-            socket.destroy();
+            return _exitTest(false, socket);
         });
 
         socket.on('close', () => {
-            if (connected) {
-                let now = new Date();
-                let nowTS = now.getTime();
-                return resolve({ url: url, lag: nowTS - beforeTS });
-            } else {
-                return resolve(null);
-            }
+            return _exitTest();
         });
     });
 }
@@ -54,8 +95,8 @@ ipcRenderer.on('fetchNodes', async (event, arg) => {
 });
 
 window.electron = {
-    testConnection: async (url) => {
-        return _testConnection(url);
+    testConnection: async (url, timeout) => {
+        return await asyncCallWithTimeout(_testConnection(url), timeout ?? 3000);
     },
     openURL: async (target) => {
         return _openURL(target);

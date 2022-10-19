@@ -16,6 +16,8 @@ export default function Wizard(properties) {
   const [broadcastResult, setBroadcastResult] = useState();
   const [inProgress, setInProgress] = useState(false);
 
+  let accountType = appStore((state) => state.accountType);
+
   let connection = beetStore((state) => state.connection);
   let asset = appStore((state) => state.asset);
   let asset_images = appStore((state) => state.asset_images);
@@ -77,12 +79,19 @@ export default function Wizard(properties) {
     let flags = getFlags(flagBooleans);
 
     let signedPayload;
-    try {
-      signedPayload = await connection.signNFT(nft_object);
-    } catch (error) {
-      console.log(error);
-      setInProgress(false);
-      return;
+    if (accountType === "BEET") {
+      try {
+        signedPayload = await connection.signNFT(nft_object);
+      } catch (error) {
+        console.log(error);
+        setInProgress(false);
+        return;
+      }
+    } else {
+      signedPayload = {
+        signed: values.signed ?? "",
+        signature: values.signature ?? ""
+      }
     }
     
     if (signedPayload) {
@@ -204,48 +213,56 @@ export default function Wizard(properties) {
                           "disable_confidential": false
                         };
 
-  const form = useForm({
-    initialValues: {
-        acknowledgements: nft_object ? nft_object.acknowledgements : '',
-        artist:  nft_object ? nft_object.artist : '',
-        attestation:  nft_object ? nft_object.attestation : '',
-        holder_license:  nft_object ? nft_object.holder_license : '',
-        license:  nft_object ? nft_object.license : '',
-        narrative:  nft_object ? nft_object.narrative : '',
-        title:  nft_object ? nft_object.title : '',
-        tags:  nft_object ? nft_object.tags : '',
-        type:  nft_object ? nft_object.type : 'NFT/ART/VISUAL',
-        main:  description ? description.main : '',
-        //
-        market:  description ? description.market : 'BTS',
-        short_name:  description ? description.short_name : '',
-        symbol:  asset ? asset.symbol : '', // check
-        precision: asset ? asset.precision : 0,
-        max_supply: options ? options.max_supply : 1,
+  let initialValues = {
+      acknowledgements: nft_object ? nft_object.acknowledgements : '',
+      artist:  nft_object ? nft_object.artist : '',
+      attestation:  nft_object ? nft_object.attestation : '',
+      holder_license:  nft_object ? nft_object.holder_license : '',
+      license:  nft_object ? nft_object.license : '',
+      narrative:  nft_object ? nft_object.narrative : '',
+      title:  nft_object ? nft_object.title : '',
+      tags:  nft_object ? nft_object.tags : '',
+      type:  nft_object ? nft_object.type : 'NFT/ART/VISUAL',
+      main:  description ? description.main : '',
+      //
+      market:  description ? description.market : 'BTS',
+      short_name:  description ? description.short_name : '',
+      symbol:  asset ? asset.symbol : '', // check
+      precision: asset ? asset.precision : 0,
+      max_supply: options ? options.max_supply : 1,
 
-        // core_exchange_rate
-        cer_base_amount: options ? options.core_exchange_rate.base.amount : 1,
-        cer_base_asset_id: options ? options.core_exchange_rate.base.asset_id : "1.3.0",
-        cer_quote_amount: options ? options.core_exchange_rate.quote.amount : 1,
-        cer_quote_asset_id: options ? options.core_exchange_rate.quote.asset_id : "1.3.1",
-        
-        // permissions
-        perm_charge_market_fee: permissionBooleans.charge_market_fee,
-        perm_white_list: permissionBooleans.white_list,
-        perm_override_authority: permissionBooleans.override_authority,
-        perm_transfer_restricted: permissionBooleans.transfer_restricted,
-        perm_disable_confidential: permissionBooleans.disable_confidential,
-        
-        // flags
-        flag_charge_market_fee: flagBooleans.charge_market_fee,
-        flag_white_list: flagBooleans.white_list,
-        flag_override_authority: flagBooleans.override_authority,
-        flag_transfer_restricted: flagBooleans.transfer_restricted,
-        flag_disable_confidential: flagBooleans.disable_confidential,
-        
-        // operationsJSON
-        issuer: userID
-    },
+      // core_exchange_rate
+      cer_base_amount: options ? options.core_exchange_rate.base.amount : 1,
+      cer_base_asset_id: options ? options.core_exchange_rate.base.asset_id : "1.3.0",
+      cer_quote_amount: options ? options.core_exchange_rate.quote.amount : 1,
+      cer_quote_asset_id: options ? options.core_exchange_rate.quote.asset_id : "1.3.1",
+      
+      // permissions
+      perm_charge_market_fee: permissionBooleans.charge_market_fee,
+      perm_white_list: permissionBooleans.white_list,
+      perm_override_authority: permissionBooleans.override_authority,
+      perm_transfer_restricted: permissionBooleans.transfer_restricted,
+      perm_disable_confidential: permissionBooleans.disable_confidential,
+      
+      // flags
+      flag_charge_market_fee: flagBooleans.charge_market_fee,
+      flag_white_list: flagBooleans.white_list,
+      flag_override_authority: flagBooleans.override_authority,
+      flag_transfer_restricted: flagBooleans.transfer_restricted,
+      flag_disable_confidential: flagBooleans.disable_confidential,
+      
+      // operationsJSON
+      issuer: userID
+  };
+
+  if (!accountType === "BEET") {
+    // User must manually sign some content
+    initialValues.signed = "";
+    initialValues.signature = "";
+  }
+
+  const form = useForm({
+    initialValues: initialValues,
     validate: {
         artist: (value) => (value.length > 0 ? null : 'Invalid'),
         attestation: (value) => (value.length > 0 ? null : 'Invalid'),
@@ -435,6 +452,27 @@ export default function Wizard(properties) {
               placeholder="License"
               {...form.getInputProps('license')}
             />
+            <Text size="md">
+                NFT Signatures
+            </Text>
+            {
+              accountType != "BEET"
+                ? <TextInput
+                    label="Signed text"
+                    placeholder="signed"
+                    {...form.getInputProps('signed')}
+                  />
+                : null
+            }
+            {
+              accountType != "BEET"
+                ? <TextInput
+                    label="Signature"
+                    placeholder="signature"
+                    {...form.getInputProps('signature')}
+                  />
+                : null
+            }
           </Paper>
         </Col>,
         <Col span={12} key="CER">

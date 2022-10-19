@@ -45,10 +45,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
-        cache: 'yarn'
+        #cache: 'yarn'
     
-    - name: Instruct yarn to use cache
-      run: yarn --prefer-offline
+    # Temporarily disabling to generate newest release
+    #- name: Instruct yarn to use cache
+    #  run: yarn --prefer-offline
     
     - run: yarn install
     - run: yarn run electron:package:${{ matrix.os }}

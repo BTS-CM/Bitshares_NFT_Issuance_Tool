@@ -8,9 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     electron({
-        main: {
-          entry: 'public/electron.js',
-        },
+      entry: 'public/electron.js'
     })
   ],
   server: {

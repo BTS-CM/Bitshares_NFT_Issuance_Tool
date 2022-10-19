@@ -14,12 +14,13 @@ const appStore = create(
       mode: null,
       nodes: null,
       asset: null,
+      account: null,
+      accountType: null,
       asset_images: null,
       changing_images: false,
       asset_issuer: null,
       asset_quantity: null,
       assets: null,
-      cdkey: null,
       setEnvironment: (env) => set({environment: env}),
       setMode: (mode) => set({mode: mode}),
       setNodes: async () => {
@@ -27,6 +28,11 @@ const appStore = create(
         * Testing then storing the bitshares nodes for blockchain queries
         */
         const env = get().environment;
+        if (!env) {
+          console.log('No env set');
+          return;
+        }
+        
         let response;
         try {
           response = await testNodes(env === 'production' ? 'BTS' : 'BTS_TEST');
@@ -72,6 +78,8 @@ const appStore = create(
           asset_quantity: dynamicData.quantity
         })
       },
+      setAccount: (newAccount) => set({account: newAccount}),
+      setAccountType: (newAccountType) => set({accountType: newAccountType}),
       setAssetImages: (images) =>  set({asset_images: images}),
       fetchAssets: async (asset_ids) => {
         /**
@@ -131,42 +139,6 @@ const appStore = create(
         if (filteredAssets.length) {
           set({ assets: filteredAssets })
         }
-      },
-      fetchKey: async (accountID) => {
-        /**
-         * Checking if the user can access this tool
-         * @param {String} accountID
-         */
-        const env = get().environment;
-        if (env === 'testnet') {
-          set({ cdkey: 'TESTNET' });
-          return;
-        }
-
-        const node = get().nodes[0];
-        let response;
-        try {
-          response = await fetchUserBalances(node, accountID);
-        } catch (error) {
-          console.log(error)
-          set({ cdkey: null });
-          return;
-        }
-  
-        const accessPasses = {
-          "BTS": 100000,
-          "NFTEA": 1
-        }
-
-        let filteredResponse = response.filter(x => 
-          accessPasses.hasOwnProperty(x.splitSymbol) && x.preciseAmount >= accessPasses[x.splitSymbol]
-        );
-
-        set({
-          cdkey: filteredResponse && filteredResponse.length
-                  ? await filteredResponse[0].splitSymbol
-                  : null
-        })
       },
       changeURL: () => {
         /**
@@ -286,6 +258,8 @@ const beetStore = create((set, get) => ({
         set(linkage)
         return;
       }
+
+      console.log({id: currentConnection.identity})
 
       linkage.isLinked = true;
       linkage.identity = currentConnection.identity;

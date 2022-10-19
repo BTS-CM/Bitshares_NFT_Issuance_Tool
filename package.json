@@ -49,12 +49,13 @@
     }
   },
   "dependencies": {
-    "@babel/core": "^7.18.10",
-    "@emotion/react": "^11.10.0",
-    "@mantine/core": "^5.2.3",
-    "@mantine/form": "^5.2.3",
-    "@mantine/hooks": "^5.2.3",
-    "@vitejs/plugin-react": "^2.0.1",
+    "@babel/core": "^7.19.3",
+    "@emotion/react": "^11.10.4",
+    "@mantine/core": "^5.5.6",
+    "@mantine/form": "^5.5.6",
+    "@mantine/hooks": "^5.5.6",
+    "@tabler/icons": "^1.105.0",
+    "@vitejs/plugin-react": "^2.1.0",
     "assert": "^2.0.0",
     "beet-js": "https://github.com/bitshares/beet-js#develop",
     "bitsharesjs": "^6.0.0",
@@ -66,20 +67,20 @@
     "react-dom": "^18.2.0",
     "simple-websocket": "^9.1.0",
     "stream-browserify": "^3.0.0",
-    "util": "^0.12.4",
-    "vite": "^3.0.9",
-    "zustand": "^4.1.1"
+    "util": "^0.12.5",
+    "vite": "^3.1.8",
+    "zustand": "^4.1.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
-    "concurrently": "^7.3.0",
+    "concurrently": "^7.4.0",
     "cross-env": "^7.0.3",
-    "electron": "^20.1.0",
-    "electron-builder": "^23.3.3",
+    "electron": "^21.1.1",
+    "electron-builder": "^23.6.0",
     "electronmon": "^2.0.2",
-    "esbuild": "^0.15.5",
-    "vite-plugin-electron": "^0.9.1",
+    "esbuild": "^0.15.11",
+    "vite-plugin-electron": "^0.10.1",
     "wait-on": "^6.0.1"
   },
   "browserslist": {

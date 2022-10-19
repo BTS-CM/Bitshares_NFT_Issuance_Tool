@@ -6,6 +6,7 @@ export default function Connect(properties) {
   let connect = beetStore((state) => state.connect);
   let link = beetStore((state) => state.link);
   let setMode = appStore((state) => state.setMode);
+  let setAccountType = appStore((state) => state.setAccountType);
 
   let environment = appStore((state) => state.environment);
   let setEnvironment = appStore((state) => state.setEnvironment); 
@@ -18,6 +19,7 @@ export default function Connect(properties) {
 
   function back() {
     setMode();
+    setAccountType();
     setEnvironment();
   }
 

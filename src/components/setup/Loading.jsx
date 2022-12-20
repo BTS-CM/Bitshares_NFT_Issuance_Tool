@@ -1,4 +1,7 @@
-import { Loader, Box, Text, Col, Paper } from '@mantine/core';
+import {
+  Loader, Box, Text, Col, Paper,
+} from '@mantine/core';
+import React, { useEffect, useState } from 'react';
 import { appStore } from '../../lib/states';
 
 export default function Offline(properties) {
@@ -7,11 +10,9 @@ export default function Offline(properties) {
   return (
     <Col span={12}>
       <Paper padding="sm" shadow="xs">
-        <Box mx="auto" sx={{padding: '10px'}}>
+        <Box mx="auto" sx={{ padding: '10px' }}>
           <span>
-            <Text size="md">
-              Finding fastest blockchain connection, please wait..
-            </Text>
+            <Text size="md">Finding fastest blockchain connection, please wait..</Text>
             <Loader variant="dots" />
           </span>
         </Box>

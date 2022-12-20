@@ -1,4 +1,7 @@
-import { Button, Box, Text, Col, Paper } from '@mantine/core';
+import {
+  Button, Box, Text, Col, Paper,
+} from '@mantine/core';
+import React, { useEffect, useState } from 'react';
 import { appStore } from '../../lib/states';
 
 export default function Mode(properties) {
@@ -7,13 +10,11 @@ export default function Mode(properties) {
   return (
     <Col span={12}>
       <Paper padding="sm" shadow="xs">
-        <Box mx="auto" sx={{padding: '10px'}}>
+        <Box mx="auto" sx={{ padding: '10px' }}>
           <span>
-            <Text size="md">
-              Are you creating a new NFT or editing an existing one?
-            </Text>
+            <Text size="md">Are you creating a new NFT or editing an existing one?</Text>
             <Button
-              sx={{marginTop: '15px', marginRight: '5px', marginLeft: '5px'}}
+              sx={{ marginTop: '15px', marginRight: '5px', marginLeft: '5px' }}
               onClick={() => {
                 setMode('create');
               }}
@@ -21,7 +22,7 @@ export default function Mode(properties) {
               Creating
             </Button>
             <Button
-              sx={{marginTop: '15px', marginRight: '5px'}}
+              sx={{ marginTop: '15px', marginRight: '5px' }}
               onClick={() => {
                 setMode('edit');
               }}

@@ -1,16 +1,17 @@
-
-import { useEffect, useState } from 'react';
-import { TextInput, Checkbox, Button, Group, Box, Text, Divider } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import {
+  TextInput, Checkbox, Button, Group, Box, Text, Divider,
+} from '@mantine/core';
 import { Dropzone, DropzoneStatus, MIME_TYPES } from '@mantine/dropzone';
 
 export default function Upload(properties) {
-  const setImage = properties.setImage;
-  const setOnchain = properties.setOnchain;
+  const { setImage } = properties;
+  const { setOnchain } = properties;
 
   function getBase64(file) {
-    return new Promise(resolve => {
-      let baseURL = "";
-      let reader = new FileReader();
+    return new Promise((resolve) => {
+      let baseURL = '';
+      const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
         baseURL = reader.result;
@@ -20,7 +21,7 @@ export default function Upload(properties) {
   }
 
   function process(file) {
-    let base64 = getBase64(file);
+    const base64 = getBase64(file);
     setImage(base64);
   }
 
@@ -48,9 +49,9 @@ export default function Upload(properties) {
         {(status) => dropzoneChildren(status)}
       </Dropzone>
       <Button
-        sx={{margin: '15px'}}
+        sx={{ margin: '15px' }}
         onClick={() => {
-          setOnchain()
+          setOnchain();
         }}
       >
         Back

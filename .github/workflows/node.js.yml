@@ -8,7 +8,7 @@ on:
 jobs:
   create_release:
     name: Create Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - name: Create Release
       id: create_release
@@ -24,7 +24,7 @@ jobs:
     needs: create_release
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-22.04, macos-latest]
         include:
           - os: windows-latest
             release_suffix: windows
@@ -32,7 +32,7 @@ jobs:
           - os: macos-latest
             release_suffix: macos
             release_format: dmg
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             release_suffix: ubuntu
             release_format: deb
     runs-on: ${{ matrix.os }}
@@ -65,7 +65,7 @@ jobs:
   generate:
     name: generate files
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - name: reqs
       run: sudo apt-get install unzip

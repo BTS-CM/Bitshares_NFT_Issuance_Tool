@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron';
-import GlobalPolyFill from "@esbuild-plugins/node-globals-polyfill";
-import NodeModulesPolyfillPlugin from '@esbuild-plugins/node-modules-polyfill';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 
 export default defineConfig({
   plugins: [
@@ -21,12 +20,11 @@ export default defineConfig({
         global: "globalThis",
       },
       plugins: [
-        GlobalPolyFill({
+        NodeGlobalsPolyfillPlugin({
           process: true,
           assert: true,
           buffer: true,
         }),
-        NodeModulesPolyfillPlugin(),
       ],
     },
   },

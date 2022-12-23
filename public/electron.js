@@ -1,8 +1,9 @@
-import {
+const path = require('path');
+const url = require("url");
+
+const {
   app, BrowserWindow, ipcMain, shell,
-} from 'electron';
-import { join } from 'path';
-import { format } from "url";
+} = require('electron');
 
 const createWindow = () => {
   // Create the browser window.
@@ -13,14 +14,14 @@ const createWindow = () => {
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: false,
-      preload: join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.js"),
       partition: 'persist:nft_issuance_tool',
     },
   });
 
   const indexURL = app.isPackaged
-    ? format({
-      pathname: join(__dirname, './index.html'),
+    ? url.format({
+      pathname: path.join(__dirname, './index.html'),
       protocol: 'file:',
       slashes: true,
     })
@@ -66,7 +67,7 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  app.on('certificate-error', (event, callback) => {
     // On certificate error we disable default behaviour (stop loading the page)
     // and we then say "it is all fine - true" to the callback
     event.preventDefault();

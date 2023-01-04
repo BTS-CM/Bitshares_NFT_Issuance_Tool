@@ -36,10 +36,6 @@ export default function AccountMode(properties) {
   }, []);
 
   useEffect(() => {
-    console.log({
-      account,
-      identity,
-    });
     if (!account && identity && identity.requested.account && identity.requested.account.id) {
       setAccount(identity.requested.account.id);
     }
@@ -68,6 +64,14 @@ export default function AccountMode(properties) {
           }}
         >
           Edit NFT
+        </Button>
+        <Button
+          sx={{ marginTop: '15px', marginRight: '5px' }}
+          onClick={() => {
+            setMode('issue');
+          }}
+        >
+          Issue NFTs
         </Button>
         <Button
           sx={{ marginTop: '15px', marginRight: '5px' }}

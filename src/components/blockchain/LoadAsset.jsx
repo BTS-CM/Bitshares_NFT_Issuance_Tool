@@ -41,6 +41,7 @@ export default function LoadAsset(properties) {
           sx={{ margin: '2px' }}
           variant="outline"
           onClick={() => {
+            setMode('create')
             setInitialValues(initialValues.values);
             setAssetImages(initialValues.asset_images);
           }}

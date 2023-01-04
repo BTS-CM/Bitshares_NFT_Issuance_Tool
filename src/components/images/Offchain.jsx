@@ -18,16 +18,11 @@ export default function Offchain(properties) {
   const changing_images = appStore((state) => state.changing_images);
   const setChangingImages = appStore((state) => state.setChangingImages);
 
-  const allowedFileTypes = ['.png', '.PNG', '.gif', '.GIF', '.jpg', '.JPG', '.jpeg', '.JPEG'];
-
   const [fileType, setFileType] = useState();
 
   const [value, setValue] = useState('');
   const [listItems, setListItems] = useState(
     changing_images && asset_images && asset_images.length ? asset_images : [],
-  );
-  const [chosenFileType, setChosenFileType] = useState(
-    changing_images && asset_images && asset_images.length ? asset_images[0].type : null,
   );
 
   function goBack() {
@@ -68,16 +63,6 @@ export default function Offchain(properties) {
   function proceed() {
     setChangingImages(false);
     setAssetImages(listItems);
-  }
-
-  // back to main menu
-  function back() {
-    if (changing_images) {
-      setChangingImages(false);
-    } else {
-      setMode();
-      setAsset();
-    }
   }
 
   const proceedButton = listItems && listItems.length ? (

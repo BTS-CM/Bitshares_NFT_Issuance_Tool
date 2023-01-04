@@ -23,6 +23,8 @@ import SelectAsset from './components/blockchain/SelectAsset';
 import LoadAsset from './components/blockchain/LoadAsset';
 import Wizard from './components/blockchain/Wizard';
 
+import IssueNFT from './components/blockchain/IssueNFT';
+
 import './App.css';
 
 function openURL() {
@@ -46,6 +48,8 @@ function App() {
   const setAccount = appStore((state) => state.setAccount);
   const setAccountType = appStore((state) => state.setAccountType);
 
+  const connection = beetStore((state) => state.connection);
+
   const nodes = appStore((state) => state.nodes);
   const setNodes = appStore((state) => state.setNodes);
 
@@ -55,7 +59,9 @@ function App() {
 
   const isLinked = beetStore((state) => state.isLinked);
   const identity = beetStore((state) => state.identity);
+
   const setIdentities = identitiesStore((state) => state.setIdentities);
+  const storeConnection = identitiesStore((state) => state.storeConnection);
 
   const resetApp = appStore((state) => state.reset);
   const resetBeet = beetStore((state) => state.reset);
@@ -72,7 +78,6 @@ function App() {
     async function fetchData() {
       if (environment && (!nodes || !nodes.length)) {
         setLoadingNodes(true);
-        console.log('setting nodes');
         try {
           await setNodes();
         } catch (error) {
@@ -87,7 +92,6 @@ function App() {
 
   useEffect(() => {
     if (nodes && nodes.length) {
-      console.log({ nodes });
       setLoadingNodes(false);
     }
   }, [nodes]);
@@ -97,7 +101,7 @@ function App() {
       setIdentities(identity);
     }
   }, [isLinked, identity]);
-
+ 
   let initPrompt;
   if (!environment) {
     initPrompt = <Environment />;
@@ -120,9 +124,12 @@ function App() {
     );
   } else if (mode === 'load' && !initialValues) {
     initPrompt = <LoadAsset />;
-  } else if (mode === 'edit' && !asset) {
+  } else if ((mode === 'edit' || mode === 'issue') && !asset) {
     const userID = account ?? identity.requested.account.id;
     initPrompt = <SelectAsset userID={userID} />;
+  } else if (mode === 'issue' && asset) {
+    const userID = account ?? identity.requested.account.id;
+    initPrompt = <IssueNFT userID={userID} />;
   } else if (mode === 'settings') {
     initPrompt = <Settings />;
   } else if ((mode === 'create' && !asset_images) || changing_images === true) {

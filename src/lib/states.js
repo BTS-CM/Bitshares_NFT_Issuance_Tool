@@ -11,6 +11,84 @@ import {
   fetchDynamicData,
 } from './stateQueries';
 
+const identitiesStore = create(
+  persist((set, get) => ({
+    identities: [],
+    drafts: [],
+    storedConnections: {},
+    storeConnection: (connection) => {
+      if (!connection || !connection.identity) {
+        return;
+      }
+      const currentConnections = get().storedConnections;
+      if (!currentConnections[connection.identity.identityhash]) {
+        currentConnections[connection.identity.identityhash] = {
+          beetkey: connection.beetkey,
+          next_identification: connection.next_identification,
+          secret: connection.secret,
+        };
+        set({ storedConnections: currentConnections });
+      }
+    },
+    removeConnection: (identityhash) => {
+      const currentConnections = get().storedConnections;
+      if (currentConnections[identityhash]) {
+        delete currentConnections[identityhash];
+        set({ storedConnections: currentConnections });
+      }
+    },
+    setIdentities: (identity) => {
+      if (!identity) {
+        return;
+      }
+
+      const currentIdentities = get().identities;
+      if (
+        currentIdentities.find(
+          (id) => id.identityHash === identity.identityHash
+            && id.requested.account.id === identity.requested.account.id,
+        )
+      ) {
+        console.log('using existing identity');
+        return;
+      }
+
+      currentIdentities.push(identity);
+      set({ identities: currentIdentities });
+    },
+    removeIdentity: (accountID) => {
+      if (!accountID) {
+        return;
+      }
+      const currentIdentities = get().identities;
+      const newIdentities = currentIdentities.filter((x) => x.requested.account.id !== accountID);
+      set({ identities: newIdentities });
+    },
+    setDrafts: (values, asset_images) => {
+      const currentDrafts = get().drafts;
+
+      // search through currentDrafts for a draft with the same accountID in jsonData
+      const draftIndex = currentDrafts.findIndex((draft) => draft.values.symbol === values.symbol);
+      if (draftIndex !== -1) {
+        // if found, replace the draft with the new one
+        currentDrafts[draftIndex] = { values, asset_images };
+        set({ drafts: currentDrafts });
+        console.log('Draft updated');
+        return;
+      }
+
+      const newDrafts = [...currentDrafts, { values, asset_images }];
+      console.log('Draft saved');
+      set({ drafts: newDrafts });
+    },
+    eraseDraft: (symbol) => {
+      const currentDrafts = get().drafts;
+      const newDrafts = currentDrafts.filter((draft) => draft.values.symbol !== symbol);
+      set({ drafts: newDrafts });
+    },
+  })),
+);
+
 /**
  * NFT_Viewer related
  */
@@ -230,30 +308,52 @@ const beetStore = create((set, get) => ({
       console.error(error);
     }
 
-    const auth = {
-      connection: null,
-      authenticated: null,
-      isLinked: null,
-    };
-
     if (!connected) {
       console.error("Couldn't connect to Beet");
-      set(auth);
+      set({
+        connection: null,
+        authenticated: null,
+        isLinked: null,
+      });
       return;
     }
 
-    auth.connection = connected;
-    auth.authenticated = connected.authenticated;
+    if (identity && identity.identityhash) {
+      const { storedConnections } = identitiesStore.getState();
 
-    set(auth);
+      const storedConnection = storedConnections[identity.identityhash];
+      if (storedConnection) {
+        connected.beetkey = storedConnection.beetkey;
+        connected.next_identification = storedConnection.next_identification;
+        connected.secret = storedConnection.secret;
+        connected.id = storedConnection.next_identification;
+        console.log('updated connected');
+
+        set({
+          connection: connected,
+          authenticated: true,
+          isLinked: true,
+        });
+        return;
+      }
+
+      console.log({
+        loc: 'relinkToBeet', storedConnection: 'none', identity, storedConnections,
+      });
+    }
+
+    set({
+      connection: connected,
+      authenticated: connected.authenticated,
+      isLinked: identity ? true : null,
+    });
   },
   link: async (environment) => {
     /**
-     * Re/Link to Beet wallet
+     * Link to Beet wallet
      * @param {String} environment
      */
     const currentConnection = get().connection;
-    const linkage = { isLinked: null, identity: null };
 
     let linkAttempt;
     try {
@@ -263,20 +363,45 @@ const beetStore = create((set, get) => ({
       );
     } catch (error) {
       console.error(error);
-      set(linkage);
+      set({ isLinked: null, identity: null });
       return;
     }
 
     if (!currentConnection.identity) {
-      set(linkage);
+      set({ isLinked: null, identity: null });
       return;
     }
 
-    console.log({ id: currentConnection.identity });
+    const { storeConnection } = identitiesStore.getState();
 
-    linkage.isLinked = true;
-    linkage.identity = currentConnection.identity;
-    set(linkage);
+    try {
+      storeConnection(currentConnection);
+    } catch (error) {
+      console.log(error);
+    }
+
+    set({ isLinked: true, identity: currentConnection.identity });
+  },
+  relink: async (environment) => {
+    /**
+     * Relink to Beet wallet
+     * @param {String} environment
+     */
+    const currentConnection = get().connection;
+
+    let linkAttempt;
+    try {
+      linkAttempt = await link(
+        environment === 'production' ? 'BTS' : 'BTS_TEST',
+        currentConnection,
+      );
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+
+    console.log({ currentConnection, msg: 'relink' });
+    set({ connection: currentConnection, isLinked: true });
   },
   setConnection: (res) => set({ connection: res }),
   setAuthenticated: (auth) => set({ authenticated: auth }),
@@ -289,62 +414,5 @@ const beetStore = create((set, get) => ({
     identity: null,
   }),
 }));
-
-const identitiesStore = create(
-  persist((set, get) => ({
-    identities: [],
-    drafts: [],
-    setIdentities: (identity) => {
-      if (!identity) {
-        return;
-      }
-
-      const currentIdentities = get().identities;
-
-      if (
-        currentIdentities.find(
-          (id) => id.identityHash === identity.identityHash
-            && id.requested.account.id === identity.requested.account.id,
-        )
-      ) {
-        console.log('Account already linked');
-        return;
-      }
-
-      currentIdentities.push(identity);
-      set({ identities: currentIdentities });
-    },
-    removeIdentity: (accountID) => {
-      if (!accountID) {
-        return;
-      }
-      const currentIdentities = get().identities;
-      const newIdentities = currentIdentities.filter((x) => x.requested.account.id !== accountID);
-      set({ identities: newIdentities });
-    },
-    setDrafts: (values, asset_images) => {
-      const currentDrafts = get().drafts;
-
-      // search through currentDrafts for a draft with the same accountID in jsonData
-      const draftIndex = currentDrafts.findIndex((draft) => draft.values.symbol === values.symbol);
-      if (draftIndex !== -1) {
-        // if found, replace the draft with the new one
-        currentDrafts[draftIndex] = { values, asset_images };
-        set({ drafts: currentDrafts });
-        console.log('Draft updated');
-        return;
-      }
-
-      const newDrafts = [...currentDrafts, { values, asset_images }];
-      console.log('Draft saved');
-      set({ drafts: newDrafts });
-    },
-    eraseDraft: (symbol) => {
-      const currentDrafts = get().drafts;
-      const newDrafts = currentDrafts.filter((draft) => draft.values.symbol !== symbol);
-      set({ drafts: newDrafts });
-    },
-  })),
-);
 
 export { appStore, beetStore, identitiesStore };

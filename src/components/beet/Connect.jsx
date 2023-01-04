@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
-  Group,
-  Container,
   Box,
   ScrollArea,
   Text,
-  Divider,
   Table,
   Loader,
   Col,
   Paper,
-  Checkbox,
 } from '@mantine/core';
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
 
 export default function Connect(properties) {
   const connect = beetStore((state) => state.connect);
-  const link = beetStore((state) => state.link);
+  const setIdentity = beetStore((state) => state.setIdentity);
+
   const setMode = appStore((state) => state.setMode);
   const setAccountType = appStore((state) => state.setAccountType);
 
@@ -27,6 +24,7 @@ export default function Connect(properties) {
   const identities = identitiesStore((state) => state.identities);
   const setIdentities = identitiesStore((state) => state.setIdentities);
   const removeIdentity = identitiesStore((state) => state.removeIdentity);
+  const removeConnection = identitiesStore((state) => state.removeConnection);
 
   const [inProgress, setInProgress] = useState(false);
 
@@ -46,6 +44,12 @@ export default function Connect(properties) {
     } catch (error) {
       console.log(error);
     }
+
+    try {
+      removeConnection(rowIdentity.identityhash);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function beetDownload() {
@@ -53,10 +57,10 @@ export default function Connect(properties) {
   }
 
   /**
-   * Relink to Beet with chosen identity
+   * Reconnect to Beet with chosen identity
    * @param {Object} identity
    */
-  async function relinkToBeet(identity) {
+  async function reconnect(identity) {
     setInProgress(true);
 
     setTimeout(() => {
@@ -71,14 +75,7 @@ export default function Connect(properties) {
       return;
     }
 
-    try {
-      await link(environment);
-    } catch (error) {
-      console.error(error);
-      setInProgress(false);
-      return;
-    }
-
+    setIdentity(identity);
     setIdentities(identity);
     setInProgress(false);
   }
@@ -113,7 +110,7 @@ export default function Connect(properties) {
             variant="light"
             sx={{ marginTop: '5px', marginRight: '5px' }}
             onClick={() => {
-              relinkToBeet(row);
+              reconnect(row);
             }}
           >
             {row.requested.account.name}

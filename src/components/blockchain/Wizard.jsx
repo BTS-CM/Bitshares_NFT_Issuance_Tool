@@ -3,10 +3,8 @@ import {
   TextInput,
   Checkbox,
   Button,
-  Box,
   Modal,
   Text,
-  Divider,
   Col,
   Paper,
   Group,
@@ -263,7 +261,12 @@ export default function Wizard(properties) {
       if (accountType === 'BEET') {
         let tx;
         try {
-          tx = await broadcastOperation(connection, wsURL, mode, operation);
+          tx = await broadcastOperation(
+            connection,
+            wsURL,
+            mode === 'create' ? 'asset_create' : 'asset_update',
+            operation,
+          );
         } catch (error) {
           console.log(error);
           setInProgress(false);
@@ -274,7 +277,12 @@ export default function Wizard(properties) {
       } else {
         let generatedObj;
         try {
-          generatedObj = await generateObject(mode, operation);
+          generatedObj = await generateObject(
+            mode === 'create'
+              ? 'asset_create'
+              : 'asset_update',
+            operation,
+          );
         } catch (error) {
           console.log(error);
           setInProgress(false);
@@ -429,7 +437,7 @@ export default function Wizard(properties) {
   } else if (inProgress) {
     response = (
       <span>
-        <Text size="md">Please wait whilst your QR code is generated</Text>
+        <Text size="md">Please wait...</Text>
         <Loader variant="dots" />
       </span>
     );

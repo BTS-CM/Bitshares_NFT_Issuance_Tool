@@ -55,29 +55,8 @@ async function lookup_asset_symbols(api, asset_ids, nonNFT = false) {
       reject();
     }
 
-    symbols = symbols.filter((x) => x !== null);
-    if (!symbols || !symbols.length) {
-      resolve([]);
-    }
-
-    if (nonNFT) {
-      resolve(symbols);
-    }
-
-    const filteredAssets = symbols.filter((asset) => {
-      if (!asset.options.description || !asset.options.description.length) {
-        return false;
-      }
-
-      if (!asset.options.description.includes('nft_object')) {
-        return false;
-      }
-
-      const desc = JSON.parse(asset.options.description);
-      return !!desc.nft_object;
-    });
-
-    resolve(filteredAssets);
+    const filteredSymbols = symbols.filter((x) => x !== null);
+    resolve(!filteredSymbols || !filteredSymbols.length ? [] : filteredSymbols);
   });
 }
 

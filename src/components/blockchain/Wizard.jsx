@@ -142,10 +142,6 @@ export default function Wizard(properties) {
    */
   async function modalDisplay(values) {
     setModalOpened(true);
-    console.log({
-      values,
-      asset_images,
-    });
     setModalContents({
       values,
       asset_images,

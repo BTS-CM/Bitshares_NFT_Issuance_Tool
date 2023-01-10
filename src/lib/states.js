@@ -105,6 +105,7 @@ const appStore = create((set, get) => ({
   asset_issuer: null,
   asset_quantity: null,
   assets: null,
+  nonNFTs: null,
   setEnvironment: (env) => set({ environment: env }),
   setMode: (mode) => set({ mode }),
   setNodes: async () => {
@@ -160,7 +161,7 @@ const appStore = create((set, get) => ({
 
     set({
       asset: newAsset,
-      asset_images: images,
+      asset_images: images ?? [],
       asset_issuer: dynamicData.issuer,
       asset_quantity: dynamicData.quantity,
     });
@@ -204,22 +205,15 @@ const appStore = create((set, get) => ({
       set({ assets: [] });
     }
 
+    const normalAssets = [];
     const filteredAssets = [];
     for (let i = 0; i < response.length; i++) {
       const asset = response[i];
       const currentDescription = JSON.parse(asset.options.description);
-      console.log();
-      const { nft_object } = currentDescription;
+      const nft_object = currentDescription.nft_object ?? null;
 
-      let images;
-      try {
-        images = await getImages(nft_object);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-
-      if (!images || !images.length) {
+      if (!nft_object) {
+        normalAssets.push(asset);
         continue;
       }
 
@@ -228,6 +222,10 @@ const appStore = create((set, get) => ({
 
     if (filteredAssets.length) {
       set({ assets: filteredAssets });
+    }
+
+    if (normalAssets.length) {
+      set({ nonNFTs: normalAssets });
     }
   },
   changeURL: () => {
@@ -242,6 +240,7 @@ const appStore = create((set, get) => ({
   },
   clearAssets: () => set({
     assets: null,
+    nonNFTs: null,
   }),
   removeImages: () => set({
     asset_images: null,
@@ -336,10 +335,6 @@ const beetStore = create((set, get) => ({
         });
         return;
       }
-
-      console.log({
-        loc: 'relinkToBeet', storedConnection: 'none', identity, storedConnections,
-      });
     }
 
     set({
@@ -400,7 +395,6 @@ const beetStore = create((set, get) => ({
       return;
     }
 
-    console.log({ currentConnection, msg: 'relink' });
     set({ connection: currentConnection, isLinked: true });
   },
   setConnection: (res) => set({ connection: res }),

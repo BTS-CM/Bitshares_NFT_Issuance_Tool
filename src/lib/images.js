@@ -5,6 +5,11 @@
  */
 function getImages(nft_object) {
   return new Promise(async (resolve, reject) => {
+    if (!nft_object) {
+      resolve();
+      return;
+    }
+
     if (nft_object.media_png_multihashes || nft_object.media_PNG_multihashes) {
       const multihashes = nft_object.media_png_multihashes || nft_object.media_PNG_multihashes;
       resolve(multihashes.map((image) => ({ url: image.url, type: 'PNG' })));

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Textarea, Button, Group, Box, Text, Divider, Col, Paper, Radio,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
 
@@ -10,6 +11,7 @@ function openURL(target) {
 }
 
 export default function Offchain(properties) {
+  const { t, i18n } = useTranslation();
   const setMode = appStore((state) => state.setMode);
   const asset_images = appStore((state) => state.asset_images);
   const setAssetImages = appStore((state) => state.setAssetImages);
@@ -72,11 +74,11 @@ export default function Offchain(properties) {
         proceed();
       }}
     >
-      Proceed with issuance
+      {t('images:offchain.continueBtn')}
     </Button>
   ) : (
     <Button sx={{ margin: '5px' }} disabled>
-      Proceed with issuance
+      {t('images:offchain.continueBtn')}
     </Button>
   );
 
@@ -86,10 +88,10 @@ export default function Offchain(properties) {
         addListItem();
       }}
     >
-      Add IPFS url
+      {t('images:offchain.ipfsBtn')}
     </Button>
   ) : (
-    <Button disabled>Add IPFS url</Button>
+    <Button disabled>{t('images:offchain.ipfsBtn')}</Button>
   );
 
   return (
@@ -98,14 +100,14 @@ export default function Offchain(properties) {
         <Paper padding="sm" shadow="xs">
           <Box mx="auto" sx={{ padding: '10px' }}>
             <Text size="sm">
-              This tool enables creation of NFTs which use IPFS as their media storage.
+              {t('images:offchain.header')}
             </Text>
             <Radio.Group
               value={fileType}
               onChange={setFileType}
               name="fileTypeRadioGroup"
-              label="Specify the file type:"
-              description="This is required for the NFT to be displayed correctly."
+              label={t('images:offchain.typeLabel')}
+              description={t('images:offchain.typeDesc')}
               withAsterisk
             >
               <Radio value="PNG" label="PNG" />
@@ -116,7 +118,7 @@ export default function Offchain(properties) {
               fileType
                 ? (
                   <Textarea
-                    label="Full IPFS URL for an individual file:"
+                    label={t('images:offchain.ipfsURL')}
                     placeholder={`/ipfs/CID/fileName.${fileType} || /ipfs/CID`}
                     value={value}
                     autosize
@@ -135,7 +137,7 @@ export default function Offchain(properties) {
                 goBack();
               }}
             >
-              Back
+              {t('images:offchain.back')}
             </Button>
           </Box>
         </Paper>
@@ -145,7 +147,7 @@ export default function Offchain(properties) {
           <Paper padding="sm" shadow="xs">
             <Box mx="auto" sx={{ padding: '10px' }}>
               <Text size="sm" weight={600}>
-                IPFS URLs
+                {t('images:offchain.urlHeader')}
               </Text>
               {listItems.map((item) => (
                 <Group key={item.url} sx={{ margin: '5px' }}>
@@ -175,8 +177,12 @@ export default function Offchain(properties) {
         <Col span={12}>
           <Paper padding="sm" shadow="xs">
             <Box mx="auto" sx={{ padding: '10px' }}>
-              <Text size="sm">Not yet uploaded your NFT images to IPFS?</Text>
-              <Text size="sm">Then check out the following IPFS pinning services:</Text>
+              <Text size="sm">
+                {t('images:offchain.newHeader')}
+              </Text>
+              <Text size="sm">
+                {t('images:offchain.serviceList')}
+              </Text>
               <Button
                 compact
                 sx={{ margin: '2px' }}

@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { appStore } from '../../lib/states';
 
 export default function SelectAsset(properties) {
+  const { t, i18n } = useTranslation();
   const setAsset = appStore((state) => state.setAsset);
   const setMode = appStore((state) => state.setMode);
   const changeURL = appStore((state) => state.changeURL);
@@ -54,29 +56,31 @@ export default function SelectAsset(properties) {
     topText = (
       <span>
         <Loader variant="dots" />
-        <Text size="md">Retrieving info on your Bitshares account</Text>
+        <Text size="md">
+          {t('blockchain:selectAsset.fetching')}
+        </Text>
       </span>
     );
   } else if (assets && !assets.length) {
     topText = (
       <span>
-        <Text size="md">No NFTs to edit</Text>
-        <Text size="sm" weight={400}>
-          This Bitshares account hasn&apos;t issued any NFTs on the BTS DEX.
+        <Text size="md">
+          {t('blockchain:selectAsset.noResultsHeader')}
         </Text>
-        <Text size="sm" weight={400}>
-          You can either create a new NFT or switch Bitshares account.
+        <Text size="sm" weight={600}>
+          {t('blockchain:selectAsset.noResultsDesc')}
         </Text>
-        <Text size="sm" weight={400}>
-          Note: Buying an NFT on the BTS DEX doesn&apos;t automatically grant you NFT editing
-          rights.
+        <Text size="sm" weight={500}>
+          {t('blockchain:selectAsset.notice')}
         </Text>
       </span>
     );
   } else {
     topText = (
       <span>
-        <Text size="md">Select the NFT you wish to edit</Text>
+        <Text size="md">
+          {t('blockchain:selectAsset.selection')}
+        </Text>
       </span>
     );
   }
@@ -130,9 +134,9 @@ export default function SelectAsset(properties) {
             nonNFTs && nonNFTs.length ? (
               <span>
                 <Divider />
-                <Text size="md">The following assets are not yet NFTs</Text>
+                <Text size="md">{t('blockchain:selectAsset.nonNFT1')}</Text>
                 <Text size="sm" weight={400}>
-                  Why not introduce NFT functionality to your existing Bitshares assets?
+                  {t('blockchain:selectAsset.nonNFT2')}
                 </Text>
               </span>
             ) : null
@@ -147,7 +151,7 @@ export default function SelectAsset(properties) {
               increaseTries();
             }}
           >
-            Refresh
+            {t('blockchain:selectAsset.refresh')}
           </Button>
           <Button
             sx={{ marginTop: '15px' }}
@@ -155,7 +159,7 @@ export default function SelectAsset(properties) {
               goBack();
             }}
           >
-            Back
+            {t('blockchain:selectAsset.back')}
           </Button>
         </Box>
       </Paper>

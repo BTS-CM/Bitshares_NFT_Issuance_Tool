@@ -1,0 +1,23 @@
+{
+    "beetlink": {
+      "connected": "Erfolgreich mit Beet Wallet verbunden.",
+      "linkPrompt": "Fahren Sie fort, indem Sie diese App unten mit Ihrer Beet-Wallet verknüpfen.",
+      "linkButton": "Link zu Rübe",
+      "beetWait": "Warten auf Antwort von der BEET-Eingabeaufforderung",
+      "backButton": "Der Rücken"
+    },
+    "connect": {
+      "remove": "Entfernen",
+      "previousBEET": "Welches zuvor verknüpfte BEET-Konto möchten Sie verwenden?",
+      "newBEET": "Möchten Sie ein anderes Konto verwenden?",
+      "newBtn": "Mit neuem Konto verbinden",
+      "back": "Geh zurück",
+      "beetHeader": "Dieses Tool ist für die Verwendung mit dem Bitshares BEET Wallet konzipiert.",
+      "beetSubheading": "Starten und entsperren Sie es und klicken Sie dann unten auf die Schaltfläche „Verbinden“, um fortzufahren.",
+      "beetConnect": "Verbinden Sie sich mit Rübe",
+      "btsPrompt": "Du hast das Bitshares BEET Wallet noch nicht installiert? ",
+      "btsGuide": "Erstellen Sie nach der Installation eine Brieftasche und fahren Sie fort, um sich oben zu verbinden.",
+      "beetDownload": "Rübe herunterladen",
+      "connecting": "Verbindung zu BEET"
+    }
+  }

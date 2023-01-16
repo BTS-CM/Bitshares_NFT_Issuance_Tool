@@ -1,0 +1,14 @@
+{
+    "offchain": {
+      "continueBtn": "発行を進める",
+      "ipfsBtn": "IPFS URL を追加",
+      "header": "このツールを使用すると、IPFS をメディア ストレージとして使用する NFT を作成できます。",
+      "typeLabel": "ファイルの種類を指定します。",
+      "typeDesc": "これは、NFT を正しく表示するために必要です。",
+      "ipfsURL": "個々のファイルの完全な IPFS URL:",
+      "back": "戻る",
+      "urlHeader": "IPFS URL",
+      "newHeader": "NFT 画像を IPFS にまだアップロードしていませんか?",
+      "serviceList": "次に、次の IPFS ピニング サービスを確認してください。"
+    }
+  }

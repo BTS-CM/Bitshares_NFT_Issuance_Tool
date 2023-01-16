@@ -1,0 +1,23 @@
+{
+    "beetlink": {
+      "connected": "Forbundet til Beet wallet.",
+      "linkPrompt": "Fortsæt med at linke denne app til din Beet-pung nedenfor.",
+      "linkButton": "Link til Beet",
+      "beetWait": "Afventer svar fra BEET-prompt",
+      "backButton": "Tilbage"
+    },
+    "connect": {
+      "remove": "Fjerne",
+      "previousBEET": "Hvilken tidligere linket BEET-konto vil du bruge?",
+      "newBEET": "Vil du bruge en anden konto?",
+      "newBtn": "Forbind med ny konto",
+      "back": "Gå tilbage",
+      "beetHeader": "Dette værktøj er designet til brug med Bitshares BEET Wallet.",
+      "beetSubheading": "Start og lås den op, og klik derefter på tilslutningsknappen nedenfor for at fortsætte.",
+      "beetConnect": "Opret forbindelse til Beet",
+      "btsPrompt": "Har du endnu ikke Bitshares BEET-pungen installeret? ",
+      "btsGuide": "Når den er installeret, skal du oprette en tegnebog og fortsætte med at oprette forbindelse ovenfor.",
+      "beetDownload": "Download BEET",
+      "connecting": "Tilslutning til BEET"
+    }
+  }

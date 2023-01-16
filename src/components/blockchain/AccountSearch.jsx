@@ -13,10 +13,13 @@ import {
   SimpleGrid,
 } from '@mantine/core';
 import { IconSearch, IconArrowRight, IconAlertCircle } from '@tabler/icons';
-import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import { useTranslation } from 'react-i18next';
+
+import { appStore } from '../../lib/states';
 import { accountSearch } from '../../lib/directQueries';
 
 export default function AccountSearch(properties) {
+  const { t, i18n } = useTranslation();
   const theme = useMantineTheme();
 
   const setAccount = appStore((state) => state.setAccount);
@@ -69,26 +72,34 @@ export default function AccountSearch(properties) {
   if (!searchInput || !attempted) {
     topText = (
       <span>
-        <Text size="md">Enter your blockchain account ID/name to proceed</Text>
+        <Text size="md">
+          {t('blockchain:accountSearch.inputPrompt')}
+        </Text>
       </span>
     );
   } else if (inProgress) {
     topText = (
       <span>
         <Loader variant="dots" />
-        <Text size="md">Looking up account</Text>
+        <Text size="md">
+          {t('blockchain:accounts.fetchingAccount')}
+        </Text>
       </span>
     );
   } else if (!inProgress && !result && attempted) {
     topText = (
       <span>
-        <Text size="md">No such account could be found, check input and try again.</Text>
+        <Text size="md">
+          {t('blockchain:accounts.noAccount')}
+        </Text>
       </span>
     );
   } else if (attempted && result) {
     topText = (
       <span>
-        <Text size="md">Search results</Text>
+        <Text size="md">
+          {t('blockchain:accounts.searchResults')}
+        </Text>
       </span>
     );
   }
@@ -97,7 +108,9 @@ export default function AccountSearch(properties) {
     return (
       <span>
         <Loader variant="dots" />
-        <Text size="md">Loading...</Text>
+        <Text size="md">
+          {t('blockchain:accounts.loading')}
+        </Text>
       </span>
     );
   }
@@ -112,6 +125,11 @@ export default function AccountSearch(properties) {
             icon={<IconSearch size={18} stroke={1.5} />}
             radius="xl"
             size="md"
+            onKeyUp={(e) => {
+              if (e.key === 'Enter') {
+                performSearch();
+              }
+            }}
             onChange={(e) => {
               setSearchInput(e.target.value);
               setAttempted();
@@ -129,7 +147,7 @@ export default function AccountSearch(properties) {
                 <IconArrowRight size={18} stroke={1.5} />
               </ActionIcon>
             )}
-            placeholder="Account ID (e.g. 1.2.0)"
+            placeholder={t('blockchain:accounts.accountID')}
             rightSectionWidth={42}
           />
         ) : null}

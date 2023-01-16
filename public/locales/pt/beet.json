@@ -1,0 +1,23 @@
+{
+    "beetlink": {
+      "connected": "Conectado à carteira Beet com sucesso.",
+      "linkPrompt": "Prossiga com a vinculação deste aplicativo à sua carteira Beet abaixo.",
+      "linkButton": "Link para Beterraba",
+      "beetWait": "Aguardando a resposta do prompt do BEET",
+      "backButton": "Voltar"
+    },
+    "connect": {
+      "remove": "Retirar",
+      "previousBEET": "Qual conta BEET vinculada anteriormente você deseja usar?",
+      "newBEET": "Quer usar uma conta diferente?",
+      "newBtn": "Conectar com nova conta",
+      "back": "Volte",
+      "beetHeader": "Esta ferramenta foi projetada para uso com a Carteira Bitshares BEET.",
+      "beetSubheading": "Inicie e desbloqueie-o e, em seguida, clique no botão de conexão abaixo para continuar.",
+      "beetConnect": "Conecte-se à Beterraba",
+      "btsPrompt": "Ainda não tem a carteira Bitshares BEET instalada? ",
+      "btsGuide": "Depois de instalado, crie uma carteira e prossiga para conectar-se acima.",
+      "beetDownload": "Baixar BEET",
+      "connecting": "Conectando ao BEET"
+    }
+  }

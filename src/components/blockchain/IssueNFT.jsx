@@ -4,13 +4,15 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { QRCode } from 'react-qrcode-logo';
+import { useTranslation } from 'react-i18next';
 
 import { appStore, beetStore } from '../../lib/states';
 import { generateObject, broadcastOperation } from '../../lib/broadcasts';
 
 export default function SelectAsset(properties) {
+  const { t, i18n } = useTranslation();
   const back = appStore((state) => state.back);
-  
+
   const asset = appStore((state) => state.asset);
   const wsURL = appStore((state) => state.nodes[0]);
   const accountType = appStore((state) => state.accountType);
@@ -32,8 +34,8 @@ export default function SelectAsset(properties) {
         amount: values.asset_to_issue_amount,
         asset_id: values.asset_to_issue_asset_id,
       },
-      //memo: undefined,
-      //memo: values.memo,
+      // memo: undefined,
+      // memo: values.memo,
       issue_to_account: values.issue_to_account,
       extensions: [],
     };
@@ -90,9 +92,9 @@ export default function SelectAsset(properties) {
   const form = useForm({
     initialValues,
     validate: {
-      asset_to_issue_amount: (value) => (value > 0 ? null : 'Invalid'),
-      asset_to_issue_asset_id: (value) => (value.length > 0 ? null : 'Invalid'),
-      issue_to_account: (value) => (value.length > 0 && value.includes("1.2.") ? null : 'Invalid'),
+      asset_to_issue_amount: (value) => (value > 0 ? null : t('blockchain:issueNFT.form.invalid')),
+      asset_to_issue_asset_id: (value) => (value.length > 0 ? null : t('blockchain:issueNFT.form.invalid')),
+      issue_to_account: (value) => (value.length > 0 && value.includes("1.2.") ? null : t('blockchain:issueNFT.form.invalid')),
     },
     validateInputOnChange: true,
   });
@@ -102,7 +104,7 @@ export default function SelectAsset(properties) {
     response = (
       <span>
         <Text size="md" sx="margin-bottom:15px;">
-          To issue this NFT, open the Beet wallet and scan the below QR code.
+          {t('blockchain:issueNFT.form.header')}
         </Text>
         <QRCode
           value={JSON.stringify(qrContents)}
@@ -118,14 +120,16 @@ export default function SelectAsset(properties) {
             goBack();
           }}
         >
-          Back
+          {t('blockchain:issueNFT.form.back')}
         </Button>
       </span>
     );
   } else if (inProgress) {
     response = (
       <span>
-        <Text size="md">Please wait...</Text>
+        <Text size="md">
+          {t('blockchain:issueNFT.form.progress')}
+        </Text>
         <Loader variant="dots" />
       </span>
     );
@@ -134,18 +138,17 @@ export default function SelectAsset(properties) {
       <Col span={12} key="Top">
         <Paper sx={{ padding: '5px' }} shadow="xs">
           <Text size="md">
-            Successfully issued your NFT on the
-            {' '}
-            {environment === 'production' ? 'Bitshares' : 'Bitshares (Testnet)'}
-            {' '}
-            blockchain!
+            {t(
+              'blockchain:issueNFT.form.success',
+              { network: environment === 'production' ? 'Bitshares' : 'Bitshares (Testnet)' },
+            )}
           </Text>
           <Button
             onClick={() => {
               goBack();
             }}
           >
-            Go back
+            {t('blockchain:issueNFT.form.back')}
           </Button>
         </Paper>
       </Col>
@@ -157,43 +160,49 @@ export default function SelectAsset(properties) {
       <Box mx="auto" sx={{ padding: '10px' }} >
         <Col span={12} key="Top">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Ready to issue NFTs on the Bitshares blockchain!</Text>
-            <Text size="sm">Complete the below form to proceed with NFT issuance.</Text>
+            <Text size="md">
+              {t('blockchain:issueNFT.form.readyHeader')}
+            </Text>
+            <Text size="sm">
+              {t('blockchain:issueNFT.form.subHeader')}
+            </Text>
             <Button
               onClick={() => {
                 goBack();
               }}
             >
-              Go back
+              {t('blockchain:issueNFT.form.back')}
             </Button>
           </Paper>
         </Col>
         <Col span={12} key="Asset Details">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Asset issuance form</Text>
+            <Text size="md">
+              {t('blockchain:issueNFT.form.issueHeader')}
+            </Text>
             <TextInput
               required
               disabled
-              label="Bitshares account used for NFT issuance"
+              label={t('blockchain:issueNFT.form.issuerLabel')}
               placeholder="1.2.x"
               {...form.getInputProps('issuer')}
             />
             <TextInput
               required
               disabled
-              label="NFT Asset ID"
+              label={t('blockchain:issueNFT.form.assetID')}
               placeholder="1.3.x"
               {...form.getInputProps('asset_to_issue_asset_id')}
             />
             <TextInput
               required
-              label="Quantity of NFT to issue"
+              label={t('blockchain:issueNFT.form.quantity')}
               placeholder="1"
               {...form.getInputProps('asset_to_issue_amount')}
             />
             <TextInput
               required
-              label="Target account to issue NFT to"
+              label={t('blockchain:issueNFT.form.target')}
               placeholder="1.2.x"
               {...form.getInputProps('issue_to_account')}
             />
@@ -204,20 +213,24 @@ export default function SelectAsset(properties) {
             {!inProgress ? (
               <span>
                 <Text color="red" size="md">
-                  Complete the fields in the above form.
+                  {t('blockchain:issueNFT.form.completeHeader')}
                 </Text>
                 <form
                   onSubmit={
                     form.onSubmit((values) => processForm(values))
                   }
                 >
-                  <Button mt="sm" compact type="submit">Submit</Button>
+                  <Button mt="sm" compact type="submit">
+                    {t('blockchain:issueNFT.form.completeBtn')}
+                  </Button>
                 </form>
               </span>
             ) : (
               <span>
                 <Loader variant="dots" />
-                <Text size="md">Waiting on responses from BEET prompts</Text>
+                <Text size="md">
+                  {t('blockchain:issueNFT.form.beetWait')}
+                </Text>
               </span>
             )}
           </Paper>

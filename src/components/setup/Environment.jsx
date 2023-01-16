@@ -2,10 +2,12 @@ import {
   Button, Box, Text, Col, Paper,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { appStore } from '../../lib/states';
 
 export default function Mode(properties) {
+  const { t, i18n } = useTranslation();
   const setEnvironment = appStore((state) => state.setEnvironment);
 
   return (
@@ -13,14 +15,18 @@ export default function Mode(properties) {
       <Paper padding="sm" shadow="xs">
         <Box mx="auto" sx={{ padding: '10px' }}>
           <span>
-            <Text size="md">Which Bitshares blockchain do you want to use?</Text>
+            <Text size="md">
+              {t('setup:environment.header')}
+            </Text>
             <Button
               sx={{ marginTop: '15px', marginRight: '5px', marginLeft: '5px' }}
               onClick={() => {
                 setEnvironment('testnet');
               }}
             >
-              Testnet (BTS_TEST)
+              {t('setup:environment.testnet')}
+              {' '}
+              (BTS_TEST)
             </Button>
             <Button
               sx={{ marginTop: '15px', marginRight: '5px' }}
@@ -28,7 +34,9 @@ export default function Mode(properties) {
                 setEnvironment('production');
               }}
             >
-              Production (BTS)
+              {t('setup:environment.production')}
+              {' '}
+              (BTS)
             </Button>
           </span>
         </Box>

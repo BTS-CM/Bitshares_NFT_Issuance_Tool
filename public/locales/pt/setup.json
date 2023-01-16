@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "Para a conta \"{{account}}\" O que você quer fazer?",
+      "create": "Criar NFT",
+      "edit": "Editar NFT",
+      "issue": "Emitir NFTs",
+      "draft": "Carregar rascunho",
+      "back": "Voltar",
+      "header2": "Forneça um ID/nome de conta:",
+      "chooseBEET": "Pergunte à BETERRABA",
+      "chooseSearch": "Procurar conta manualmente",
+      "beetPrompt": "Para continuar, conecte-se a Beet.",
+      "linkPrompt": "Para continuar, conecte-se com Beet.",
+      "waiting": "Aguardando a resposta do usuário do cliente BEET"
+    },
+    "environment": {
+      "header": "Qual blockchain Bitshares você deseja usar?",
+      "testnet": "rede de teste",
+      "production": "rede principal"
+    },
+    "loading": {
+      "message": "Encontrando a conexão blockchain mais rápida, aguarde.."
+    },
+    "offline": {
+      "header": "Você parece estar offline? ",
+      "exit": "Saída"
+    },
+    "settings": {
+      "remove": "Retirar",
+      "settings": "Configurações",
+      "linked": "Aqui estão suas contas atualmente vinculadas",
+      "notLinked": "Beterraba não ligada.",
+      "back": "Volte",
+      "language": "Mudar idioma?"
+    },
+    "app": {
+      "error": "Foi encontrado um problema, reinicie e tente novamente.",
+      "reset": "Redefinir aplicativo"
+    }
+  }

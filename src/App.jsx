@@ -11,6 +11,8 @@ import {
   Divider,
   Image,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+
 import { appStore, beetStore, identitiesStore } from './lib/states';
 
 import Environment from './components/setup/Environment';
@@ -32,6 +34,8 @@ function openURL() {
 }
 
 function App() {
+  const { t, i18n } = useTranslation();
+
   const environment = appStore((state) => state.environment);
   const setEnvironment = appStore((state) => state.setEnvironment);
 
@@ -138,7 +142,7 @@ function App() {
     const userID = account ?? identity.requested.account.id;
     initPrompt = <Wizard userID={userID} />;
   } else {
-    initPrompt = <Text size="md">An issue was encountered, reset and try again.</Text>;
+    initPrompt = <Text size="md">{t('setup:app.error')}</Text>;
   }
 
   let caption;
@@ -186,7 +190,7 @@ function App() {
                       openSettings();
                     }}
                   >
-                    Settings
+                    {t('setup:settings.settings')}
                   </Button>
                 ) : null}
                 {isLinked ? (
@@ -198,7 +202,7 @@ function App() {
                       reset();
                     }}
                   >
-                    Reset app
+                    {t('setup:app.reset')}
                   </Button>
                 ) : null}
               </span>

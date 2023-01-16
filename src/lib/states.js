@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { connect, checkBeet, link } from 'beet-js';
 
@@ -11,82 +11,102 @@ import {
   fetchDynamicData,
 } from './stateQueries';
 
+const localePreferenceStore = create(
+  persist(
+    (set, get) => ({
+      locale: 'en',
+      changeLocale: (lng) => {
+        console.log(`Saving preferred locale: ${lng}`);
+        set({ locale: lng });
+      },
+    }),
+    {
+      name: 'localePreference',
+    },
+  ),
+);
+
 const identitiesStore = create(
-  persist((set, get) => ({
-    identities: [],
-    drafts: [],
-    storedConnections: {},
-    storeConnection: (connection) => {
-      if (!connection || !connection.identity) {
-        return;
-      }
-      const currentConnections = get().storedConnections;
-      if (!currentConnections[connection.identity.identityhash]) {
-        currentConnections[connection.identity.identityhash] = {
-          beetkey: connection.beetkey,
-          next_identification: connection.next_identification,
-          secret: connection.secret,
-        };
-        set({ storedConnections: currentConnections });
-      }
-    },
-    removeConnection: (identityhash) => {
-      const currentConnections = get().storedConnections;
-      if (currentConnections[identityhash]) {
-        delete currentConnections[identityhash];
-        set({ storedConnections: currentConnections });
-      }
-    },
-    setIdentities: (identity) => {
-      if (!identity) {
-        return;
-      }
+  persist(
+    (set, get) => ({
+      identities: [],
+      drafts: [],
+      storedConnections: {},
+      storeConnection: (connection) => {
+        if (!connection || !connection.identity) {
+          return;
+        }
+        const currentConnections = get().storedConnections;
+        if (!currentConnections || !currentConnections[connection.identity.identityhash]) {
+          currentConnections[connection.identity.identityhash] = {
+            beetkey: connection.beetkey,
+            next_identification: connection.next_identification,
+            secret: connection.secret,
+          };
+          set({ storedConnections: currentConnections });
+        }
+      },
+      removeConnection: (identityhash) => {
+        const currentConnections = get().storedConnections;
+        if (currentConnections && currentConnections[identityhash]) {
+          delete currentConnections[identityhash];
+          set({ storedConnections: currentConnections });
+        }
+      },
+      setIdentities: (identity) => {
+        if (!identity) {
+          return;
+        }
 
-      const currentIdentities = get().identities;
-      if (
-        currentIdentities.find(
-          (id) => id.identityHash === identity.identityHash
-            && id.requested.account.id === identity.requested.account.id,
-        )
-      ) {
-        console.log('using existing identity');
-        return;
-      }
+        const currentIdentities = get().identities;
+        if (
+          currentIdentities.find(
+            (id) => id.identityHash === identity.identityHash
+              && id.requested.account.id === identity.requested.account.id,
+          )
+        ) {
+          console.log('using existing identity');
+          return;
+        }
 
-      currentIdentities.push(identity);
-      set({ identities: currentIdentities });
-    },
-    removeIdentity: (accountID) => {
-      if (!accountID) {
-        return;
-      }
-      const currentIdentities = get().identities;
-      const newIdentities = currentIdentities.filter((x) => x.requested.account.id !== accountID);
-      set({ identities: newIdentities });
-    },
-    setDrafts: (values, asset_images) => {
-      const currentDrafts = get().drafts;
+        currentIdentities.push(identity);
+        set({ identities: currentIdentities });
+      },
+      removeIdentity: (accountID) => {
+        if (!accountID) {
+          return;
+        }
+        const currentIdentities = get().identities;
+        const newIdentities = currentIdentities.filter((x) => x.requested.account.id !== accountID);
+        set({ identities: newIdentities });
+      },
+      setDrafts: (values, asset_images) => {
+        const currentDrafts = get().drafts;
 
-      // search through currentDrafts for a draft with the same accountID in jsonData
-      const draftIndex = currentDrafts.findIndex((draft) => draft.values.symbol === values.symbol);
-      if (draftIndex !== -1) {
-        // if found, replace the draft with the new one
-        currentDrafts[draftIndex] = { values, asset_images };
-        set({ drafts: currentDrafts });
-        console.log('Draft updated');
-        return;
-      }
+        // search through currentDrafts for a draft with the same accountID in jsonData
+        const draftIndex = currentDrafts.findIndex((draft) => draft.values.symbol === values.symbol);
+        if (draftIndex !== -1) {
+          // if found, replace the draft with the new one
+          currentDrafts[draftIndex] = { values, asset_images };
+          set({ drafts: currentDrafts });
+          console.log('Draft updated');
+          return;
+        }
 
-      const newDrafts = [...currentDrafts, { values, asset_images }];
-      console.log('Draft saved');
-      set({ drafts: newDrafts });
+        const newDrafts = [...currentDrafts, { values, asset_images }];
+        console.log('Draft saved');
+        set({ drafts: newDrafts });
+      },
+      eraseDraft: (symbol) => {
+        const currentDrafts = get().drafts;
+        const newDrafts = currentDrafts.filter((draft) => draft.values.symbol !== symbol);
+        set({ drafts: newDrafts });
+      },
+    }),
+    {
+      name: 'beetIdentities',
     },
-    eraseDraft: (symbol) => {
-      const currentDrafts = get().drafts;
-      const newDrafts = currentDrafts.filter((draft) => draft.values.symbol !== symbol);
-      set({ drafts: newDrafts });
-    },
-  })),
+  ),
 );
 
 /**
@@ -203,6 +223,7 @@ const appStore = create((set, get) => ({
 
     if (!response || !response.length) {
       set({ assets: [] });
+      return;
     }
 
     const normalAssets = [];
@@ -409,4 +430,6 @@ const beetStore = create((set, get) => ({
   }),
 }));
 
-export { appStore, beetStore, identitiesStore };
+export {
+  appStore, beetStore, identitiesStore, localePreferenceStore,
+};

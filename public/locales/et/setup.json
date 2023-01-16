@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "konto jaoks \"{{account}}\" mida sa teha tahad?",
+      "create": "Looge NFT",
+      "edit": "Redigeeri NFT-d",
+      "issue": "NFT-de väljaandmine",
+      "draft": "Laadi mustand",
+      "back": "tagasi",
+      "header2": "Sisestage konto ID/nimi:",
+      "chooseBEET": "Küsi PEEDIT",
+      "chooseSearch": "Otsige kontot käsitsi",
+      "beetPrompt": "Jätkamiseks ühendage Beetiga.",
+      "linkPrompt": "Jätkamiseks linkige Beetiga.",
+      "waiting": "Ootan kasutaja vastust BEET-kliendilt"
+    },
+    "environment": {
+      "header": "Millist Bitsharesi plokiahelat soovite kasutada?",
+      "testnet": "Test võrku",
+      "production": "Põhivõrk"
+    },
+    "loading": {
+      "message": "Kiireima plokiahela ühenduse leidmine, palun oodake."
+    },
+    "offline": {
+      "header": "Tundub, et olete võrguühenduseta? ",
+      "exit": "Välju"
+    },
+    "settings": {
+      "remove": "Eemalda",
+      "settings": "Seaded",
+      "linked": "Siin on teie praegu lingitud kontod",
+      "notLinked": "Peet ei ole seotud.",
+      "back": "Mine tagasi",
+      "language": "Kas vahetada keelt?"
+    },
+    "app": {
+      "error": "Ilmnes probleem, lähtestage ja proovige uuesti.",
+      "reset": "Lähtesta rakendus"
+    }
+  }

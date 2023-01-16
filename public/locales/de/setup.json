@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "Für das Konto \"{{account}}\" Was möchten Sie tun?",
+      "create": "NFT erstellen",
+      "edit": "NFT bearbeiten",
+      "issue": "Geben Sie NFTs aus",
+      "draft": "Entwurf laden",
+      "back": "Der Rücken",
+      "header2": "Bitte geben Sie eine Konto-ID/einen Namen an:",
+      "chooseBEET": "Frag RÜBE",
+      "chooseSearch": "Konto manuell suchen",
+      "beetPrompt": "Um fortzufahren, verbinden Sie sich bitte mit Beet.",
+      "linkPrompt": "Um fortzufahren, verlinken Sie bitte mit Beet.",
+      "waiting": "Warten auf Benutzerantwort vom BEET-Client"
+    },
+    "environment": {
+      "header": "Welche Bitshares-Blockchain möchten Sie verwenden?",
+      "testnet": "Netzwerk testen",
+      "production": "Hauptnetz"
+    },
+    "loading": {
+      "message": "Suche nach schnellster Blockchain-Verbindung, bitte warten.."
+    },
+    "offline": {
+      "header": "Du scheinst offline zu sein? ",
+      "exit": "Ausgang"
+    },
+    "settings": {
+      "remove": "Entfernen",
+      "settings": "Einstellungen",
+      "linked": "Hier sind Ihre derzeit verknüpften Konten",
+      "notLinked": "Rübe nicht verbunden.",
+      "back": "Geh zurück",
+      "language": "Sprache ändern?"
+    },
+    "app": {
+      "error": "Ein Problem ist aufgetreten, setzen Sie es zurück und versuchen Sie es erneut.",
+      "reset": "App zurücksetzen"
+    }
+  }

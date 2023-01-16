@@ -1,15 +1,40 @@
 import {
-  Button, Badge, Box, Text, Col, Paper, ScrollArea, Table,
+  Button, Badge, Box, Text, Col, Paper, ScrollArea, Table, Select,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import { useTranslation } from 'react-i18next';
+import {
+  appStore, beetStore, identitiesStore, localePreferenceStore,
+} from '../../lib/states';
 
 export default function Mode(properties) {
+  const { t, i18n } = useTranslation();
+
   const setMode = appStore((state) => state.setMode);
   const environment = appStore((state) => state.environment);
   const identities = identitiesStore((state) => state.identities);
   const removeIdentity = identitiesStore((state) => state.removeIdentity);
   const reset = beetStore((state) => state.reset);
+  const changeLocale = localePreferenceStore((state) => state.changeLocale);
+
+  /**
+   * Set the i18n locale
+   * @param {String} newLocale
+   */
+  function setLanguage(newLocale) {
+    try {
+      i18n.changeLanguage(newLocale);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+
+    try {
+      changeLocale(newLocale);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   /**
    * Removing a previously linked identity from the identity store
@@ -46,7 +71,7 @@ export default function Mode(properties) {
               remove(row);
             }}
           >
-            Remove
+            {t('setup:settings.remove')}
           </Button>
         </td>
       </tr>
@@ -61,12 +86,16 @@ export default function Mode(properties) {
   return (
     <Col span={12}>
       <Paper padding="sm" shadow="xs">
-        <Text size="md">Settings</Text>
+        <Text size="md">
+          {t('setup:settings.settings')}
+        </Text>
 
         <Paper padding="sm" shadow="xs">
           {identities && identities.length ? (
             <Box mx="auto" sx={{ padding: '10px', paddingTop: '10px' }}>
-              <Text size="md">Here are your currently linked acounts</Text>
+              <Text size="md">
+                {t('setup:settings.linked')}
+              </Text>
               <ScrollArea
                 sx={{ height: rows.length > 1 && rows.length < 3 ? rows.length * 55 : 120 }}
               >
@@ -77,9 +106,34 @@ export default function Mode(properties) {
             </Box>
           ) : (
             <Box mx="auto" sx={{ padding: '10px', paddingTop: '10px' }}>
-              <Text size="md">Beet not linked.</Text>
+              <Text size="md">
+                {t('setup:settings.notLinked')}
+              </Text>
             </Box>
           )}
+          <br />
+          <Select
+            label={t('setup:settings.language')}
+            placeholder="Pick one"
+            onChange={(value) => {
+              setLanguage(value);
+            }}
+            sx={{ paddingLeft: '25%', paddingRight: '25%' }}
+            data={[
+              { value: 'en', label: 'English' },
+              { value: 'da', label: 'Dansk' },
+              { value: 'de', label: 'Deutsche' },
+              { value: 'et', label: 'Eesti' },
+              { value: 'es', label: 'Español' },
+              { value: 'fr', label: 'Français' },
+              { value: 'it', label: 'Italiano' },
+              { value: 'ja', label: '日本語' },
+              { value: 'ko', label: '한국어' },
+              { value: 'pt', label: 'Português' },
+              { value: 'th', label: 'ไทย' },
+            ]}
+          />
+          <br />
           <Button
             sx={{ marginBottom: '15px' }}
             variant="subtle"
@@ -89,7 +143,7 @@ export default function Mode(properties) {
               back();
             }}
           >
-            Back
+            {t('setup:settings.back')}
           </Button>
         </Paper>
       </Paper>

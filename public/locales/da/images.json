@@ -1,0 +1,14 @@
+{
+    "offchain": {
+      "continueBtn": "Fortsæt med udstedelsen",
+      "ipfsBtn": "Tilføj IPFS url",
+      "header": "Dette værktøj muliggør oprettelse af NFT'er, der bruger IPFS som deres medielager.",
+      "typeLabel": "Angiv filtypen:",
+      "typeDesc": "Dette er påkrævet for at NFT kan vises korrekt.",
+      "ipfsURL": "Fuld IPFS URL for en individuel fil:",
+      "back": "Gå tilbage",
+      "urlHeader": "IPFS URL'er",
+      "newHeader": "Har du endnu ikke uploadet dine NFT-billeder til IPFS?",
+      "serviceList": "Så tjek følgende IPFS pinning-tjenester:"
+    }
+  }

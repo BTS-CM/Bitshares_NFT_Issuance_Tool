@@ -1,0 +1,14 @@
+{
+    "offchain": {
+      "continueBtn": "Jätkake väljastamisega",
+      "ipfsBtn": "Lisage IPFS-i URL",
+      "header": "See tööriist võimaldab luua NFT-sid, mis kasutavad meediumisalvestusena IPFS-i.",
+      "typeLabel": "Määrake faili tüüp:",
+      "typeDesc": "See on vajalik NFT õigeks kuvamiseks.",
+      "ipfsURL": "Üksiku faili täielik IPFS-i URL:",
+      "back": "Mine tagasi",
+      "urlHeader": "IPFS-i URL-id",
+      "newHeader": "Kas te pole veel oma NFT-pilte IPFS-i üles laadinud?",
+      "serviceList": "Seejärel vaadake järgmisi IPFS-i kinnitamisteenuseid:"
+    }
+  }

@@ -1,0 +1,23 @@
+{
+    "beetlink": {
+      "connected": "Beet ウォレットに正常に接続されました。",
+      "linkPrompt": "このアプリを以下の Beet ウォレットにリンクしてください。",
+      "linkButton": "ビートへのリンク",
+      "beetWait": "BEETプロンプトからの応答待ち",
+      "backButton": "戻る"
+    },
+    "connect": {
+      "remove": "削除する",
+      "previousBEET": "以前にリンクしたどの BEET アカウントを使用しますか?",
+      "newBEET": "別のアカウントを使用しますか?",
+      "newBtn": "新しいアカウントに接続",
+      "back": "戻る",
+      "beetHeader": "このツールは、Bitshares BEET Wallet で使用するために設計されています。",
+      "beetSubheading": "起動してロックを解除し、下の接続ボタンをクリックして続行します。",
+      "beetConnect": "ビートに接続",
+      "btsPrompt": "Bitshares BEET ウォレットをまだインストールしていませんか?",
+      "btsGuide": "インストールしたら、ウォレットを作成し、上記の接続に進みます。",
+      "beetDownload": "ビートをダウンロード",
+      "connecting": "BEETに接続する"
+    }
+  }

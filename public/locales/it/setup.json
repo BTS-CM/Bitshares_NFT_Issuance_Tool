@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "Per il conto\"{{account}}\" Che cosa vuoi fare?",
+      "create": "Crea NFT",
+      "edit": "Modifica NFT",
+      "issue": "Emetti NFT",
+      "draft": "Carica bozza",
+      "back": "Di ritorno",
+      "header2": "Si prega di fornire un ID account/nome:",
+      "chooseBEET": "Chiedi a barbabietola",
+      "chooseSearch": "Cerca account manualmente",
+      "beetPrompt": "Per continuare, connettiti a Beet.",
+      "linkPrompt": "Per continuare, collegarsi a Beet.",
+      "waiting": "In attesa della risposta dell'utente dal client BEET"
+    },
+    "environment": {
+      "header": "Quale blockchain di Bitshares vuoi utilizzare?",
+      "testnet": "Rete di prova",
+      "production": "Rete principale"
+    },
+    "loading": {
+      "message": "Ricerca della connessione blockchain più veloce, attendere..."
+    },
+    "offline": {
+      "header": "Sembra che tu sia offline? ",
+      "exit": "Uscita"
+    },
+    "settings": {
+      "remove": "Rimuovere",
+      "settings": "Impostazioni",
+      "linked": "Ecco i tuoi account attualmente collegati",
+      "notLinked": "Barbabietola non legata.",
+      "back": "Torna indietro",
+      "language": "Cambia lingua?"
+    },
+    "app": {
+      "error": "Si è verificato un problema, reimpostare e riprovare.",
+      "reset": "Reimposta l'app"
+    }
+  }

@@ -1,0 +1,23 @@
+{
+    "beetlink": {
+      "connected": "Conectado a la billetera Beet con éxito.",
+      "linkPrompt": "Continúe vinculando esta aplicación a su billetera Beet a continuación.",
+      "linkButton": "Enlace a la remolacha",
+      "beetWait": "Esperando respuesta del indicador BEET",
+      "backButton": "atrás"
+    },
+    "connect": {
+      "remove": "Eliminar",
+      "previousBEET": "¿Qué cuenta BEET previamente vinculada desea utilizar?",
+      "newBEET": "¿Quieres usar una cuenta diferente?",
+      "newBtn": "Conectar con nueva cuenta",
+      "back": "Regresa",
+      "beetHeader": "Esta herramienta está diseñada para usarse con Bitshares BEET Wallet.",
+      "beetSubheading": "Inícielo y desbloquéelo, luego haga clic en el botón de conexión a continuación para continuar.",
+      "beetConnect": "Conéctese a la remolacha",
+      "btsPrompt": "¿Aún no tienes instalada la billetera BEET de Bitshares? ",
+      "btsGuide": "Una vez instalado, cree una billetera y proceda a conectarse arriba.",
+      "beetDownload": "Descargar REMOLACHA",
+      "connecting": "Conexión a BEET"
+    }
+  }

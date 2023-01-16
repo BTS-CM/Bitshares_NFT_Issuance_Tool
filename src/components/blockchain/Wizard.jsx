@@ -16,6 +16,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { QRCode } from 'react-qrcode-logo';
+import { useTranslation } from 'react-i18next';
 
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
 import { getPermissions, getFlags, getFlagBooleans } from '../../lib/permissions';
@@ -26,6 +27,7 @@ function openLink() {
 }
 
 export default function Wizard(properties) {
+  const { t, i18n } = useTranslation();
   const { userID } = properties;
 
   const [broadcastResult, setBroadcastResult] = useState();
@@ -383,20 +385,20 @@ export default function Wizard(properties) {
   const form = useForm({
     initialValues,
     validate: {
-      artist: (value) => (value.length > 0 ? null : 'Invalid'),
-      attestation: (value) => (value.length > 0 ? null : 'Invalid'),
-      title: (value) => (value.length > 0 ? null : 'Invalid'),
-      main: (value) => (value.length > 0 ? null : 'Invalid'),
-      market: (value) => (value.length > 0 ? null : 'Invalid'),
-      short_name: (value) => (value.length > 0 ? null : 'Invalid'),
-      symbol: (value) => (value.length > 0 ? null : 'Invalid'),
-      max_supply: (value) => (value >= 0 ? null : 'Invalid'),
-      precision: (value) => (value >= 0 ? null : 'Invalid'),
-      flag_charge_market_fee: (value, values) => (value === true && !values.perm_charge_market_fee ? 'Invalid' : null),
-      flag_white_list: (value, values) => (value === true && !values.perm_white_list ? 'Invalid' : null),
-      flag_override_authority: (value, values) => (value === true && !values.perm_override_authority ? 'Invalid' : null),
-      flag_transfer_restricted: (value, values) => (value === true && !values.perm_transfer_restricted ? 'Invalid' : null),
-      flag_disable_confidential: (value, values) => (value === true && !values.perm_disable_confidential ? 'Invalid' : null),
+      artist: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      attestation: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      title: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      main: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      market: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      short_name: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      symbol: (value) => (value.length > 0 ? null : t('blockchain:wizard.invalid')),
+      max_supply: (value) => (value >= 0 ? null : t('blockchain:wizard.invalid')),
+      precision: (value) => (value >= 0 ? null : t('blockchain:wizard.invalid')),
+      flag_charge_market_fee: (value, values) => (value === true && !values.perm_charge_market_fee ? t('blockchain:wizard.invalid') : null),
+      flag_white_list: (value, values) => (value === true && !values.perm_white_list ? t('blockchain:wizard.invalid') : null),
+      flag_override_authority: (value, values) => (value === true && !values.perm_override_authority ? t('blockchain:wizard.invalid') : null),
+      flag_transfer_restricted: (value, values) => (value === true && !values.perm_transfer_restricted ? t('blockchain:wizard.invalid') : null),
+      flag_disable_confidential: (value, values) => (value === true && !values.perm_disable_confidential ? t('blockchain:wizard.invalid') : null),
     },
     validateInputOnChange: true,
   });
@@ -406,11 +408,11 @@ export default function Wizard(properties) {
     response = (
       <span>
         <Text size="md" sx="margin-bottom:15px;">
-          To
-          {' '}
-          {mode}
-          {' '}
-          this NFT, open your Bitshares wallet and scan the below QR code.
+          {
+            mode === 'create'
+              ? t('blockchain:wizard.broadcastCreate')
+              : t('blockchain:wizard.broadcastUpdate')
+          }
         </Text>
         <QRCode
           value={JSON.stringify(qrContents)}
@@ -426,14 +428,16 @@ export default function Wizard(properties) {
             back();
           }}
         >
-          Back
+          {t('blockchain:wizard.back')}
         </Button>
       </span>
     );
   } else if (inProgress) {
     response = (
       <span>
-        <Text size="md">Please wait...</Text>
+        <Text size="md">
+          {t('blockchain:wizard.inProgress')}
+        </Text>
         <Loader variant="dots" />
       </span>
     );
@@ -442,38 +446,42 @@ export default function Wizard(properties) {
       <span>
         <Col span={12} key="Top">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Ready to issue NFTs on the Bitshares blockchain!</Text>
-            <Text size="sm">
-              Make sure you have enough Bitshares tokens to cover the network fees.
+            <Text size="md">
+              {t('blockchain:wizard.form.header')}
             </Text>
-            <Text size="sm">To save on fees consider getting a Bitshares lifetime membership.</Text>
-            <Text size="sm">Also remember to withdraw the NFT&apos;s fee pool after creation.</Text>
+            <Text size="sm">
+              {t('blockchain:wizard.form.subHeader')}
+            </Text>
+            <Text size="sm">
+              {t('blockchain:wizard.form.feeTip')}
+            </Text>
+            <Text size="sm">
+              {t('blockchain:wizard.form.poolTip')}
+            </Text>
             <Button
               sx={{ margin: '5px' }}
               onClick={() => {
                 openLink();
               }}
             >
-              BTS NFT Spec
+              {t('blockchain:wizard.form.spec')}
             </Button>
             <Button
               onClick={() => {
                 back();
               }}
             >
-              Go back
+              {t('blockchain:wizard.back')}
             </Button>
           </Paper>
         </Col>
         <Col span={12} key="ImageDetails">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Image details</Text>
+            <Text size="md">
+              {t('blockchain:wizard.form.imgHeader')}
+            </Text>
             <Text size="sm">
-              This NFT currently contains the following
-              {' '}
-              {asset_images && asset_images.length}
-              {' '}
-              images:
+              {t('blockchain:wizard.form.qtyImages', { qty: asset_images && asset_images.length })}
             </Text>
             {asset_images
               ? asset_images.map((item) => (
@@ -489,7 +497,7 @@ export default function Wizard(properties) {
                 changeImages();
               }}
             >
-              Change images
+              {t('blockchain:wizard.form.changeImages')}
             </Button>
           </Paper>
         </Col>
@@ -499,43 +507,43 @@ export default function Wizard(properties) {
             <TextInput
               required
               disabled
-              label="Bitshares account used for NFT issuance"
+              label={t('blockchain:wizard.form.issuerLabel')}
               placeholder="1.2.x"
               {...form.getInputProps('issuer')}
             />
             <TextInput
               required
-              label="Asset symbol"
-              placeholder="Asset symbol for DEX navigation"
+              label={t('blockchain:wizard.form.symbolLabel')}
+              placeholder={t('blockchain:wizard.form.symbolPlaceholder')}
               {...form.getInputProps('symbol')}
             />
             <TextInput
               required
-              label="Main description"
-              placeholder="Brief asset summary for DEX"
+              label={t('blockchain:wizard.form.mainLabel')}
+              placeholder={t('blockchain:wizard.form.mainPlaceholder')}
               {...form.getInputProps('main')}
             />
             <TextInput
               required
-              label="Short name"
-              placeholder="Shortened name for DEX"
+              label={t('blockchain:wizard.form.snLabel')}
+              placeholder={t('blockchain:wizard.form.snPlaceholder')}
               {...form.getInputProps('short_name')}
             />
             <TextInput
               required
-              label="Market"
-              placeholder="Primary trading asset e.g. BTS"
+              label={t('blockchain:wizard.form.marketLabel')}
+              placeholder={t('blockchain:wizard.form.marketPlaceholder')}
               {...form.getInputProps('market')}
             />
             <TextInput
               required
-              label="Maximum supply"
+              label={t('blockchain:wizard.form.msLabel')}
               placeholder="1"
               {...form.getInputProps('max_supply')}
             />
             <TextInput
               required
-              label="Asset precision (decimal places)"
+              label={t('blockchain:wizard.form.precisionLabel')}
               placeholder="1"
               {...form.getInputProps('precision')}
             />
@@ -543,73 +551,75 @@ export default function Wizard(properties) {
         </Col>
         <Col span={12} key="NFT Details">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">NFT details</Text>
+            <Text size="md">
+              {t('blockchain:wizard.form.nftHeader')}
+            </Text>
             <TextInput
               required
-              label="NFT title"
-              placeholder="NFT title"
+              label={t('blockchain:wizard.form.titleLabel')}
+              placeholder={t('blockchain:wizard.form.titlePlaceholder')}
               {...form.getInputProps('title')}
             />
             <TextInput
               required
-              label="NFT artist"
-              placeholder="Artist identity, username or pseudonym"
+              label={t('blockchain:wizard.form.artistLabel')}
+              placeholder={t('blockchain:wizard.form.artistPlaceholder')}
               {...form.getInputProps('artist')}
             />
             <TextInput
               required
-              label="NFT narrative"
-              placeholder="Narrative"
+              label={t('blockchain:wizard.form.narrativeLabel')}
+              placeholder={t('blockchain:wizard.form.narrativePlaceholder')}
               {...form.getInputProps('narrative')}
             />
             <TextInput
               required
-              label="NFT tags"
-              placeholder="comma,separated,tags"
+              label={t('blockchain:wizard.form.tagsLabel')}
+              placeholder={t('blockchain:wizard.form.tagsPlaceholder')}
               {...form.getInputProps('tags')}
             />
             <TextInput
               required
-              label="NFT type"
-              placeholder="NFT/ART/VISUAL"
+              label={t('blockchain:wizard.form.typeLabel')}
+              placeholder={t('blockchain:wizard.form.typePlaceholder')}
               {...form.getInputProps('type')}
             />
             <TextInput
               required
-              label="NFT attestation"
-              placeholder="An attestation regarding this NFT"
+              label={t('blockchain:wizard.form.attestationLabel')}
+              placeholder={t('blockchain:wizard.form.attestationPlaceholder')}
               {...form.getInputProps('attestation')}
             />
             <TextInput
               required
-              label="NFT acknowledgements"
-              placeholder="Any acknowledgements you have to make"
+              label={t('blockchain:wizard.form.ackLabel')}
+              placeholder={t('blockchain:wizard.form.ackPlaceholder')}
               {...form.getInputProps('acknowledgements')}
             />
             <TextInput
               required
-              label="NFT holders license"
-              placeholder="NFT holder license"
+              label={t('blockchain:wizard.form.holderLicenceLabel')}
+              placeholder={t('blockchain:wizard.form.holderLicencePlaceholder')}
               {...form.getInputProps('holder_license')}
             />
             <TextInput
               required
-              label="NFT license"
-              placeholder="License"
+              label={t('blockchain:wizard.form.licenseLabel')}
+              placeholder={t('blockchain:wizard.form.licensePlaceholder')}
               {...form.getInputProps('license')}
             />
-            <Text size="md">NFT Signatures</Text>
+            <Text size="md">{t('blockchain:wizard.form.sigHeader')}</Text>
             {accountType !== 'BEET' ? (
               <TextInput
-                label="Signed text"
-                placeholder="signed"
+                label={t('blockchain:wizard.form.signedLabel')}
+                placeholder={t('blockchain:wizard.form.signedPlaceholder')}
                 {...form.getInputProps('signed')}
               />
             ) : null}
             {accountType !== 'BEET' ? (
               <TextInput
-                label="Signature"
-                placeholder="signature"
+                label={t('blockchain:wizard.form.signedLabel')}
+                placeholder={t('blockchain:wizard.form.signedPlaceholder')}
                 {...form.getInputProps('signature')}
               />
             ) : null}
@@ -617,138 +627,144 @@ export default function Wizard(properties) {
         </Col>
         <Col span={12} key="CER">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Core Exchange Rate</Text>
+            <Text size="md">
+              {t('blockchain:wizard.form.cerHeader')}
+            </Text>
             <TextInput
               required
-              label="Base amount"
+              label={t('blockchain:wizard.form.cerbaLabel')}
               placeholder="0"
               {...form.getInputProps('cer_base_amount')}
             />
             <TextInput
               required
-              label="base_asset_id"
-              placeholder="cer_base_asset_id"
+              label={t('blockchain:wizard.form.cerbaLabel')}
+              placeholder="1.3.x"
               {...form.getInputProps('cer_base_asset_id')}
             />
             <TextInput
               required
-              label="quote_amount"
-              placeholder="cer_quote_amount"
+              label={t('blockchain:wizard.form.cerqaLabel')}
+              placeholder="0"
               {...form.getInputProps('cer_quote_amount')}
             />
             <TextInput
               required
-              label="quote_asset_id"
-              placeholder="cer_quote_asset_id"
+              label={t('blockchain:wizard.form.cerqaIDLabel')}
+              placeholder="1.3.x"
               {...form.getInputProps('cer_quote_asset_id')}
             />
           </Paper>
         </Col>
         <Col span={12} key="Perms">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Permissions</Text>
-            <Text size="sm">Note: Disabling permissions is a permanent decision.</Text>
+            <Text size="md">
+              {t('blockchain:wizard.form.permsHeader')}
+            </Text>
+            <Text size="sm">
+              {t('blockchain:wizard.form.permsSubHeader')}
+            </Text>
             {!permissionBooleans.charge_market_fee ? (
               <Tooltip
-                label="The charge_market_fee permission was permanently disabled."
+                label={t('blockchain:wizard.form.disabledCMF')}
                 color="gray"
                 withArrow
               >
                 <Checkbox
                   mt="md"
                   disabled
-                  label="Enable market fee (charge_market_fee)"
+                  label={t('blockchain:wizard.form.cmfPLabel')}
                   {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
                 />
               </Tooltip>
             ) : (
               <Checkbox
                 mt="md"
-                label="Enable market fee (charge_market_fee)"
+                label={t('blockchain:wizard.form.cmfPLabel')}
                 {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
               />
             )}
             <br />
             {!permissionBooleans.white_list ? (
               <Tooltip
-                label="The white_list permission was permanently disabled."
+                label={t('blockchain:wizard.form.disabledWL')}
                 color="gray"
                 withArrow
               >
                 <Checkbox
                   mt="md"
                   disabled
-                  label="Require holders to be white-listed (white_list)"
+                  label={t('blockchain:wizard.form.wlLabel')}
                   {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
                 />
               </Tooltip>
             ) : (
               <Checkbox
                 mt="md"
-                label="Require holders to be white-listed (white_list)"
+                label={t('blockchain:wizard.form.wlLabel')}
                 {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
               />
             )}
             <br />
             {!permissionBooleans.override_authority ? (
               <Tooltip
-                label="The override_authority permission was permanently disabled."
+                label={t('blockchain:wizard.form.disabledPOA')}
                 color="gray"
                 withArrow
               >
                 <Checkbox
                   mt="md"
                   disabled
-                  label="Asset owner may transfer asset back to himself (override_authority)"
+                  label={t('blockchain:wizard.form.poaLabel')}
                   {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
                 />
               </Tooltip>
             ) : (
               <Checkbox
                 mt="md"
-                label="Asset owner may transfer asset back to himself (override_authority)"
+                label={t('blockchain:wizard.form.poaLabel')}
                 {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
               />
             )}
             <br />
             {!permissionBooleans.transfer_restricted ? (
               <Tooltip
-                label="The transfer_restricted permission was permanently disabled."
+                label={t('blockchain:wizard.form.disabledTR')}
                 color="gray"
                 withArrow
               >
                 <Checkbox
                   mt="md"
                   disabled
-                  label="Asset owner must approve all transfers (transfer_restricted)"
+                  label={t('blockchain:wizard.form.trLabel')}
                   {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
                 />
               </Tooltip>
             ) : (
               <Checkbox
                 mt="md"
-                label="Asset owner must approve all transfers (transfer_restricted)"
+                label={t('blockchain:wizard.form.trLabel')}
                 {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
               />
             )}
             <br />
             {!permissionBooleans.disable_confidential ? (
               <Tooltip
-                label="The disable_confidential permission was permanently disabled."
+                label={t('blockchain:wizard.form.disabledDC')}
                 color="gray"
                 withArrow
               >
                 <Checkbox
                   mt="md"
                   disabled
-                  label="Disable confidential transactions (disable_confidential)"
+                  label={t('blockchain:wizard.form.dcLabel')}
                   {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
                 />
               </Tooltip>
             ) : (
               <Checkbox
                 mt="md"
-                label="Disable confidential transactions (disable_confidential)"
+                label={t('blockchain:wizard.form.dcLabel')}
                 {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
               />
             )}
@@ -756,43 +772,45 @@ export default function Wizard(properties) {
         </Col>
         <Col span={12} key="Flags">
           <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">Flags</Text>
+            <Text size="md">
+              {t('blockchain:wizard.form.flagsHeader')}
+            </Text>
             <Text size="sm">
-              If a related permission above is enabled, these flags can be changed at any time.
+              {t('blockchain:wizard.form.flagsSubHeader')}
             </Text>
             {
               !permissionBooleans.charge_market_fee
                 ? ( // || form.values.perm_charge_market_fee === false
-                  <Tooltip label="Relavent permission was disabled." color="gray" withArrow>
+                  <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
                     <Checkbox
                       mt="md"
                       disabled
-                      label="Enable charging a market fee (charge_market_fee)"
+                      label={t('blockchain:wizard.form.fcmfLabel')}
                       {...form.getInputProps('flag_charge_market_fee', { type: 'checkbox' })}
                     />
                   </Tooltip>
                 ) : (
                   <Checkbox
                     mt="md"
-                    label="Enable charging a market fee (charge_market_fee)"
+                    label={t('blockchain:wizard.form.fcmfLabel')}
                     {...form.getInputProps('flag_charge_market_fee', { type: 'checkbox' })}
                   />
                 )
 }
             <br />
             {!permissionBooleans.white_list ? ( // || form.values.perm_white_list === false
-              <Tooltip label="Relavent permission was disabled." color="gray" withArrow>
+              <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
                 <Checkbox
                   mt="md"
                   disabled
-                  label="Require holders to be white-listed (white_list)"
+                  label={t('blockchain:wizard.form.fwlLabel')}
                   {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
                 />
               </Tooltip>
             ) : (
               <Checkbox
                 mt="md"
-                label="Require holders to be white-listed (white_list)"
+                label={t('blockchain:wizard.form.fwlLabel')}
                 {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
               />
             )}
@@ -800,18 +818,18 @@ export default function Wizard(properties) {
             {
             !permissionBooleans.override_authority
               ? ( // || form.values.perm_override_authority === false
-                <Tooltip label="Relavent permission was disabled." color="gray" withArrow>
+                <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
                   <Checkbox
                     mt="md"
                     disabled
-                    label="Asset owner may transfer asset back to himself (override_authority)"
+                    label={t('blockchain:wizard.form.foaLabel')}
                     {...form.getInputProps('flag_override_authority', { type: 'checkbox' })}
                   />
                 </Tooltip>
               ) : (
                 <Checkbox
                   mt="md"
-                  label="Asset owner may transfer asset back to himself (override_authority)"
+                  label={t('blockchain:wizard.form.foaLabel')}
                   {...form.getInputProps('flag_override_authority', { type: 'checkbox' })}
                 />
               )
@@ -820,18 +838,18 @@ export default function Wizard(properties) {
             {
             !permissionBooleans.transfer_restricted
               ? ( // || form.values.perm_transfer_restricted === false
-                <Tooltip label="Relavent permission was disabled." color="gray" withArrow>
+                <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
                   <Checkbox
                     mt="md"
                     disabled
-                    label="Asset owner must approve all transfers (transfer_restricted)"
+                    label={t('blockchain:wizard.form.ftrLabel')}
                     {...form.getInputProps('flag_transfer_restricted', { type: 'checkbox' })}
                   />
                 </Tooltip>
               ) : (
                 <Checkbox
                   mt="md"
-                  label="Asset owner must approve all transfers (transfer_restricted)"
+                  label={t('blockchain:wizard.form.ftrLabel')}
                   {...form.getInputProps('flag_transfer_restricted', { type: 'checkbox' })}
                 />
               )
@@ -840,18 +858,18 @@ export default function Wizard(properties) {
             {
             !permissionBooleans.disable_confidential
               ? ( // || form.values.perm_disable_confidential === false
-                <Tooltip label="Relavent permission was disabled." color="gray" withArrow>
+                <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
                   <Checkbox
                     mt="md"
                     disabled
-                    label="Disable confidential transactions (disable_confidential)"
+                    label={t('blockchain:wizard.form.fdcLabel')}
                     {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
                   />
                 </Tooltip>
               ) : (
                 <Checkbox
                   mt="md"
-                  label="Disable confidential transactions (disable_confidential)"
+                  label={t('blockchain:wizard.form.fdcLabel')}
                   {...form.getInputProps('flag_disable_confidential', { type: 'checkbox' })}
                 />
               )
@@ -863,20 +881,24 @@ export default function Wizard(properties) {
             {!inProgress ? (
               <span>
                 <Text color="red" size="md">
-                  Complete the fields in the above form.
+                  {t('blockchain:wizard.form.submitHeader')}
                 </Text>
                 <form
                   onSubmit={
                     form.onSubmit((values) => processForm(values))
                   }
                 >
-                  <Button mt="sm" compact type="submit">Submit</Button>
+                  <Button mt="sm" compact type="submit">
+                    {t('blockchain:wizard.form.submitBtn')}
+                  </Button>
                 </form>
               </span>
             ) : (
               <span>
                 <Loader variant="dots" />
-                <Text size="md">Waiting on responses from BEET prompts</Text>
+                <Text size="md">
+                  {t('blockchain:wizard.form.waitBeet')}
+                </Text>
               </span>
             )}
           </Paper>
@@ -885,7 +907,7 @@ export default function Wizard(properties) {
           <Paper sx={{ padding: '5px' }} shadow="xs">
             <span>
               <Text size="sm">
-                Save your progress for this NFT?
+                {t('blockchain:wizard.form.saveDraftLabel')}
               </Text>
               <form
                 onSubmit={
@@ -894,14 +916,14 @@ export default function Wizard(properties) {
               >
                 {
                       form.values.symbol
-                        ? <Button mt="sm" compact type="submit">Save Draft</Button>
-                        : <Button mt="sm" compact disabled type="submit">Save Draft</Button>
+                        ? <Button mt="sm" compact type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
+                        : <Button mt="sm" compact disabled type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
                     }
               </form>
               <Modal
                 opened={modalOpened}
                 onClose={() => setModalOpened(false)}
-                title="NFT JSON"
+                title={t('blockchain:wizard.form.modalTitle')}
               >
                 <Container>
                   <ScrollArea p="md">
@@ -931,7 +953,7 @@ export default function Wizard(properties) {
                             compact
                             type="submit"
                           >
-                            View JSON
+                            {t('blockchain:wizard.form.viewJSON')}
                           </Button>
                         )
                         : (
@@ -941,7 +963,7 @@ export default function Wizard(properties) {
                             disabled
                             type="submit"
                           >
-                            View JSON
+                            {t('blockchain:wizard.form.viewJSON')}
                           </Button>
                         )
                     }
@@ -956,22 +978,24 @@ export default function Wizard(properties) {
       <Col span={12} key="Top">
         <Paper sx={{ padding: '5px' }} shadow="xs">
           <Text size="md">
-            Successfully
-            {' '}
-            {mode === 'create' ? 'created' : 'updated'}
-            {' '}
-            your NFT on the
-            {' '}
-            {environment === 'production' ? 'Bitshares' : 'BTS Testnet'}
-            {' '}
-            blockchain!
+            {
+              t(
+                'blockchain:wizard.form.broadcastSuccess',
+                {
+                  action: mode === 'create'
+                    ? t('blockchain:wizard.form.broadcastActionCreate')
+                    : t('blockchain:wizard.form.broadcastActionUpdate'),
+                  network: environment === 'production' ? 'Bitshares' : 'BTS Testnet',
+                },
+              )
+            }
           </Text>
           <Button
             onClick={() => {
               back();
             }}
           >
-            Go back
+            {t('blockchain:wizard.back')}
           </Button>
         </Paper>
       </Col>

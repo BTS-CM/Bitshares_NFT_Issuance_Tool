@@ -1,0 +1,23 @@
+{
+    "beetlink": {
+      "connected": "Ühendus Beeti rahakotiga õnnestus.",
+      "linkPrompt": "Jätkake selle rakenduse linkimist oma Beeti rahakotiga allpool.",
+      "linkButton": "Link Peedile",
+      "beetWait": "Ootan vastust BEET-viibalt",
+      "backButton": "tagasi"
+    },
+    "connect": {
+      "remove": "Eemalda",
+      "previousBEET": "Millist varem lingitud BEET-kontot soovite kasutada?",
+      "newBEET": "Kas soovite kasutada teist kontot?",
+      "newBtn": "Ühendage uue kontoga",
+      "back": "Mine tagasi",
+      "beetHeader": "See tööriist on mõeldud kasutamiseks koos Bitshares BEET Walletiga.",
+      "beetSubheading": "Käivitage ja avage see, seejärel klõpsake jätkamiseks allolevat ühenduse nuppu.",
+      "beetConnect": "Ühendage Beetiga",
+      "btsPrompt": "Kas teil pole veel Bitshares BEET rahakotti installitud? ",
+      "btsGuide": "Pärast installimist looge rahakott ja jätkake ülaltoodud ühenduse loomist.",
+      "beetDownload": "Laadige alla BEET",
+      "connecting": "Ühenduse loomine teenusega BEET"
+    }
+  }

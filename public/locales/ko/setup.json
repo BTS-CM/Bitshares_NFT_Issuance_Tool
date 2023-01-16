@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "계정에 대해 \"{{account}}\" 뭐하고 싶어?",
+      "create": "NFT 만들기",
+      "edit": "NFT 편집",
+      "issue": "NFT 발행",
+      "draft": "초안 로드",
+      "back": "뒤쪽에",
+      "header2": "계정 ID/이름을 입력하십시오:",
+      "chooseBEET": "BEET에게 물어보세요",
+      "chooseSearch": "수동으로 계정 조회",
+      "beetPrompt": "계속하려면 Beet에 연결하세요.",
+      "linkPrompt": "계속하려면 Beet에 연결하세요.",
+      "waiting": "BEET 클라이언트의 사용자 응답 대기 중"
+    },
+    "environment": {
+      "header": "어떤 Bitshares 블록체인을 사용하고 싶습니까?",
+      "testnet": "테스트 네트워크",
+      "production": "메인 네트워크"
+    },
+    "loading": {
+      "message": "가장 빠른 블록체인 연결을 찾는 중입니다. 잠시만 기다려 주세요.."
+    },
+    "offline": {
+      "header": "오프라인 상태인 것 같나요? ",
+      "exit": "출구"
+    },
+    "settings": {
+      "remove": "제거하다",
+      "settings": "설정",
+      "linked": "현재 연결된 계정은 다음과 같습니다.",
+      "notLinked": "비트가 연결되지 않았습니다.",
+      "back": "돌아가기",
+      "language": "언어를 변경하시겠습니까?"
+    },
+    "app": {
+      "error": "문제가 발생했습니다. 재설정하고 다시 시도하세요.",
+      "reset": "앱 재설정"
+    }
+  }

@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "アカウントの「{{account}}」何をしたいですか？",
+      "create": "NFTの作成",
+      "edit": "NFT を編集",
+      "issue": "NFTの発行",
+      "draft": "下書きを読み込む",
+      "back": "戻る",
+      "header2": "アカウント ID/名前を入力してください:",
+      "chooseBEET": "BEETに聞く",
+      "chooseSearch": "アカウントを手動で検索する",
+      "beetPrompt": "続行するには、Beet に接続してください。",
+      "linkPrompt": "続行するには、Beet にリンクしてください。",
+      "waiting": "BEET クライアントからのユーザーの応答を待っています"
+    },
+    "environment": {
+      "header": "どの Bitshares ブロックチェーンを使用しますか?",
+      "testnet": "テスト ネットワーク",
+      "production": "主なネットワーク"
+    },
+    "loading": {
+      "message": "最速のブロックチェーン接続を見つけています。お待ちください.."
+    },
+    "offline": {
+      "header": "オフラインのようですか？",
+      "exit": "出口"
+    },
+    "settings": {
+      "remove": "削除する",
+      "settings": "設定",
+      "linked": "現在リンクされているアカウントは次のとおりです",
+      "notLinked": "ビートはリンクされていません。",
+      "back": "戻る",
+      "language": "言語を変更？"
+    },
+    "app": {
+      "error": "問題が発生しました。リセットして、もう一度お試しください。",
+      "reset": "アプリをリセット"
+    }
+  }

@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "For kontoen \"{{account}}\" hvad vil du lave?",
+      "create": "Opret NFT",
+      "edit": "Rediger NFT",
+      "issue": "Udsted NFT'er",
+      "draft": "Indlæs udkast",
+      "back": "Tilbage",
+      "header2": "Angiv venligst et konto-id/navn:",
+      "chooseBEET": "Spørg BEET",
+      "chooseSearch": "Slå konto manuelt",
+      "beetPrompt": "For at fortsætte skal du oprette forbindelse til Beet.",
+      "linkPrompt": "For at fortsætte skal du linke til Beet.",
+      "waiting": "Venter på brugersvar fra BEET-klient"
+    },
+    "environment": {
+      "header": "Hvilken Bitshares blockchain vil du bruge?",
+      "testnet": "Test netværk",
+      "production": "Hovednetværk"
+    },
+    "loading": {
+      "message": "Finder den hurtigste blockchain-forbindelse, vent venligst.."
+    },
+    "offline": {
+      "header": "Du ser ud til at være offline? ",
+      "exit": "Afslut"
+    },
+    "settings": {
+      "remove": "Fjerne",
+      "settings": "Indstillinger",
+      "linked": "Her er dine aktuelt linkede konti",
+      "notLinked": "Roer ikke forbundet.",
+      "back": "Gå tilbage",
+      "language": "Skift sprog?"
+    },
+    "app": {
+      "error": "Der opstod et problem, nulstil og prøv igen.",
+      "reset": "Nulstil app"
+    }
+  }

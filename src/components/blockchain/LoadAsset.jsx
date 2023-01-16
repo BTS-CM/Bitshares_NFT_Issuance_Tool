@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
 } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import { appStore, identitiesStore } from '../../lib/states';
 
 export default function LoadAsset(properties) {
+  const { t, i18n } = useTranslation();
   const setMode = appStore((state) => state.setMode);
   const drafts = identitiesStore((state) => state.drafts);
   const setInitialValues = appStore((state) => state.setInitialValues);
@@ -19,16 +21,20 @@ export default function LoadAsset(properties) {
   if (!drafts || !drafts.length) {
     topText = (
       <span>
-        <Text size="md">Nothing to edit</Text>
+        <Text size="md">
+          {t('blockchain:loadAsset.noHeader')}
+        </Text>
         <Text size="sm" weight={600}>
-          You have not saved any NFT drafts yet.
+          {t('blockchain:loadAsset.noSubHeader')}
         </Text>
       </span>
     );
   } else {
     topText = (
       <span>
-        <Text size="md">Select the NFT draft you wish to edit</Text>
+        <Text size="md">
+          {t('blockchain:loadAsset.draftHeader')}
+        </Text>
       </span>
     );
   }
@@ -41,7 +47,7 @@ export default function LoadAsset(properties) {
           sx={{ margin: '2px' }}
           variant="outline"
           onClick={() => {
-            setMode('create')
+            setMode('create');
             setInitialValues(initialValues.values);
             setAssetImages(initialValues.asset_images);
           }}
@@ -76,7 +82,7 @@ export default function LoadAsset(properties) {
               goBack();
             }}
           >
-            Back
+            {t('blockchain:loadAsset.back')}
           </Button>
         </Box>
       </Paper>

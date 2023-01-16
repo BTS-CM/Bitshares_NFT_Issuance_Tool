@@ -85,4 +85,24 @@ window.electron = {
     timeout ?? 3000,
   ),
   openURL: async (target) => _openURL(target),
+  fetchLocales: () => {
+    const translations = {};
+    const languages = ['en', 'da', 'de', 'et', 'es', 'fr', 'it', 'ja', 'ko', 'pt', 'th'];
+    const pages = [
+      'beet',
+      'blockchain',
+      'images',
+      'setup',
+    ];
+    languages.forEach((language) => {
+      const localPages = {};
+      pages.forEach((page) => {
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        const pageContents = require(`./locales/${language}/${page}.json`);
+        localPages[page] = pageContents;
+      });
+      translations[language] = localPages;
+    });
+    return translations;
+  },
 };

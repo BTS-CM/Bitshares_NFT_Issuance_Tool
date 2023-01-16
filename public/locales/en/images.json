@@ -1,0 +1,14 @@
+{
+    "offchain": {
+        "continueBtn": "Proceed with issuance",
+        "ipfsBtn": "Add IPFS url",
+        "header": "This tool enables creation of NFTs which use IPFS as their media storage.",
+        "typeLabel": "Specify the file type:",
+        "typeDesc": "This is required for the NFT to be displayed correctly.",
+        "ipfsURL": "Full IPFS URL for an individual file:",
+        "back": "Go back",
+        "urlHeader": "IPFS URLs",
+        "newHeader": "Not yet uploaded your NFT images to IPFS?",
+        "serviceList": "Then check out the following IPFS pinning services:"
+    }
+}

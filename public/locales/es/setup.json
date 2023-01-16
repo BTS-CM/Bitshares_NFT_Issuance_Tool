@@ -1,0 +1,40 @@
+{
+    "accountMode": {
+      "header": "Por la cuenta\"{{account}}\" ¿Qué quieres hacer?",
+      "create": "Crear NFT",
+      "edit": "Editar NFT",
+      "issue": "Emitir NFT",
+      "draft": "Cargar borrador",
+      "back": "atrás",
+      "header2": "Proporcione una identificación/nombre de cuenta:",
+      "chooseBEET": "Pregunte a la remolacha",
+      "chooseSearch": "Buscar cuenta manualmente",
+      "beetPrompt": "Para continuar, conéctese a Beet.",
+      "linkPrompt": "Para continuar, enlace con Beet.",
+      "waiting": "Esperando la respuesta del usuario del cliente BEET"
+    },
+    "environment": {
+      "header": "¿Qué cadena de bloques de Bitshares quieres usar?",
+      "testnet": "Red de prueba",
+      "production": "red principal"
+    },
+    "loading": {
+      "message": "Encontrando la conexión blockchain más rápida, espere..."
+    },
+    "offline": {
+      "header": "¿Pareces estar desconectado? ",
+      "exit": "Salida"
+    },
+    "settings": {
+      "remove": "Eliminar",
+      "settings": "Ajustes",
+      "linked": "Aquí están sus cuentas actualmente vinculadas",
+      "notLinked": "Remolacha no ligada.",
+      "back": "Regresa",
+      "language": "¿Cambiar idioma?"
+    },
+    "app": {
+      "error": "Se encontró un problema, restablezca y vuelva a intentarlo.",
+      "reset": "Restablecer aplicación"
+    }
+  }

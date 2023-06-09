@@ -116,7 +116,13 @@
       "broadcastSuccess": "Edukalt {{action}} teie NFT {{network}} plokiahel!",
       "broadcastActionCreate": "loodud",
       "broadcastActionUpdate": "uuendatud"
-    }
+    },
+    "choice": "Kuidas soovite edasi minna?",
+    "confirmation": "Loodi Airdrop JSON",
+    "download1": "1. Käivitage BEET rahakott ja navigeerige menüüs jaotisse „Kohalik”.",
+    "download2": "2. Laadige lehelt BEET Local üles järgmine JSON-fail, peaks ilmuma viip.",
+    "download3": "3. Kontrollige enne õhulanguse kinnitamist viipa sisu.",
+    "downloadButton": "Laadige alla airdrop JSON"
   },
   "issueNFT": {
     "form": {

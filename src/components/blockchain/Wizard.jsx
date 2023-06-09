@@ -13,6 +13,9 @@ import {
   ScrollArea,
   Container,
   Code,
+  Radio,
+  JsonInput,
+  Accordion,
   Loader,
   SimpleGrid,
 } from '@mantine/core';
@@ -23,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
 import { getPermissions, getFlags, getFlagBooleans } from '../../lib/permissions';
 import { generateObject, broadcastOperation } from '../../lib/broadcasts';
+import { generateDeepLink } from '../../lib/generate';
 
 function openLink() {
   window.electron.openURL('nft_spec');
@@ -34,7 +38,10 @@ export default function Wizard(properties) {
 
   const [broadcastResult, setBroadcastResult] = useState();
   const [inProgress, setInProgress] = useState(false);
+
+  const [manualType, setManualType] = useState();
   const [qrContents, setQRContents] = useState();
+  const [localContents, setLocalContents] = useState();
 
   const [modalOpened, setModalOpened] = useState(false);
   const [modalContents, setModalContents] = useState('');
@@ -293,8 +300,26 @@ export default function Wizard(properties) {
           return;
         }
 
+        let generatedLocalContents;
+        try {
+          generatedLocalContents = await generateDeepLink(
+            'nft_creator',
+            environment === "production" ? "BTS" : "BTS_TEST",
+            wsURL,
+            mode === 'create'
+              ? 'asset_create'
+              : 'asset_update',
+            [operation],
+          );
+        } catch (error) {
+          console.log(error);
+          setInProgress(false);
+          return;
+        }
+
         if (operation) {
           setQRContents(generatedObj);
+          setLocalContents(generatedLocalContents);
         }
       }
 
@@ -456,23 +481,89 @@ export default function Wizard(properties) {
   }, [perm_white_list]);
 
   let response;
-  if (qrContents) {
+  if (qrContents && localContents) {
     response = (
-      <span>
-        <Text size="md" sx="margin-bottom:15px;">
-          {
-            mode === 'create'
-              ? t('blockchain:wizard.broadcastCreate')
-              : t('blockchain:wizard.broadcastUpdate')
-          }
-        </Text>
-        <QRCode
-          value={JSON.stringify(qrContents)}
-          ecLevel="H"
-          size={420}
-          quietZone={25}
-          qrStyle="dots"
-        />
+      <span style={{textAlign: 'center'}}>
+        <Radio.Group
+          value={manualType}
+          onChange={setManualType}
+          name="manualTypeRadioGroup"
+          label={t('blockchain:wizard.choice')}
+          withAsterisk
+        >
+          <Group>
+            <Radio value="QR" label="QR code" />
+            <Radio value="LOCAL" label="Local file" />
+            <Radio value="JSON" label="JSON data" />
+          </Group>
+        </Radio.Group>
+        <br />
+
+        {
+          manualType && manualType === "JSON"
+            ? (
+              <JsonInput
+                placeholder="Textarea will autosize to fit the content"
+                defaultValue={decodeURIComponent(localContents)}
+                validationError="Invalid JSON"
+                formatOnBlur
+                autosize
+                minRows={4}
+                maxRows={15}
+              />
+            )
+            : null
+        }
+        {
+          manualType && manualType === "QR"
+            ? (
+              <>
+                <Text size="md" sx="margin-bottom:15px;">
+                  {
+                    mode === 'create'
+                      ? t('blockchain:wizard.broadcastCreate')
+                      : t('blockchain:wizard.broadcastUpdate')
+                  }
+                </Text>
+                <QRCode
+                  value={JSON.stringify(qrContents)}
+                  ecLevel="H"
+                  size={420}
+                  quietZone={25}
+                  qrStyle="dots"
+                />
+              </>
+
+            )
+            : null
+        }
+        {
+          manualType && manualType === "LOCAL"
+            ? (
+              <Paper>
+                <Text>{t("blockchain:wizard.confirmation")}</Text>
+                <Text fz="xs">
+                  {t("blockchain:wizard.download1")}
+                  <br />
+                  {t("blockchain:wizard.download2")}
+                  <br />
+                  {t("blockchain:wizard.download3")}
+                </Text>
+
+                <a
+                  href={`data:text/json;charset=utf-8,${localContents}`}
+                  download="NFT.json"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button mt="md" mb="md">
+                    {t("blockchain:wizard.downloadButton")}
+                  </Button>
+                </a>
+              </Paper>
+            )
+            : null
+        }
         <br />
         <Button
           variant="light"
@@ -493,7 +584,7 @@ export default function Wizard(properties) {
         <Loader variant="dots" />
       </span>
     );
-  } else if (!broadcastResult && !qrContents) {
+  } else if (!broadcastResult && !qrContents && !localContents) {
     response = (
       <span>
         <Col span={12} key="Top">
@@ -979,14 +1070,14 @@ export default function Wizard(properties) {
               </Text>
               <form
                 onSubmit={
-                      form.onSubmit((values) => saveForm(values))
-                    }
+                  form.onSubmit((values) => saveForm(values))
+                }
               >
                 {
-                      form.values.symbol
-                        ? <Button mt="sm" compact type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
-                        : <Button mt="sm" compact disabled type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
-                    }
+                  form.values.symbol
+                    ? <Button mt="sm" compact type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
+                    : <Button mt="sm" compact disabled type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
+                }
               </form>
               <Modal
                 opened={modalOpened}
@@ -997,44 +1088,44 @@ export default function Wizard(properties) {
                   <ScrollArea p="md">
                     <Code block style={{ textAlign: 'left', maxWidth: '750px', wordBreak: 'break-all' }}>
                       {
-                          modalOpened && modalContents
-                            ? JSON.stringify(modalContents, undefined, 4)
-                            : 'N/A'
-                        }
+                        modalOpened && modalContents
+                          ? JSON.stringify(modalContents, undefined, 4)
+                          : 'N/A'
+                      }
                     </Code>
                   </ScrollArea>
                 </Container>
               </Modal>
               <form
                 onSubmit={
-                      form.onSubmit((values) => {
-                        setModalOpened(true);
-                        modalDisplay(values);
-                      })
-                  }
+                  form.onSubmit((values) => {
+                    setModalOpened(true);
+                    modalDisplay(values);
+                  })
+                }
               >
                 {
-                      form.values.symbol
-                        ? (
-                          <Button
-                            mt="sm"
-                            compact
-                            type="submit"
-                          >
-                            {t('blockchain:wizard.form.viewJSON')}
-                          </Button>
-                        )
-                        : (
-                          <Button
-                            mt="sm"
-                            compact
-                            disabled
-                            type="submit"
-                          >
-                            {t('blockchain:wizard.form.viewJSON')}
-                          </Button>
-                        )
-                    }
+                  form.values.symbol
+                    ? (
+                      <Button
+                        mt="sm"
+                        compact
+                        type="submit"
+                      >
+                        {t('blockchain:wizard.form.viewJSON')}
+                      </Button>
+                    )
+                    : (
+                      <Button
+                        mt="sm"
+                        compact
+                        disabled
+                        type="submit"
+                      >
+                        {t('blockchain:wizard.form.viewJSON')}
+                      </Button>
+                    )
+                }
               </form>
             </span>
           </Paper>

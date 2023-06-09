@@ -116,7 +116,13 @@
       "broadcastSuccess": "성공적으로 {{action}} 당신의 NFT에 {{network}} 블록체인!",
       "broadcastActionCreate": "만들어진",
       "broadcastActionUpdate": "업데이트"
-    }
+    },
+    "choice": "어떻게 진행하시겠습니까?",
+    "confirmation": "에어드롭 JSON 생성",
+    "download1": "1. BEET 지갑을 실행하고 메뉴에서 '로컬'로 이동합니다.",
+    "download2": "2. BEET 로컬 페이지에서 다음 JSON 파일을 업로드하면 프롬프트가 나타납니다.",
+    "download3": "3. 에어드롭을 승인하기 전에 프롬프트의 내용을 확인하십시오.",
+    "downloadButton": "에어드롭 JSON 다운로드"
   },
   "issueNFT": {
     "form": {

@@ -116,7 +116,13 @@
       "broadcastSuccess": "Succesfuldt {{action}} din NFT på {{network}} blockchain!",
       "broadcastActionCreate": "oprettet",
       "broadcastActionUpdate": "opdateret"
-    }
+    },
+    "choice": "Hvordan vil du gå videre?",
+    "confirmation": "Airdrop JSON genereret",
+    "download1": "1. Start BEET-pungen og naviger til 'Lokal' i menuen.",
+    "download2": "2. Fra BEET Local-siden skal du uploade følgende JSON-fil, en prompt skulle vises.",
+    "download3": "3. Bekræft promptens indhold, før du godkender airdrop.",
+    "downloadButton": "Download airdrop JSON"
   },
   "issueNFT": {
     "form": {

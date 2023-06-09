@@ -116,7 +116,13 @@
       "broadcastSuccess": "Erfolgreich {{action}} Ihr NFT auf der {{network}} Blockchain!",
       "broadcastActionCreate": "erstellt",
       "broadcastActionUpdate": "Aktualisiert"
-    }
+    },
+    "choice": "Wie wollen Sie fortfahren?",
+    "confirmation": "Airdrop JSON generiert",
+    "download1": "1. Starten Sie die BEET-Wallet und navigieren Sie im Menü zu „Lokal“.",
+    "download2": "2. Laden Sie auf der BEET Local-Seite die folgende JSON-Datei hoch. Es sollte eine Eingabeaufforderung angezeigt werden.",
+    "download3": "3. Überprüfen Sie den Inhalt der Eingabeaufforderung, bevor Sie den Airdrop genehmigen.",
+    "downloadButton": "Laden Sie Airdrop JSON herunter"
   },
   "issueNFT": {
     "form": {

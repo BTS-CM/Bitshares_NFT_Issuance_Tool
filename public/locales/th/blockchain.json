@@ -116,7 +116,13 @@
       "broadcastSuccess": "เรียบร้อยแล้ว {{action}} NFT ของคุณบน {{network}} บล็อกเชน!",
       "broadcastActionCreate": "สร้าง",
       "broadcastActionUpdate": "ปรับปรุง"
-    }
+    },
+    "choice": "คุณต้องการดำเนินการอย่างไร",
+    "confirmation": "สร้าง Airdrop JSON แล้ว",
+    "download1": "1. เปิด BEET wallet และไปที่ 'Local' ในเมนู",
+    "download2": "2. จากหน้า BEET Local ให้อัปโหลดไฟล์ JSON ต่อไปนี้ ข้อความแจ้งจะปรากฏขึ้น",
+    "download3": "3. ตรวจสอบเนื้อหาของพรอมต์ก่อนที่จะอนุมัติการออกอากาศ",
+    "downloadButton": "ดาวน์โหลด airdrop JSON"
   },
   "issueNFT": {
     "form": {

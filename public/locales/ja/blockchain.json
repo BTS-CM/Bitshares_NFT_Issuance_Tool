@@ -116,7 +116,13 @@
       "broadcastSuccess": "成功しました {{action}} あなたのNFTは {{network}} ブロックチェーン！",
       "broadcastActionCreate": "作成した",
       "broadcastActionUpdate": "更新しました"
-    }
+    },
+    "choice": "どのように進めたいですか?",
+    "confirmation": "Airdrop JSON が生成されました",
+    "download1": "1. BEET ウォレットを起動し、メニューの「ローカル」に移動します。",
+    "download2": "2. BEET ローカル ページから次の JSON ファイルをアップロードすると、プロンプトが表示されます。",
+    "download3": "3. エアドロップを承認する前に、プロンプトの内容を確認します。",
+    "downloadButton": "エアドロップ JSON をダウンロード"
   },
   "issueNFT": {
     "form": {

@@ -116,7 +116,13 @@
       "broadcastSuccess": "Avec succès {{action}} votre NFT sur le {{network}} blockchain !",
       "broadcastActionCreate": "créé",
       "broadcastActionUpdate": "mis à jour"
-    }
+    },
+    "choice": "Comment veux-tu procéder?",
+    "confirmation": "Airdrop JSON généré",
+    "download1": "1. Lancez le portefeuille BEET et accédez à \"Local\" dans le menu.",
+    "download2": "2. À partir de la page BEET Local, téléchargez le fichier JSON suivant, une invite devrait apparaître.",
+    "download3": "3. Vérifiez le contenu de l'invite avant d'approuver le parachutage.",
+    "downloadButton": "Télécharger airdrop JSON"
   },
   "issueNFT": {
     "form": {

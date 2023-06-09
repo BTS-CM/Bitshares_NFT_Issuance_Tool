@@ -114,14 +114,6 @@ export default function SelectAsset(properties) {
           qrStyle="dots"
         />
         <br />
-        <Button
-          variant="light"
-          onClick={() => {
-            goBack();
-          }}
-        >
-          {t('blockchain:issueNFT.form.back')}
-        </Button>
       </span>
     );
   } else if (inProgress) {
@@ -143,13 +135,6 @@ export default function SelectAsset(properties) {
               { network: environment === 'production' ? 'Bitshares' : 'Bitshares (Testnet)' },
             )}
           </Text>
-          <Button
-            onClick={() => {
-              goBack();
-            }}
-          >
-            {t('blockchain:issueNFT.form.back')}
-          </Button>
         </Paper>
       </Col>
     );
@@ -166,13 +151,6 @@ export default function SelectAsset(properties) {
             <Text size="sm">
               {t('blockchain:issueNFT.form.subHeader')}
             </Text>
-            <Button
-              onClick={() => {
-                goBack();
-              }}
-            >
-              {t('blockchain:issueNFT.form.back')}
-            </Button>
           </Paper>
         </Col>
         <Col span={12} key="Asset Details">
@@ -244,6 +222,16 @@ export default function SelectAsset(properties) {
       <Paper padding="sm" shadow="xs">
         { response }
       </Paper>
+      <Button
+        mt="sm"
+        compact
+        variant="light"
+        onClick={() => {
+          goBack();
+        }}
+      >
+        {t('blockchain:issueNFT.form.back')}
+      </Button>
     </Col>
   );
 }

@@ -1,14 +1,21 @@
 {
-    "offchain": {
-      "continueBtn": "발급 진행",
-      "ipfsBtn": "IPFS URL 추가",
-      "header": "이 도구를 사용하면 IPFS를 미디어 저장소로 사용하는 NFT를 만들 수 있습니다.",
-      "typeLabel": "파일 형식을 지정합니다.",
-      "typeDesc": "이것은 NFT가 올바르게 표시되는 데 필요합니다.",
-      "ipfsURL": "개별 파일의 전체 IPFS URL:",
-      "back": "돌아가기",
-      "urlHeader": "IPFS URL",
-      "newHeader": "아직 NFT 이미지를 IPFS에 업로드하지 않았습니까?",
-      "serviceList": "그런 다음 다음 IPFS 고정 서비스를 확인하십시오."
-    }
+  "offchain": {
+    "continueBtn": "발급 진행",
+    "ipfsBtn": "IPFS URL 추가",
+    "header": "이 도구를 사용하면 IPFS를 미디어 저장소로 사용하는 NFT를 만들 수 있습니다.",
+    "typeLabel": "파일 형식을 지정합니다.",
+    "typeDesc": "이것은 NFT가 올바르게 표시되는 데 필요합니다.",
+    "ipfsURL": "개별 파일의 전체 IPFS URL:",
+    "back": "돌아가기",
+    "urlHeader": "IPFS URL",
+    "newHeader": "아직 NFT 이미지를 IPFS에 업로드하지 않았습니까?",
+    "serviceList": "그런 다음 다음 IPFS 고정 서비스를 확인하십시오."
+  },
+  "formats": {
+    "images": "이미지",
+    "audio": "오디오",
+    "video": "동영상",
+    "document": "문서",
+    "3D": "3D"
   }
+}

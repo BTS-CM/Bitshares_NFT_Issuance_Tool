@@ -153,16 +153,18 @@ export default function SelectAsset(properties) {
           >
             {t('blockchain:selectAsset.refresh')}
           </Button>
-          <Button
-            sx={{ marginTop: '15px' }}
-            onClick={() => {
-              goBack();
-            }}
-          >
-            {t('blockchain:selectAsset.back')}
-          </Button>
         </Box>
       </Paper>
+      <Button
+        mt="sm"
+        compact
+        sx={{ marginTop: '15px' }}
+        onClick={() => {
+          goBack();
+        }}
+      >
+        {t('blockchain:selectAsset.back')}
+      </Button>
     </Col>
   );
 }

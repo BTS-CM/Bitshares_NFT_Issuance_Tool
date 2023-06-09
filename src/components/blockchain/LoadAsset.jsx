@@ -76,16 +76,18 @@ export default function LoadAsset(properties) {
           <SimpleGrid cols={3} sx={{ marginTop: '10px' }}>
             {buttonList}
           </SimpleGrid>
-          <Button
-            sx={{ marginTop: '15px' }}
-            onClick={() => {
-              goBack();
-            }}
-          >
-            {t('blockchain:loadAsset.back')}
-          </Button>
         </Box>
       </Paper>
+      <Button
+        mt="sm"
+        compact
+        sx={{ marginTop: '15px' }}
+        onClick={() => {
+          goBack();
+        }}
+      >
+        {t('blockchain:loadAsset.back')}
+      </Button>
     </Col>
   );
 }

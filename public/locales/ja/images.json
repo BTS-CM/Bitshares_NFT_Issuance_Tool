@@ -1,14 +1,21 @@
 {
-    "offchain": {
-      "continueBtn": "発行を進める",
-      "ipfsBtn": "IPFS URL を追加",
-      "header": "このツールを使用すると、IPFS をメディア ストレージとして使用する NFT を作成できます。",
-      "typeLabel": "ファイルの種類を指定します。",
-      "typeDesc": "これは、NFT を正しく表示するために必要です。",
-      "ipfsURL": "個々のファイルの完全な IPFS URL:",
-      "back": "戻る",
-      "urlHeader": "IPFS URL",
-      "newHeader": "NFT 画像を IPFS にまだアップロードしていませんか?",
-      "serviceList": "次に、次の IPFS ピニング サービスを確認してください。"
-    }
+  "offchain": {
+    "continueBtn": "発行を進めます",
+    "ipfsBtn": "IPFS URLを追加",
+    "header": "このツールを使用すると、IPFS をメディア ストレージとして使用する NFT の作成が可能になります。",
+    "typeLabel": "ファイルの種類を指定します。",
+    "typeDesc": "これは、NFT が正しく表示されるために必要です。",
+    "ipfsURL": "個々のファイルの完全な IPFS URL:",
+    "back": "戻る",
+    "urlHeader": "IPFS URL",
+    "newHeader": "NFT 画像をまだ IPFS にアップロードしていませんか?",
+    "serviceList": "次に、次の IPFS ピンニング サービスを確認してください。"
+  },
+  "formats": {
+    "images": "画像",
+    "audio": "オーディオ",
+    "video": "ビデオ",
+    "document": "書類",
+    "3D": "3D"
   }
+}

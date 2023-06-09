@@ -10,5 +10,12 @@
         "urlHeader": "IPFS URLs",
         "newHeader": "Not yet uploaded your NFT images to IPFS?",
         "serviceList": "Then check out the following IPFS pinning services:"
+    },
+    "formats": {
+        "images": "Images",
+        "audio": "Audio",
+        "video": "Video",
+        "document": "Document",
+        "3D": "3D"
     }
 }

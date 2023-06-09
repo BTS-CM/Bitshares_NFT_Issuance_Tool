@@ -29,8 +29,18 @@ import IssueNFT from './components/blockchain/IssueNFT';
 
 import './App.css';
 
-function openURL() {
-  window.electron.openURL('gallery');
+/**
+ * Tell electron to open a pre-approved external URL
+ * @param {String} loc 
+ */
+function openURL(loc) {
+  if (loc === 'gallery') {
+    window.electron.openURL('gallery');
+  } else if (loc === 'viewer') {
+    window.electron.openURL('viewer');
+  } else if (loc === 'airdrop') {
+    window.electron.openURL('airdrop');
+  }
 }
 
 function App() {
@@ -176,10 +186,30 @@ function App() {
                   color="dark"
                   sx={{ marginTop: '15px', marginRight: '5px' }}
                   onClick={() => {
-                    openURL();
+                    openURL('gallery');
                   }}
                 >
                   NFTEA Gallery
+                </Button>
+                <Button
+                  variant="default"
+                  color="dark"
+                  sx={{ marginTop: '15px', marginRight: '5px' }}
+                  onClick={() => {
+                    openURL('airdrop');
+                  }}
+                >
+                  Airdrop Tool
+                </Button>
+                <Button
+                  variant="default"
+                  color="dark"
+                  sx={{ marginTop: '15px', marginRight: '5px' }}
+                  onClick={() => {
+                    openURL('viewer');
+                  }}
+                >
+                  NFT Viewer
                 </Button>
                 {environment ? (
                   <Button

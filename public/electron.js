@@ -38,6 +38,8 @@ const createWindow = () => {
 const allowed = {
   github: "https://github.com/bitshares/beet/releases",
   gallery: "https://nftea.gallery/gallery",
+  viewer: "https://github.com/BTS-CM/NFT_Viewer",
+  airdrop: "https://github.com/BTS-CM/airdrop_tool",
   ipfs_pinata: "https://www.pinata.cloud/",
   ipfs_nft_storage: "https://nft.storage/",
   ipfs_web3_storage: "https://web3.storage/",

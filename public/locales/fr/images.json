@@ -1,14 +1,21 @@
 {
-    "offchain": {
-      "continueBtn": "Procéder à l'émission",
-      "ipfsBtn": "Ajouter une URL IPFS",
-      "header": "Cet outil permet la création de NFT qui utilisent IPFS comme stockage multimédia.",
-      "typeLabel": "Spécifiez le type de fichier :",
-      "typeDesc": "Ceci est nécessaire pour que le NFT s'affiche correctement.",
-      "ipfsURL": "URL IPFS complète pour un fichier individuel :",
-      "back": "Retourner",
-      "urlHeader": "URL IPFS",
-      "newHeader": "Vous n'avez pas encore téléchargé vos images NFT sur IPFS ?",
-      "serviceList": "Découvrez ensuite les services d'épinglage IPFS suivants :"
-    }
+  "offchain": {
+    "continueBtn": "Procéder à l'émission",
+    "ipfsBtn": "Ajouter une URL IPFS",
+    "header": "Cet outil permet la création de NFT qui utilisent IPFS comme stockage multimédia.",
+    "typeLabel": "Spécifiez le type de fichier :",
+    "typeDesc": "Ceci est nécessaire pour que le NFT s'affiche correctement.",
+    "ipfsURL": "URL IPFS complète pour un fichier individuel :",
+    "back": "Retourner",
+    "urlHeader": "URL IPFS",
+    "newHeader": "Vous n'avez pas encore téléchargé vos images NFT sur IPFS ?",
+    "serviceList": "Découvrez ensuite les services d'épinglage IPFS suivants :"
+  },
+  "formats": {
+    "images": "Images",
+    "audio": "l'audio",
+    "video": "Vidéo",
+    "document": "Document",
+    "3D": "3D"
   }
+}

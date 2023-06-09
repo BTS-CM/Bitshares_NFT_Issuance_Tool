@@ -82,15 +82,6 @@ export default function AccountMode(properties) {
           {t('setup:accountMode.draft')}
         </Button>
       </Group>
-      <Group position="center" sx={{ marginTop: '5px', paddingTop: '5px' }}>
-        <Button
-          onClick={() => {
-            backCallback();
-          }}
-        >
-          {t('setup:accountMode.back')}
-        </Button>
-      </Group>
     </span>
   );
 
@@ -121,16 +112,6 @@ export default function AccountMode(properties) {
             }}
           >
             {t('setup:accountMode.chooseSearch')}
-          </Button>
-        </Group>
-        <Group position="center" sx={{ marginTop: '5px', paddingTop: '5px' }}>
-          <Button
-            variant="light"
-            onClick={() => {
-              backCallback();
-            }}
-          >
-            {t('setup:accountMode.back')}
           </Button>
         </Group>
       </span>
@@ -165,13 +146,6 @@ export default function AccountMode(properties) {
       response = (
         <span>
           <AccountSearch />
-          <Button
-            onClick={() => {
-              setAccountType();
-            }}
-          >
-            {t('setup:accountMode.back')}
-          </Button>
         </span>
       );
     } else {
@@ -185,6 +159,21 @@ export default function AccountMode(properties) {
           {response}
         </Box>
       </Paper>
+      <Button
+        mt="sm"
+        compact
+        onClick={() => {
+          if (!accountType) {
+            backCallback();
+          } else if (accountType === 'Search') {
+            setAccountType();
+          } else {
+            backCallback();
+          }
+        }}
+      >
+        {t('setup:accountMode.back')}
+      </Button>
     </Col>
   );
 }

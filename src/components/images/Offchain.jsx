@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
 import {
-  Textarea, Button, Group, Box, Text, Divider, Col, Paper, Radio,
+  Textarea,
+  Button,
+  Group,
+  Box,
+  Table,
+  Text,
+  Divider,
+  Col,
+  Paper,
+  Radio,
+  TextInput,
+  Accordion,
+  ActionIcon,
+  useMantineTheme,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
+import { TbArrowNarrowRight, TbForms } from "react-icons/tb";
 
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
 
@@ -15,7 +29,7 @@ export default function Offchain(properties) {
   const setMode = appStore((state) => state.setMode);
   const asset_images = appStore((state) => state.asset_images);
   const setAssetImages = appStore((state) => state.setAssetImages);
-  const setAsset = appStore((state) => state.setAsset);
+  const theme = useMantineTheme();
 
   const changing_images = appStore((state) => state.changing_images);
   const setChangingImages = appStore((state) => state.setChangingImages);
@@ -37,13 +51,15 @@ export default function Offchain(properties) {
 
   // Avoid duplicate files, and add the URL to the list
   function addListItem() {
-    const currentListItems = listItems;
-    const existingListItem = listItems.filter((listItem) => listItem.url === value);
-    if (!existingListItem.length) {
-      currentListItems.push({ url: value, type: fileType });
-      setListItems(currentListItems);
+    if (value && value.length) {
+      const currentListItems = listItems;
+      const existingListItem = listItems.filter((listItem) => listItem.url === value);
+      if (!existingListItem.length) {
+        currentListItems.push({ url: value, type: fileType });
+        setListItems(currentListItems);
+      }
+      setValue('');
     }
-    setValue('');
   }
 
   /**
@@ -95,7 +111,7 @@ export default function Offchain(properties) {
   );
 
   return (
-    <span>
+    <>
       <Col span={12}>
         <Paper padding="sm" shadow="xs">
           <Box mx="auto" sx={{ padding: '10px' }}>
@@ -110,35 +126,138 @@ export default function Offchain(properties) {
               description={t('images:offchain.typeDesc')}
               withAsterisk
             >
-              <Radio value="PNG" label="PNG" />
-              <Radio value="JPEG" label="JPEG" />
-              <Radio value="GIF" label="GIF" />
+              <Accordion mt="xs" defaultValue="images">
+                <Accordion.Item key="json" value="images">
+                  <Accordion.Control>
+                    <Text align="left" size="md">
+                      { t('images:formats.images') }
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Group>
+                      <Radio value="PNG" label="PNG" />
+                      <Radio value="JPEG" label="JPEG" />
+                      <Radio value="GIF" label="GIF" />
+                      <Radio value="TIFF" label="TIFF" />
+                      <Radio value="BMP" label="BMP" />
+                    </Group>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item key="json" value="audio">
+                  <Accordion.Control>
+                    <Text align="left" size="md">
+                      { t('images:formats.audio') }
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Group>
+                      <Radio value="MP3" label="MP3" />
+                      <Radio value="MP4" label="MP4" />
+                      <Radio value="M4A" label="M4A" />
+                      <Radio value="OGG" label="OGG" />
+                      <Radio value="FLAC" label="FLAC" />
+                      <Radio value="WAV" label="WAV" />
+                      <Radio value="WMA" label="WMA" />
+                      <Radio value="AAC" label="AAC" />
+                    </Group>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item key="json" value="video">
+                  <Accordion.Control>
+                    <Text align="left" size="md">
+                      { t('images:formats.video') }
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Group>
+                      <Radio value="WEBM" label="WEBM" />
+                      <Radio value="MOV" label="MOV" />
+                      <Radio value="QT" label="QT" />
+                      <Radio value="AVI" label="AVI" />
+                      <Radio value="WMV" label="WMV" />
+                      <Radio value="MPEG" label="MPEG" />
+                    </Group>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item key="json" value="document">
+                  <Accordion.Control>
+                    <Text align="left" size="md">
+                      { t('images:formats.document') }
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Group>
+                      <Radio value="PDF" label="PDF" />
+                      <Radio value="DOCX" label="DOCX" />
+                      <Radio value="ODT" label="ODT" />
+                      <Radio value="XLSX" label="XLSX" />
+                      <Radio value="ODS" label="ODS" />
+                      <Radio value="PPTX" label="PPTX" />
+                      <Radio value="TXT" label="TXT" />
+                    </Group>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item key="json" value="3D">
+                  <Accordion.Control>
+                    <Text align="left" size="md">
+                      { t('images:formats.3D') }
+                    </Text>
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Group>
+                      <Radio value="OBJ" label="OBJ" />
+                      <Radio value="FBX" label="FBX" />
+                      <Radio value="GLTF" label="GLTF" />
+                      <Radio value="3DS" label="3DS" />
+                      <Radio value="STL" label="STL" />
+                      <Radio value="COLLADA" label="COLLADA" />
+                      <Radio value="3MF" label="3MF" />
+                      <Radio value="BLEND" label="BLEND" />
+                      <Radio value="SKP" label="SKP" />
+                      <Radio value="VOX" label="VOX" />
+                    </Group>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
             </Radio.Group>
+
             {
               fileType
                 ? (
-                  <Textarea
+                  <TextInput
+                    icon={<TbForms />}
+                    radius="xl"
                     label={t('images:offchain.ipfsURL')}
-                    placeholder={`/ipfs/CID/fileName.${fileType} || /ipfs/CID`}
+                    size="md"
                     value={value}
-                    autosize
-                    minRows={1}
-                    maxRows={1}
-                    onChange={(event) => setValue(event.currentTarget.value)}
-                    sx={{ marginTop: '10px', marginBottom: '10px' }}
+                    onKeyUp={(e) => {
+                      if (e.key === 'Enter') {
+                        addListItem();
+                      }
+                    }}
+                    onChange={(e) => {
+                      setValue(e.currentTarget.value);
+                    }}
+                    rightSection={(
+                      <ActionIcon
+                        size={32}
+                        radius="xl"
+                        color={theme.primaryColor}
+                        onClick={() => {
+                          addListItem();
+                        }}
+                        variant="filled"
+                      >
+                        <TbArrowNarrowRight />
+                      </ActionIcon>
+                    )}
+                    placeholder={`/ipfs/CID/fileName.${fileType} || /ipfs/CID`}
+                    rightSectionWidth={42}
                   />
                 )
                 : null
             }
-            {ipfsButton}
-            <Button
-              sx={{ marginTop: '5px', marginLeft: '5px' }}
-              onClick={() => {
-                goBack();
-              }}
-            >
-              {t('images:offchain.back')}
-            </Button>
+
           </Box>
         </Paper>
       </Col>
@@ -149,26 +268,42 @@ export default function Offchain(properties) {
               <Text size="sm" weight={600}>
                 {t('images:offchain.urlHeader')}
               </Text>
-              {listItems.map((item) => (
-                <Group key={item.url} sx={{ margin: '5px' }}>
-                  <Button
-                    compact
-                    variant="outline"
-                    onClick={() => {
-                      removeListItem(item.url);
-                    }}
-                  >
-                    ❌
-                  </Button>
-                  <Text size="sm">
-                    {item.url}
-                    {' '}
-                    (
-                    {item.type}
-                    )
-                  </Text>
-                </Group>
-              ))}
+              <Table>
+                <thead>
+                  <tr>
+                    <th style={{textAlign: 'center'}}>
+                      File name
+                    </th>
+                    <th style={{textAlign: 'center'}}>
+                      File type
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {listItems.map((item) => (
+                    <tr key={item.url}>
+                      <td>
+                        {item.url}
+                      </td>
+                      <td>
+                        {item.type}
+                      </td>
+                      <td>
+                        <Button
+                          compact
+                          variant="outline"
+                          onClick={() => {
+                            removeListItem(item.url);
+                          }}
+                        >
+                          ❌
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
               {proceedButton}
             </Box>
           </Paper>
@@ -257,8 +392,18 @@ export default function Offchain(properties) {
               </Button>
             </Box>
           </Paper>
+          <Button
+            mt="sm"
+            compact
+            sx={{ marginTop: '5px', marginLeft: '5px' }}
+            onClick={() => {
+              goBack();
+            }}
+          >
+            {t('images:offchain.back')}
+          </Button>
         </Col>
       )}
-    </span>
+    </>
   );
 }

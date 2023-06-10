@@ -22,6 +22,7 @@ export default function AccountMode(properties) {
 
   const account = appStore((state) => state.account);
   const setAccount = appStore((state) => state.setAccount);
+  const chosenAccountMemo = appStore((state) => state.chosenAccountMemo);
 
   const { backCallback } = properties;
 
@@ -108,6 +109,7 @@ export default function AccountMode(properties) {
             onClick={() => {
               setAccountType('Search');
               setAccount();
+              chosenAccountMemo();
               reset();
             }}
           >

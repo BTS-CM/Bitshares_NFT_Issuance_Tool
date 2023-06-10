@@ -14,18 +14,19 @@ import {
   Container,
   Code,
   Radio,
+  Center,
   JsonInput,
   Accordion,
   Loader,
   SimpleGrid,
+  CopyButton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { QRCode } from 'react-qrcode-logo';
 import { useTranslation } from 'react-i18next';
 
 import { appStore, beetStore, identitiesStore } from '../../lib/states';
 import { getPermissions, getFlags, getFlagBooleans } from '../../lib/permissions';
-import { generateObject, broadcastOperation } from '../../lib/broadcasts';
+import { broadcastOperation } from '../../lib/broadcasts';
 import { generateDeepLink } from '../../lib/generate';
 
 function openLink() {
@@ -36,17 +37,8 @@ export default function Wizard(properties) {
   const { t, i18n } = useTranslation();
   const { userID } = properties;
 
-  const [broadcastResult, setBroadcastResult] = useState();
-  const [inProgress, setInProgress] = useState(false);
-
-  const [manualType, setManualType] = useState();
-  const [qrContents, setQRContents] = useState();
-  const [localContents, setLocalContents] = useState();
-
-  const [modalOpened, setModalOpened] = useState(false);
-  const [modalContents, setModalContents] = useState('');
-
   const accountType = appStore((state) => state.accountType);
+  const memo = appStore((state) => state.memo);
 
   const connection = beetStore((state) => state.connection);
   const asset = appStore((state) => state.asset);
@@ -62,6 +54,16 @@ export default function Wizard(properties) {
 
   const setDrafts = identitiesStore((state) => state.setDrafts);
   const setChangingImages = appStore((state) => state.setChangingImages);
+
+  const [broadcastResult, setBroadcastResult] = useState();
+  const [inProgress, setInProgress] = useState(false);
+
+  const [signedType, setSignedType] = useState(accountType === "BEET" ? "BEET" : "MANUAL");
+  const [manualType, setManualType] = useState();
+  const [localContents, setLocalContents] = useState();
+
+  const [modalOpened, setModalOpened] = useState(false);
+  const [modalContents, setModalContents] = useState('');
 
   /**
    * Generate booleans for the permissions
@@ -110,6 +112,7 @@ export default function Wizard(properties) {
       title: values.title,
       tags: values.tags,
       type: values.type,
+      sig_pubkey_or_address: values.sig_pubkey_or_address,
     };
 
     asset_images.forEach((image) => {
@@ -172,11 +175,12 @@ export default function Wizard(properties) {
     const permissionBooleans = generatePermissionBooleans(values);
     const flagBooleans = generateFlagBooleans(values);
     const nft_object = generateNFTObj(values);
+
     const issuer_permissions = getPermissions(permissionBooleans, false);
     const flags = getFlags(flagBooleans);
 
     let signedPayload;
-    if (accountType === 'BEET') {
+    if (accountType === 'BEET' && signedType === "BEET") {
       try {
         signedPayload = await connection.signNFT(nft_object);
       } catch (error) {
@@ -186,8 +190,8 @@ export default function Wizard(properties) {
       }
     } else {
       signedPayload = {
-        signed: values.signed ?? '',
-        signature: values.signature ?? '',
+        key: signedType === "NONE" ? '' : values.sig_pubkey_or_address,
+        signature: signedType === "NONE" ? '' : values.signature,
       };
     }
 
@@ -195,7 +199,7 @@ export default function Wizard(properties) {
       const description = JSON.stringify({
         main: values.main,
         market: values.market,
-        nft_object: signedPayload.signed,
+        nft_object: { ...nft_object, sig_pubkey_or_address: signedPayload.key },
         nft_signature: signedPayload.signature,
         short_name: values.short_name,
       });
@@ -286,20 +290,6 @@ export default function Wizard(properties) {
 
         setBroadcastResult(tx);
       } else {
-        let generatedObj;
-        try {
-          generatedObj = await generateObject(
-            mode === 'create'
-              ? 'asset_create'
-              : 'asset_update',
-            operation,
-          );
-        } catch (error) {
-          console.log(error);
-          setInProgress(false);
-          return;
-        }
-
         let generatedLocalContents;
         try {
           generatedLocalContents = await generateDeepLink(
@@ -317,13 +307,11 @@ export default function Wizard(properties) {
           return;
         }
 
-        if (operation) {
-          setQRContents(generatedObj);
+        if (generatedLocalContents) {
           setLocalContents(generatedLocalContents);
         }
       }
 
-      console.log(operation);
       setInProgress(false);
     } else {
       console.log('An issue with signing the nft_object occurred');
@@ -376,6 +364,8 @@ export default function Wizard(properties) {
     tags: nft_object ? nft_object.tags : '',
     type: nft_object ? nft_object.type : 'NFT/ART/VISUAL',
     main: description ? description.main : '',
+    //
+    sig_pubkey_or_address: nft_object ? nft_object.sig_pubkey_or_address : memo,
     //
     market: description ? description.market : 'BTS',
     short_name: description ? description.short_name : '',
@@ -480,26 +470,42 @@ export default function Wizard(properties) {
     }
   }, [perm_white_list]);
 
-  let response;
-  if (qrContents && localContents) {
-    response = (
-      <span style={{textAlign: 'center'}}>
-        <Radio.Group
-          value={manualType}
-          onChange={setManualType}
-          name="manualTypeRadioGroup"
-          label={t('blockchain:wizard.choice')}
-          withAsterisk
-        >
-          <Group>
-            <Radio value="QR" label="QR code" />
-            <Radio value="LOCAL" label="Local file" />
-            <Radio value="JSON" label="JSON data" />
-          </Group>
-        </Radio.Group>
-        <br />
-
-        {
+  return (
+    <Col span={12} key="Top">
+      {
+        inProgress
+          ? (
+            <span>
+              <Text size="md">
+                {t('blockchain:wizard.inProgress')}
+              </Text>
+              <Loader variant="dots" />
+            </span>
+          )
+          : null
+      }
+      {
+        localContents
+          ? (
+            <span style={{ textAlign: 'center' }}>
+              <Text size="lg">
+                {t('blockchain:wizard.choice')}
+              </Text>
+              <Center mt="sm">
+                <Radio.Group
+                  value={manualType}
+                  onChange={setManualType}
+                  name="manualTypeRadioGroup"
+                  withAsterisk
+                >
+                  <Group>
+                    <Radio value="LOCAL" label="Local file" />
+                    <Radio value="JSON" label="JSON data" />
+                  </Group>
+                </Radio.Group>
+              </Center>
+              <br />
+              {
           manualType && manualType === "JSON"
             ? (
               <JsonInput
@@ -514,30 +520,7 @@ export default function Wizard(properties) {
             )
             : null
         }
-        {
-          manualType && manualType === "QR"
-            ? (
-              <>
-                <Text size="md" sx="margin-bottom:15px;">
-                  {
-                    mode === 'create'
-                      ? t('blockchain:wizard.broadcastCreate')
-                      : t('blockchain:wizard.broadcastUpdate')
-                  }
-                </Text>
-                <QRCode
-                  value={JSON.stringify(qrContents)}
-                  ecLevel="H"
-                  size={420}
-                  quietZone={25}
-                  qrStyle="dots"
-                />
-              </>
-
-            )
-            : null
-        }
-        {
+              {
           manualType && manualType === "LOCAL"
             ? (
               <Paper>
@@ -564,382 +547,360 @@ export default function Wizard(properties) {
             )
             : null
         }
-        <br />
-        <Button
-          variant="light"
-          onClick={() => {
-            back();
-          }}
-        >
-          {t('blockchain:wizard.back')}
-        </Button>
-      </span>
-    );
-  } else if (inProgress) {
-    response = (
-      <span>
-        <Text size="md">
-          {t('blockchain:wizard.inProgress')}
-        </Text>
-        <Loader variant="dots" />
-      </span>
-    );
-  } else if (!broadcastResult && !qrContents && !localContents) {
-    response = (
-      <span>
-        <Col span={12} key="Top">
-          <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">
-              {t('blockchain:wizard.form.header')}
-            </Text>
-            <Text size="sm">
-              {t('blockchain:wizard.form.subHeader')}
-            </Text>
-            <Text size="sm">
-              {t('blockchain:wizard.form.feeTip')}
-            </Text>
-            <Text size="sm">
-              {t('blockchain:wizard.form.poolTip')}
-            </Text>
-            <Button
-              sx={{ margin: '5px' }}
-              onClick={() => {
-                openLink();
-              }}
-            >
-              {t('blockchain:wizard.form.spec')}
-            </Button>
-            <Button
-              onClick={() => {
-                back();
-              }}
-            >
-              {t('blockchain:wizard.back')}
-            </Button>
-          </Paper>
-        </Col>
-        <Col span={12} key="ImageDetails">
-          <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md">
-              {t('blockchain:wizard.form.imgHeader')}
-            </Text>
-            <Text size="sm">
-              {t('blockchain:wizard.form.qtyImages', { qty: asset_images && asset_images.length })}
-            </Text>
-            <Table align="center">
-              <thead>
-                <tr>
-                  <th style={{ textAlign: "center" }}>URL</th>
-                  <th style={{ textAlign: "center" }} align="center">File type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  asset_images
-                    ? asset_images.map((item) => (
-                      <tr key={item.url}>
-                        <td>{item.url}</td>
-                        <td>{item.type}</td>
-                      </tr>
-                    ))
-                    : null
-                }
-              </tbody>
-            </Table>
-            <Button
-              onClick={() => {
-                changeImages();
-              }}
-            >
-              {t('blockchain:wizard.form.changeImages')}
-            </Button>
-          </Paper>
-        </Col>
-        <SimpleGrid cols={2}>
-          <Col span={6} key="Asset Details" align="left">
-            <Paper sx={{ padding: '5px' }} shadow="xs">
-              <Text size="md" align="center">Asset details</Text>
-              <TextInput
-                required
-                disabled
-                label={t('blockchain:wizard.form.issuerLabel')}
-                placeholder="1.2.x"
-                {...form.getInputProps('issuer')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.symbolLabel')}
-                placeholder={t('blockchain:wizard.form.symbolPlaceholder')}
-                {...form.getInputProps('symbol')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.mainLabel')}
-                placeholder={t('blockchain:wizard.form.mainPlaceholder')}
-                {...form.getInputProps('main')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.snLabel')}
-                placeholder={t('blockchain:wizard.form.snPlaceholder')}
-                {...form.getInputProps('short_name')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.marketLabel')}
-                placeholder={t('blockchain:wizard.form.marketPlaceholder')}
-                {...form.getInputProps('market')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.msLabel')}
-                placeholder="1"
-                {...form.getInputProps('max_supply')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.precisionLabel')}
-                placeholder="1"
-                {...form.getInputProps('precision')}
-              />
-            </Paper>
-          </Col>
-          <Col span={6} key="CER" align="left">
-            <Paper sx={{ padding: '5px' }} shadow="xs">
-              <Text size="md" align="center">
-                {t('blockchain:wizard.form.cerHeader')}
-              </Text>
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.cerbaLabel')}
-                placeholder="0"
-                {...form.getInputProps('cer_base_amount')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.cerbaLabel')}
-                placeholder="1.3.x"
-                {...form.getInputProps('cer_base_asset_id')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.cerqaLabel')}
-                placeholder="0"
-                {...form.getInputProps('cer_quote_amount')}
-              />
-              <TextInput
-                required
-                label={t('blockchain:wizard.form.cerqaIDLabel')}
-                placeholder="1.3.x"
-                {...form.getInputProps('cer_quote_asset_id')}
-              />
-            </Paper>
-          </Col>
-        </SimpleGrid>
-        <Col span={12} key="NFT Details" align="left">
-          <Paper sx={{ padding: '5px' }} shadow="xs">
-            <Text size="md" align="center">
-              {t('blockchain:wizard.form.nftHeader')}
-            </Text>
-            <SimpleGrid cols={2}>
-              <div>
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.titleLabel')}
-                  placeholder={t('blockchain:wizard.form.titlePlaceholder')}
-                  {...form.getInputProps('title')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.artistLabel')}
-                  placeholder={t('blockchain:wizard.form.artistPlaceholder')}
-                  {...form.getInputProps('artist')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.narrativeLabel')}
-                  placeholder={t('blockchain:wizard.form.narrativePlaceholder')}
-                  {...form.getInputProps('narrative')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.tagsLabel')}
-                  placeholder={t('blockchain:wizard.form.tagsPlaceholder')}
-                  {...form.getInputProps('tags')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.typeLabel')}
-                  placeholder={t('blockchain:wizard.form.typePlaceholder')}
-                  {...form.getInputProps('type')}
-                />
-              </div>
-              <div>
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.attestationLabel')}
-                  placeholder={t('blockchain:wizard.form.attestationPlaceholder')}
-                  {...form.getInputProps('attestation')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.ackLabel')}
-                  placeholder={t('blockchain:wizard.form.ackPlaceholder')}
-                  {...form.getInputProps('acknowledgements')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.holderLicenceLabel')}
-                  placeholder={t('blockchain:wizard.form.holderLicencePlaceholder')}
-                  {...form.getInputProps('holder_license')}
-                />
-                <TextInput
-                  required
-                  label={t('blockchain:wizard.form.licenseLabel')}
-                  placeholder={t('blockchain:wizard.form.licensePlaceholder')}
-                  {...form.getInputProps('license')}
-                />
-              </div>
-            </SimpleGrid>
 
-            <br />
-            <Text size="md" align="center">{t('blockchain:wizard.form.sigHeader')}</Text>
-            {accountType !== 'BEET' ? (
-              <TextInput
-                label={t('blockchain:wizard.form.signedLabel')}
-                placeholder={t('blockchain:wizard.form.signedPlaceholder')}
-                {...form.getInputProps('signed')}
-              />
-            ) : null}
-            {accountType !== 'BEET' ? (
-              <TextInput
-                label={t('blockchain:wizard.form.signatureLabel')}
-                placeholder={t('blockchain:wizard.form.signaturePlaceholder')}
-                {...form.getInputProps('signature')}
-              />
-            ) : null}
-          </Paper>
-        </Col>
-        <SimpleGrid cols={2}>
-          <Col span={6} key="Perms" style={{ textAlign: 'left' }}>
-            <Paper sx={{ padding: '5px' }} shadow="xs">
-              <Text size="md" align="center">
-                {t('blockchain:wizard.form.permsHeader')}
-              </Text>
-              <Text size="sm" align="center">
-                {t('blockchain:wizard.form.permsSubHeader')}
-              </Text>
-              {!permissionBooleans.charge_market_fee === true || form.getInputProps('charge_market_fee').value ? (
-                <Tooltip
-                  label={t('blockchain:wizard.form.disabledCMF')}
-                  color="gray"
-                  withArrow
-                >
-                  <Checkbox
-                    disabled
-                    mt="xs"
-                    label={t('blockchain:wizard.form.cmfPLabel')}
-                    {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
-                  />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  mt="xs"
-                  label={t('blockchain:wizard.form.cmfPLabel')}
-                  {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
-                />
-              )}
-              {!permissionBooleans.white_list ? (
-                <Tooltip
-                  label={t('blockchain:wizard.form.disabledWL')}
-                  color="gray"
-                  withArrow
-                >
-                  <Checkbox
-                    disabled
-                    mt="xs"
-                    label={t('blockchain:wizard.form.wlLabel')}
-                    {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
-                  />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  mt="xs"
-                  label={t('blockchain:wizard.form.wlLabel')}
-                  {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
-                />
-              )}
-              {!permissionBooleans.override_authority ? (
-                <Tooltip
-                  label={t('blockchain:wizard.form.disabledPOA')}
-                  color="gray"
-                  withArrow
-                >
-                  <Checkbox
-                    disabled
-                    mt="xs"
-                    label={t('blockchain:wizard.form.poaLabel')}
-                    {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
-                  />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  mt="xs"
-                  label={t('blockchain:wizard.form.poaLabel')}
-                  {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
-                />
-              )}
-              {!permissionBooleans.transfer_restricted ? (
-                <Tooltip
-                  label={t('blockchain:wizard.form.disabledTR')}
-                  color="gray"
-                  withArrow
-                >
-                  <Checkbox
-                    mt="xs"
-                    disabled
-                    label={t('blockchain:wizard.form.trLabel')}
-                    {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
-                  />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  mt="xs"
-                  label={t('blockchain:wizard.form.trLabel')}
-                  {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
-                />
-              )}
-              {!permissionBooleans.disable_confidential ? (
-                <Tooltip
-                  label={t('blockchain:wizard.form.disabledDC')}
-                  color="gray"
-                  withArrow
-                >
-                  <Checkbox
-                    mt="xs"
-                    disabled
-                    label={t('blockchain:wizard.form.dcLabel')}
-                    {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
-                  />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  mt="xs"
-                  label={t('blockchain:wizard.form.dcLabel')}
-                  {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
-                />
-              )}
-            </Paper>
-          </Col>
-          <Col span={6} key="Flags">
-            <Paper sx={{ padding: '5px', textAlign: 'left' }} shadow="xs">
-              <Text size="md" align="center">
-                {t('blockchain:wizard.form.flagsHeader')}
-              </Text>
-              <Text size="sm">
-                {t('blockchain:wizard.form.flagsSubHeader')}
-              </Text>
-              {
+              <br />
+              <Button
+                variant="light"
+                onClick={() => {
+                  back();
+                }}
+              >
+                {t('blockchain:wizard.back')}
+              </Button>
+            </span>
+          )
+          : null
+      }
+      {
+        !broadcastResult && !localContents
+          ? (
+            <span>
+              <Col span={12} key="Top">
+                <Paper sx={{ padding: '5px' }} shadow="xs">
+                  <Text size="md">
+                    {t('blockchain:wizard.form.header')}
+                  </Text>
+                  <Text size="sm">
+                    {t('blockchain:wizard.form.subHeader')}
+                  </Text>
+                  <Text size="sm">
+                    {t('blockchain:wizard.form.feeTip')}
+                  </Text>
+                  <Text size="sm">
+                    {t('blockchain:wizard.form.poolTip')}
+                  </Text>
+                  <Button
+                    sx={{ margin: '5px' }}
+                    onClick={() => {
+                      openLink();
+                    }}
+                  >
+                    {t('blockchain:wizard.form.spec')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      back();
+                    }}
+                  >
+                    {t('blockchain:wizard.back')}
+                  </Button>
+                </Paper>
+              </Col>
+              <Col span={12} key="ImageDetails">
+                <Paper sx={{ padding: '5px' }} shadow="xs">
+                  <Text size="md">
+                    {t('blockchain:wizard.form.imgHeader')}
+                  </Text>
+                  <Text size="sm">
+                    {t('blockchain:wizard.form.qtyImages', { qty: asset_images && asset_images.length })}
+                  </Text>
+                  <Table align="center">
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: "center" }}>URL</th>
+                        <th style={{ textAlign: "center" }} align="center">File type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        asset_images && asset_images.length
+                          ? asset_images.map((item) => (
+                            <tr key={item.url}>
+                              <td>{item.url}</td>
+                              <td>{item.type}</td>
+                            </tr>
+                          ))
+                          : null
+                      }
+                    </tbody>
+                  </Table>
+                  <Button
+                    onClick={() => {
+                      changeImages();
+                    }}
+                  >
+                    {t('blockchain:wizard.form.changeImages')}
+                  </Button>
+                </Paper>
+              </Col>
+              <SimpleGrid cols={2}>
+                <Col span={6} key="Asset Details" align="left">
+                  <Paper sx={{ padding: '5px' }} shadow="xs">
+                    <Text size="md" align="center">Asset details</Text>
+                    <TextInput
+                      required
+                      disabled
+                      label={t('blockchain:wizard.form.issuerLabel')}
+                      placeholder="1.2.x"
+                      {...form.getInputProps('issuer')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.symbolLabel')}
+                      placeholder={t('blockchain:wizard.form.symbolPlaceholder')}
+                      {...form.getInputProps('symbol')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.mainLabel')}
+                      placeholder={t('blockchain:wizard.form.mainPlaceholder')}
+                      {...form.getInputProps('main')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.snLabel')}
+                      placeholder={t('blockchain:wizard.form.snPlaceholder')}
+                      {...form.getInputProps('short_name')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.marketLabel')}
+                      placeholder={t('blockchain:wizard.form.marketPlaceholder')}
+                      {...form.getInputProps('market')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.msLabel')}
+                      placeholder="1"
+                      {...form.getInputProps('max_supply')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.precisionLabel')}
+                      placeholder="1"
+                      {...form.getInputProps('precision')}
+                    />
+                  </Paper>
+                </Col>
+                <Col span={6} key="CER" align="left">
+                  <Paper sx={{ padding: '5px' }} shadow="xs">
+                    <Text size="md" align="center">
+                      {t('blockchain:wizard.form.cerHeader')}
+                    </Text>
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.cerbaLabel')}
+                      placeholder="0"
+                      {...form.getInputProps('cer_base_amount')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.cerbaLabel')}
+                      placeholder="1.3.x"
+                      {...form.getInputProps('cer_base_asset_id')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.cerqaLabel')}
+                      placeholder="0"
+                      {...form.getInputProps('cer_quote_amount')}
+                    />
+                    <TextInput
+                      required
+                      label={t('blockchain:wizard.form.cerqaIDLabel')}
+                      placeholder="1.3.x"
+                      {...form.getInputProps('cer_quote_asset_id')}
+                    />
+                  </Paper>
+                </Col>
+              </SimpleGrid>
+              <Col span={12} key="NFT Details" align="left">
+                <Paper sx={{ padding: '5px' }} shadow="xs">
+                  <Text size="md" align="center">
+                    {t('blockchain:wizard.form.nftHeader')}
+                  </Text>
+                  <SimpleGrid cols={2}>
+                    <div>
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.titleLabel')}
+                        placeholder={t('blockchain:wizard.form.titlePlaceholder')}
+                        {...form.getInputProps('title')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.artistLabel')}
+                        placeholder={t('blockchain:wizard.form.artistPlaceholder')}
+                        {...form.getInputProps('artist')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.narrativeLabel')}
+                        placeholder={t('blockchain:wizard.form.narrativePlaceholder')}
+                        {...form.getInputProps('narrative')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.tagsLabel')}
+                        placeholder={t('blockchain:wizard.form.tagsPlaceholder')}
+                        {...form.getInputProps('tags')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.typeLabel')}
+                        placeholder={t('blockchain:wizard.form.typePlaceholder')}
+                        {...form.getInputProps('type')}
+                      />
+                    </div>
+                    <div>
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.attestationLabel')}
+                        placeholder={t('blockchain:wizard.form.attestationPlaceholder')}
+                        {...form.getInputProps('attestation')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.ackLabel')}
+                        placeholder={t('blockchain:wizard.form.ackPlaceholder')}
+                        {...form.getInputProps('acknowledgements')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.holderLicenceLabel')}
+                        placeholder={t('blockchain:wizard.form.holderLicencePlaceholder')}
+                        {...form.getInputProps('holder_license')}
+                      />
+                      <TextInput
+                        required
+                        label={t('blockchain:wizard.form.licenseLabel')}
+                        placeholder={t('blockchain:wizard.form.licensePlaceholder')}
+                        {...form.getInputProps('license')}
+                      />
+                    </div>
+                  </SimpleGrid>
+                </Paper>
+              </Col>
+              <SimpleGrid cols={2}>
+                <Col span={6} key="Perms" style={{ textAlign: 'left' }}>
+                  <Paper sx={{ padding: '5px' }} shadow="xs">
+                    <Text size="md" align="center">
+                      {t('blockchain:wizard.form.permsHeader')}
+                    </Text>
+                    <Text size="sm" align="center">
+                      {t('blockchain:wizard.form.permsSubHeader')}
+                    </Text>
+                    {!permissionBooleans.charge_market_fee === true || form.getInputProps('charge_market_fee').value ? (
+                      <Tooltip
+                        label={t('blockchain:wizard.form.disabledCMF')}
+                        color="gray"
+                        withArrow
+                      >
+                        <Checkbox
+                          disabled
+                          mt="xs"
+                          label={t('blockchain:wizard.form.cmfPLabel')}
+                          {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Checkbox
+                        mt="xs"
+                        label={t('blockchain:wizard.form.cmfPLabel')}
+                        {...form.getInputProps('perm_charge_market_fee', { type: 'checkbox' })}
+                      />
+                    )}
+                    {!permissionBooleans.white_list ? (
+                      <Tooltip
+                        label={t('blockchain:wizard.form.disabledWL')}
+                        color="gray"
+                        withArrow
+                      >
+                        <Checkbox
+                          disabled
+                          mt="xs"
+                          label={t('blockchain:wizard.form.wlLabel')}
+                          {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Checkbox
+                        mt="xs"
+                        label={t('blockchain:wizard.form.wlLabel')}
+                        {...form.getInputProps('perm_white_list', { type: 'checkbox' })}
+                      />
+                    )}
+                    {!permissionBooleans.override_authority ? (
+                      <Tooltip
+                        label={t('blockchain:wizard.form.disabledPOA')}
+                        color="gray"
+                        withArrow
+                      >
+                        <Checkbox
+                          disabled
+                          mt="xs"
+                          label={t('blockchain:wizard.form.poaLabel')}
+                          {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Checkbox
+                        mt="xs"
+                        label={t('blockchain:wizard.form.poaLabel')}
+                        {...form.getInputProps('perm_override_authority', { type: 'checkbox' })}
+                      />
+                    )}
+                    {!permissionBooleans.transfer_restricted ? (
+                      <Tooltip
+                        label={t('blockchain:wizard.form.disabledTR')}
+                        color="gray"
+                        withArrow
+                      >
+                        <Checkbox
+                          mt="xs"
+                          disabled
+                          label={t('blockchain:wizard.form.trLabel')}
+                          {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Checkbox
+                        mt="xs"
+                        label={t('blockchain:wizard.form.trLabel')}
+                        {...form.getInputProps('perm_transfer_restricted', { type: 'checkbox' })}
+                      />
+                    )}
+                    {!permissionBooleans.disable_confidential ? (
+                      <Tooltip
+                        label={t('blockchain:wizard.form.disabledDC')}
+                        color="gray"
+                        withArrow
+                      >
+                        <Checkbox
+                          mt="xs"
+                          disabled
+                          label={t('blockchain:wizard.form.dcLabel')}
+                          {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Checkbox
+                        mt="xs"
+                        label={t('blockchain:wizard.form.dcLabel')}
+                        {...form.getInputProps('perm_disable_confidential', { type: 'checkbox' })}
+                      />
+                    )}
+                  </Paper>
+                </Col>
+                <Col span={6} key="Flags">
+                  <Paper sx={{ padding: '5px', textAlign: 'left' }} shadow="xs">
+                    <Text size="md" align="center">
+                      {t('blockchain:wizard.form.flagsHeader')}
+                    </Text>
+                    <Text size="sm">
+                      {t('blockchain:wizard.form.flagsSubHeader')}
+                    </Text>
+                    {
                 !permissionBooleans.charge_market_fee || perm_charge_market_fee === false
                   ? ( // || form.values.perm_charge_market_fee === false
                     <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
@@ -958,23 +919,23 @@ export default function Wizard(properties) {
                     />
                   )
               }
-              {!permissionBooleans.white_list || perm_white_list === false ? (
-                <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
-                  <Checkbox
-                    disabled
-                    mt="xs"
-                    label={t('blockchain:wizard.form.fwlLabel')}
-                    {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
-                  />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  mt="xs"
-                  label={t('blockchain:wizard.form.fwlLabel')}
-                  {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
-                />
-              )}
-              {
+                    {!permissionBooleans.white_list || perm_white_list === false ? (
+                      <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
+                        <Checkbox
+                          disabled
+                          mt="xs"
+                          label={t('blockchain:wizard.form.fwlLabel')}
+                          {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Checkbox
+                        mt="xs"
+                        label={t('blockchain:wizard.form.fwlLabel')}
+                        {...form.getInputProps('flag_white_list', { type: 'checkbox' })}
+                      />
+                    )}
+                    {
                 !permissionBooleans.override_authority || perm_override_authority === false
                   ? (
                     <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
@@ -993,7 +954,7 @@ export default function Wizard(properties) {
                     />
                   )
               }
-              {
+                    {
                 !permissionBooleans.transfer_restricted || perm_transfer_restricted === false
                   ? (
                     <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
@@ -1012,7 +973,7 @@ export default function Wizard(properties) {
                     />
                   )
               }
-              {
+                    {
               !permissionBooleans.disable_confidential || perm_disable_confidential === false
                 ? (
                   <Tooltip label={t('blockchain:wizard.form.disabledLabel')} color="gray" withArrow>
@@ -1031,80 +992,161 @@ export default function Wizard(properties) {
                   />
                 )
             }
-            </Paper>
-          </Col>
-        </SimpleGrid>
+                  </Paper>
+                </Col>
+              </SimpleGrid>
 
-        <Col span={12} key="SubmitBox">
-          <Paper sx={{ padding: '5px' }} shadow="xs">
-            {!inProgress ? (
-              <span>
-                <Text color="red" size="md">
-                  {t('blockchain:wizard.form.submitHeader')}
-                </Text>
-                <form
-                  onSubmit={
-                    form.onSubmit((values) => processForm(values))
-                  }
-                >
-                  <Button mt="sm" compact type="submit">
-                    {t('blockchain:wizard.form.submitBtn')}
-                  </Button>
-                </form>
-              </span>
-            ) : (
-              <span>
-                <Loader variant="dots" />
-                <Text size="md">
-                  {t('blockchain:wizard.form.waitBeet')}
-                </Text>
-              </span>
-            )}
-          </Paper>
-        </Col>
-        <Col span={12} key="SaveBox">
-          <Paper sx={{ padding: '5px' }} shadow="xs">
-            <span>
-              <Text size="sm">
-                {t('blockchain:wizard.form.saveDraftLabel')}
-              </Text>
-              <form
-                onSubmit={
+              <Col span={12} key="signatures">
+                <Paper sx={{ padding: '5px' }} shadow="xs">
+                  <Text size="md" align="center">{t('blockchain:wizard.form.sigHeader')}</Text>
+                  <Center mt="sm">
+                    <Radio.Group
+                      value={signedType}
+                      onChange={setSignedType}
+                      name="manualTypeRadioGroup"
+                      withAsterisk
+                      defaultValue={accountType === "BEET" ? "BEET" : "MANUAL"}
+                    >
+                      <Group>
+                        <Radio value="NONE" label="None" />
+                        {
+                          accountType === "BEET"
+                            ? <Radio value="BEET" label="Sign with BEET" />
+                            : null
+                        }
+                        <Radio value="MANUAL" label="Manual signature" />
+                      </Group>
+                    </Radio.Group>
+                  </Center>
+                  {signedType && signedType === "MANUAL" ? (
+                    <>
+                      <TextInput
+                        label={t('blockchain:wizard.form.pubkeyLabel')}
+                        placeholder={memo ?? form.values.sig_pubkey_or_address}
+                        {...form.getInputProps('sig_pubkey_or_address')}
+                      />
+                      {
+                        form.values.sig_pubkey_or_address
+                        && form.values.sig_pubkey_or_address.length
+                          ? (
+                            <>
+                              <Text size="sm" mt="sm" weight={500}>
+                                { t('blockchain:wizard.form.signedLabel') }
+                              </Text>
+                              <CopyButton value={JSON.stringify(generateNFTObj(form.values))}>
+                                {({ copied, copy }) => (
+                                  <Button color={copied ? 'teal' : 'blue'} onClick={copy} mt="xs">
+                                    {copied ? 'Copied string' : 'Copy string'}
+                                  </Button>
+                                )}
+                              </CopyButton>
+                              <TextInput
+                                label={t('blockchain:wizard.form.signatureLabel')}
+                                placeholder={t('blockchain:wizard.form.signaturePlaceholder')}
+                                {...form.getInputProps('signature')}
+                              />
+                            </>
+                          )
+                          : null
+                      }
+
+                    </>
+                  ) : null}
+                </Paper>
+              </Col>
+
+              <Col span={12} key="SubmitBox">
+                <Paper sx={{ padding: '5px' }} shadow="xs">
+                  {!inProgress ? (
+                    <span>
+                      <Text color="red" size="md">
+                        {t('blockchain:wizard.form.submitHeader')}
+                      </Text>
+                      <form
+                        onSubmit={
+                          form.onSubmit((values) => processForm(values))
+                        }
+                      >
+                        {
+                          signedType
+                          && signedType === "MANUAL"
+                          && (
+                            (
+                              !form.values.sig_pubkey_or_address
+                              || !form.values.sig_pubkey_or_address.length
+                            )
+                            || (
+                              !form.values.signature
+                              || !form.values.signature.length
+                            )
+                          )
+                            ? (
+                              <Button mt="sm" compact disabled>
+                                {t('blockchain:wizard.form.submitBtn')}
+                              </Button>
+                            )
+                            : (
+                              <Button mt="sm" compact type="submit">
+                                {t('blockchain:wizard.form.submitBtn')}
+                              </Button>
+                            )
+                        }
+
+                      </form>
+                    </span>
+                  ) : (
+                    <span>
+                      <Loader variant="dots" />
+                      <Text size="md">
+                        {t('blockchain:wizard.form.waitBeet')}
+                      </Text>
+                    </span>
+                  )}
+                </Paper>
+              </Col>
+              <Col span={12} key="SaveBox">
+                <Paper sx={{ padding: '5px' }} shadow="xs">
+                  <span>
+                    <Text size="sm">
+                      {t('blockchain:wizard.form.saveDraftLabel')}
+                    </Text>
+                    <form
+                      onSubmit={
                   form.onSubmit((values) => saveForm(values))
                 }
-              >
-                {
+                    >
+                      {
                   form.values.symbol
                     ? <Button mt="sm" compact type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
                     : <Button mt="sm" compact disabled type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
                 }
-              </form>
-              <Modal
-                opened={modalOpened}
-                onClose={() => setModalOpened(false)}
-                title={t('blockchain:wizard.form.modalTitle')}
-              >
-                <Container>
-                  <ScrollArea p="md">
-                    <Code block style={{ textAlign: 'left', maxWidth: '750px', wordBreak: 'break-all' }}>
-                      {
+                    </form>
+                    <Modal
+                      opened={modalOpened}
+                      onClose={() => setModalOpened(false)}
+                      title={t('blockchain:wizard.form.modalTitle')}
+                    >
+                      <Container>
+                        <ScrollArea p="md">
+                          <Code block style={{ textAlign: 'left', maxWidth: '750px', wordBreak: 'break-all' }}>
+                            {
                         modalOpened && modalContents
                           ? JSON.stringify(modalContents, undefined, 4)
                           : 'N/A'
                       }
-                    </Code>
-                  </ScrollArea>
-                </Container>
-              </Modal>
-              <form
-                onSubmit={
+                          </Code>
+                        </ScrollArea>
+                      </Container>
+                    </Modal>
+                    <form
+                      onSubmit={
                   form.onSubmit((values) => {
                     setModalOpened(true);
                     modalDisplay(values);
                   })
                 }
-              >
-                {
+                    >
+                      {
                   form.values.symbol
                     ? (
                       <Button
@@ -1126,44 +1168,44 @@ export default function Wizard(properties) {
                       </Button>
                     )
                 }
-              </form>
+                    </form>
+                  </span>
+                </Paper>
+              </Col>
             </span>
-          </Paper>
-        </Col>
-      </span>
-    );
-  } else if (broadcastResult) {
-    response = (
-      <Col span={12} key="Top">
-        <Paper sx={{ padding: '5px' }} shadow="xs">
-          <Text size="md">
-            {
-              t(
-                'blockchain:wizard.form.broadcastSuccess',
-                {
-                  action: mode === 'create'
-                    ? t('blockchain:wizard.form.broadcastActionCreate')
-                    : t('blockchain:wizard.form.broadcastActionUpdate'),
-                  network: environment === 'production' ? 'Bitshares' : 'BTS Testnet',
-                },
-              )
-            }
-          </Text>
-          <Button
-            onClick={() => {
-              back();
-            }}
-          >
-            {t('blockchain:wizard.back')}
-          </Button>
-        </Paper>
-      </Col>
-    );
-  }
-
-  return (
-    <Col span={12} key="Top">
-      {response}
+          )
+          : null
+      }
+      {
+        broadcastResult
+          ? (
+            <Col span={12} key="Top">
+              <Paper sx={{ padding: '5px' }} shadow="xs">
+                <Text size="md">
+                  {
+                      t(
+                        'blockchain:wizard.form.broadcastSuccess',
+                        {
+                          action: mode === 'create'
+                            ? t('blockchain:wizard.form.broadcastActionCreate')
+                            : t('blockchain:wizard.form.broadcastActionUpdate'),
+                          network: environment === 'production' ? 'Bitshares' : 'BTS Testnet',
+                        },
+                      )
+                    }
+                </Text>
+                <Button
+                  onClick={() => {
+                    back();
+                  }}
+                >
+                  {t('blockchain:wizard.back')}
+                </Button>
+              </Paper>
+            </Col>
+          )
+          : null
+      }
     </Col>
   );
 }

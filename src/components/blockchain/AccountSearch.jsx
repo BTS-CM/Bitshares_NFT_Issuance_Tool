@@ -23,6 +23,8 @@ export default function AccountSearch(properties) {
   const theme = useMantineTheme();
 
   const setAccount = appStore((state) => state.setAccount);
+  const chosenAccountMemo = appStore((state) => state.chosenAccountMemo);
+
   const nodes = appStore((state) => state.nodes);
   const goBack = appStore((state) => state.back);
 
@@ -161,6 +163,7 @@ export default function AccountSearch(properties) {
               key={`button.${result.name}`}
               onClick={() => {
                 chosenAccount(result.id);
+                chosenAccountMemo(result.options.memo_key);
               }}
             >
               {result.id}

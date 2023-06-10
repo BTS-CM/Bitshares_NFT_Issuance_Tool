@@ -10,37 +10,20 @@ function getImages(nft_object) {
       return;
     }
 
-    if (nft_object.media_png_multihashes || nft_object.media_PNG_multihashes) {
-      const multihashes = nft_object.media_png_multihashes || nft_object.media_PNG_multihashes;
-      resolve(multihashes.map((image) => ({ url: image.url, type: 'PNG' })));
-    }
-    if (nft_object.media_jpeg_multihashes || nft_object.media_JPEG_multihashes) {
-      const multihashes = nft_object.media_jpeg_multihashes || nft_object.media_JPEG_multihashes;
-      resolve(multihashes.map((image) => ({ url: image.url, type: 'JPEG' })));
-    }
-    if (nft_object.media_gif_multihashes || nft_object.media_GIF_multihashes) {
-      const multihashes = nft_object.media_gif_multihashes || nft_object.media_GIF_multihashes;
-      resolve(multihashes.map((image) => ({ url: image.url, type: 'GIF' })));
-    }
-    if (nft_object.media_png_multihash || nft_object.media_PNG_multihash) {
-      resolve({
-        url: [nft_object.media_png_multihash || nft_object.media_PNG_multihash],
-        type: 'PNG',
-      });
-    }
-    if (nft_object.media_jpeg_multihash || nft_object.media_JPEG_multihash) {
-      resolve({
-        url: [nft_object.media_jpeg_multihash || nft_object.media_JPEG_multihash],
-        type: 'JPEG',
-      });
-    }
-    if (nft_object.media_gif_multihash || nft_object.media_GIF_multihash) {
-      resolve({
-        url: [nft_object.media_gif_multihash || nft_object.media_GIF_multihash],
-        type: 'GIF',
-      });
-    }
-    resolve();
+    const multihashKeys = Object.keys(nft_object)
+      .filter((key) => (key.includes("media_") && key.includes("_multihashes")) || key.includes("_multihash"));
+
+    resolve(
+      multihashKeys.map((key) => {
+        const current = nft_object[key];
+        const type = key.split("_")[1].toUpperCase();
+        const array = key.split("_")[2].includes("multihashes");
+        if (array) {
+          return current.map((image) => ({ url: image.url, type }));
+        }
+        return { url: current, type };
+      }).flat(),
+    );
   });
 }
 

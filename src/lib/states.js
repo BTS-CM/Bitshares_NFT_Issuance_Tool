@@ -119,6 +119,7 @@ const appStore = create((set, get) => ({
   asset: null,
   initialValues: null, // sending draft to wizard
   account: null,
+  memo: null,
   accountType: null,
   asset_images: null,
   changing_images: false,
@@ -187,6 +188,7 @@ const appStore = create((set, get) => ({
     });
   },
   setAccount: (newAccount) => set({ account: newAccount }),
+  chosenAccountMemo: (newMemo) => set({ memo: newMemo }),
   setAccountType: (newAccountType) => set({ accountType: newAccountType }),
   setAssetImages: (images) => set({ asset_images: images }),
   fetchAssets: async (asset_ids) => {

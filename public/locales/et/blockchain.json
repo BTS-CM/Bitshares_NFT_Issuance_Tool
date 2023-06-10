@@ -77,9 +77,10 @@
       "licenseLabel": "NFT litsents",
       "licensePlaceholder": "Litsents",
       "sigHeader": "Valikuline allkirjatõend",
-      "signedLabel": "Signeeritud tekst",
+      "pubkeyLabel": "Esitage allkirjastatavasse stringi lisamiseks avalik võti",
+      "signedLabel": "Allkirjastage järgmine tekst ülaltoodud avaliku võtmega seotud privaatvõtmega",
       "signedPlaceholder": "tekst",
-      "signatureLabel": "Arvutatud allkiri",
+      "signatureLabel": "Esitage käsitsi arvutatud allkiri",
       "signaturePlaceholder": "allkiri",
       "cerHeader": "Põhivahetuskurss",
       "cerbaLabel": "Baassumma",
@@ -118,11 +119,11 @@
       "broadcastActionUpdate": "uuendatud"
     },
     "choice": "Kuidas soovite edasi minna?",
-    "confirmation": "Loodi Airdrop JSON",
+    "confirmation": "JSON loodud",
     "download1": "1. Käivitage BEET rahakott ja navigeerige menüüs jaotisse „Kohalik”.",
     "download2": "2. Laadige lehelt BEET Local üles järgmine JSON-fail, peaks ilmuma viip.",
-    "download3": "3. Kontrollige enne õhulanguse kinnitamist viipa sisu.",
-    "downloadButton": "Laadige alla airdrop JSON"
+    "download3": "3. Enne toimingu kinnitamist kontrollige viipa sisu.",
+    "downloadButton": "Laadige alla JSON-fail"
   },
   "issueNFT": {
     "form": {

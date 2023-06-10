@@ -77,9 +77,10 @@
       "licenseLabel": "Licença NFT",
       "licensePlaceholder": "Licença",
       "sigHeader": "Prova de assinatura opcional",
-      "signedLabel": "texto assinado",
+      "pubkeyLabel": "Forneça uma chave pública para inclusão na string que está sendo assinada",
+      "signedLabel": "Assine o seguinte texto com a chave privada associada à chave pública acima",
       "signedPlaceholder": "texto",
-      "signatureLabel": "Assinatura computada",
+      "signatureLabel": "Forneça a assinatura computada manualmente",
       "signaturePlaceholder": "assinatura",
       "cerHeader": "Taxa de Câmbio Central",
       "cerbaLabel": "Valor base",
@@ -118,11 +119,11 @@
       "broadcastActionUpdate": "Atualizada"
     },
     "choice": "Como você deseja proceder?",
-    "confirmation": "Airdrop JSON gerado",
+    "confirmation": "JSON gerado",
     "download1": "1. Inicie a carteira BEET e navegue até 'Local' no menu.",
     "download2": "2. Na página BEET Local, carregue o seguinte arquivo JSON, um prompt deve aparecer.",
-    "download3": "3. Verifique o conteúdo do prompt antes de aprovar o airdrop.",
-    "downloadButton": "Baixar airdrop JSON"
+    "download3": "3. Verifique o conteúdo do prompt antes de aprovar a operação.",
+    "downloadButton": "Baixar arquivo JSON"
   },
   "issueNFT": {
     "form": {

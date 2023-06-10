@@ -77,9 +77,10 @@
       "licenseLabel": "NFT-licens",
       "licensePlaceholder": "Licens",
       "sigHeader": "Valgfri signaturbevis",
-      "signedLabel": "Signeret tekst",
+      "pubkeyLabel": "Angiv en offentlig nøgle til medtagelse i strengen, der signeres",
+      "signedLabel": "Underskriv følgende tekst med den private nøgle, der er knyttet til ovenstående offentlige nøgle",
       "signedPlaceholder": "tekst",
-      "signatureLabel": "Beregnet signatur",
+      "signatureLabel": "Angiv den manuelt beregnede signatur",
       "signaturePlaceholder": "Underskrift",
       "cerHeader": "Kernekurs",
       "cerbaLabel": "Grundbeløb",
@@ -118,11 +119,11 @@
       "broadcastActionUpdate": "opdateret"
     },
     "choice": "Hvordan vil du gå videre?",
-    "confirmation": "Airdrop JSON genereret",
+    "confirmation": "JSON genereret",
     "download1": "1. Start BEET-pungen og naviger til 'Lokal' i menuen.",
     "download2": "2. Fra BEET Local-siden skal du uploade følgende JSON-fil, en prompt skulle vises.",
-    "download3": "3. Bekræft promptens indhold, før du godkender airdrop.",
-    "downloadButton": "Download airdrop JSON"
+    "download3": "3. Bekræft promptens indhold, før du godkender handlingen.",
+    "downloadButton": "Download JSON-fil"
   },
   "issueNFT": {
     "form": {

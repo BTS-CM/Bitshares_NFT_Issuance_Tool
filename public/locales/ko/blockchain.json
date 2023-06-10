@@ -77,9 +77,10 @@
       "licenseLabel": "NFT 라이선스",
       "licensePlaceholder": "특허",
       "sigHeader": "선택적 서명 증명",
-      "signedLabel": "서명된 텍스트",
+      "pubkeyLabel": "서명 중인 문자열에 포함할 공개 키를 제공하십시오.",
+      "signedLabel": "위의 공개 키와 연결된 개인 키로 다음 텍스트에 서명하십시오.",
       "signedPlaceholder": "텍스트",
-      "signatureLabel": "계산된 서명",
+      "signatureLabel": "수동으로 계산된 서명 제공",
       "signaturePlaceholder": "서명",
       "cerHeader": "핵심환율",
       "cerbaLabel": "기본 금액",
@@ -118,11 +119,11 @@
       "broadcastActionUpdate": "업데이트"
     },
     "choice": "어떻게 진행하시겠습니까?",
-    "confirmation": "에어드롭 JSON 생성",
+    "confirmation": "JSON 생성",
     "download1": "1. BEET 지갑을 실행하고 메뉴에서 '로컬'로 이동합니다.",
     "download2": "2. BEET 로컬 페이지에서 다음 JSON 파일을 업로드하면 프롬프트가 나타납니다.",
-    "download3": "3. 에어드롭을 승인하기 전에 프롬프트의 내용을 확인하십시오.",
-    "downloadButton": "에어드롭 JSON 다운로드"
+    "download3": "3. 작업을 승인하기 전에 프롬프트의 내용을 확인하십시오.",
+    "downloadButton": "JSON 파일 다운로드"
   },
   "issueNFT": {
     "form": {

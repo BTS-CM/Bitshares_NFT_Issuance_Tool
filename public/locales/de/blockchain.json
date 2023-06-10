@@ -77,9 +77,10 @@
       "licenseLabel": "NFT-Lizenz",
       "licensePlaceholder": "Lizenz",
       "sigHeader": "Optionaler Signaturnachweis",
-      "signedLabel": "Signierter Text",
+      "pubkeyLabel": "Geben Sie einen öffentlichen Schlüssel zur Aufnahme in die zu signierende Zeichenfolge an",
+      "signedLabel": "Signieren Sie den folgenden Text mit dem privaten Schlüssel, der dem oben genannten öffentlichen Schlüssel zugeordnet ist",
       "signedPlaceholder": "Text",
-      "signatureLabel": "Berechnete Signatur",
+      "signatureLabel": "Geben Sie die manuell berechnete Signatur an",
       "signaturePlaceholder": "Unterschrift",
       "cerHeader": "Kernwechselkurs",
       "cerbaLabel": "Grundbetrag",
@@ -118,11 +119,11 @@
       "broadcastActionUpdate": "Aktualisiert"
     },
     "choice": "Wie wollen Sie fortfahren?",
-    "confirmation": "Airdrop JSON generiert",
+    "confirmation": "JSON generiert",
     "download1": "1. Starten Sie die BEET-Wallet und navigieren Sie im Menü zu „Lokal“.",
     "download2": "2. Laden Sie auf der BEET Local-Seite die folgende JSON-Datei hoch. Es sollte eine Eingabeaufforderung angezeigt werden.",
-    "download3": "3. Überprüfen Sie den Inhalt der Eingabeaufforderung, bevor Sie den Airdrop genehmigen.",
-    "downloadButton": "Laden Sie Airdrop JSON herunter"
+    "download3": "3. Überprüfen Sie den Inhalt der Eingabeaufforderung, bevor Sie den Vorgang genehmigen.",
+    "downloadButton": "Laden Sie die JSON-Datei herunter"
   },
   "issueNFT": {
     "form": {

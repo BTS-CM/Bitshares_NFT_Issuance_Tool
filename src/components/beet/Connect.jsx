@@ -19,6 +19,7 @@ export default function Connect(properties) {
 
   const setMode = appStore((state) => state.setMode);
   const setAccountType = appStore((state) => state.setAccountType);
+  const chosenAccountMemo = appStore((state) => state.setMode);
 
   const environment = appStore((state) => state.environment);
   const setEnvironment = appStore((state) => state.setEnvironment);
@@ -78,7 +79,7 @@ export default function Connect(properties) {
     }
 
     setIdentity(identity);
-    // setIsLinked(true);
+    chosenAccountMemo();
     setIdentities(identity);
     setInProgress(false);
   }

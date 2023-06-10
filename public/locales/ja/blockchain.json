@@ -77,9 +77,10 @@
       "licenseLabel": "NFTライセンス",
       "licensePlaceholder": "ライセンス",
       "sigHeader": "オプションの署名証明",
-      "signedLabel": "署名付きテキスト",
+      "pubkeyLabel": "署名される文字列に含める公開キーを提供します",
+      "signedLabel": "上記の公開鍵に関連付けられた秘密鍵を使用して、次のテキストに署名します。",
       "signedPlaceholder": "文章",
-      "signatureLabel": "計算された署名",
+      "signatureLabel": "手動で計算された署名を提供します",
       "signaturePlaceholder": "サイン",
       "cerHeader": "コア為替レート",
       "cerbaLabel": "基本額",
@@ -118,11 +119,11 @@
       "broadcastActionUpdate": "更新しました"
     },
     "choice": "どのように進めたいですか?",
-    "confirmation": "Airdrop JSON が生成されました",
+    "confirmation": "JSON が生成されました",
     "download1": "1. BEET ウォレットを起動し、メニューの「ローカル」に移動します。",
     "download2": "2. BEET ローカル ページから次の JSON ファイルをアップロードすると、プロンプトが表示されます。",
-    "download3": "3. エアドロップを承認する前に、プロンプトの内容を確認します。",
-    "downloadButton": "エアドロップ JSON をダウンロード"
+    "download3": "3. 操作を承認する前に、プロンプトの内容を確認します。",
+    "downloadButton": "JSONファイルをダウンロード"
   },
   "issueNFT": {
     "form": {

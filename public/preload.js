@@ -67,7 +67,17 @@ async function _testConnection(url) {
 
     const socket = new Socket(url);
 
-    socket.on('connect', () => _exitTest(true, socket));
+    socket.on('connect', () => {
+      socket.send('{"method": "call", "params": [1, "database", []], "id": 3}');
+      socket.on('data', (data) => {
+        const socketResponse = JSON.parse(data.toString());
+        if (socketResponse.result !== 2) {
+          // database not available
+          return _exitTest(false, socket);
+        }
+        return _exitTest(true, socket);
+      });
+    });
 
     socket.on('error', (error) => _exitTest(false, socket));
 

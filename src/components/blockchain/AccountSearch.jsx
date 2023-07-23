@@ -15,27 +15,22 @@ import {
 import { TbInputSearch, TbArrowNarrowRight } from "react-icons/tb";
 import { useTranslation } from 'react-i18next';
 
-import { appStore } from '../../lib/states';
+import { appStore, tempStore } from '../../lib/states';
 import { accountSearch } from '../../lib/directQueries';
 
 export default function AccountSearch(properties) {
   const { t, i18n } = useTranslation();
   const theme = useMantineTheme();
 
-  const setAccount = appStore((state) => state.setAccount);
-  const chosenAccountMemo = appStore((state) => state.chosenAccountMemo);
-
+  const setAccount = tempStore((state) => state.setAccount);
+  const chosenAccountMemo = tempStore((state) => state.chosenAccountMemo);
+  const environment = appStore((state) => state.environment);
   const nodes = appStore((state) => state.nodes);
-  const goBack = appStore((state) => state.back);
 
   const [searchInput, setSearchInput] = useState();
   const [inProgress, setInProgress] = useState(false);
   const [result, setResult] = useState();
   const [attempted, setAttempted] = useState();
-
-  function back() {
-    goBack();
-  }
 
   /**
    * @param {Object} account
@@ -49,14 +44,14 @@ export default function AccountSearch(properties) {
     setInProgress(true);
     setResult();
 
-    if (!nodes || !nodes.length) {
+    if (!nodes || !nodes[environment] || !nodes[environment].length) {
       console.log('No connected nodes');
       return;
     }
 
     let searchResult;
     try {
-      searchResult = await accountSearch(nodes[0], searchInput);
+      searchResult = await accountSearch(nodes[environment][0], searchInput);
     } catch (error) {
       console.log(error);
       setInProgress(false);

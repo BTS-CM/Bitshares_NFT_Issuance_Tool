@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "메뉴",
+      "label": "메인 메뉴",
+      "home": "집",
+      "language": "언어",
+      "createNFT": "NFT 만들기",
+      "editNFT": "NFT 편집",
+      "loadDraft": "초안 로드",
+      "issueNFT": "NFT 발행",
+      "upgradeAccount": "업그레이드 계정",
+      "faq": "자주하는 질문",
+      "changeNodes": "노드 변경"
+    }
+  }

@@ -1,0 +1,35 @@
+{
+    "how_airdrop": {
+      "control": "¿Cómo realizo un airdrop?",
+      "panel": "Obtenga los boletos de la cadena de bloques, calcule un airdrop contra un número de bloque, verifique el contenido del airdrop en la página de análisis y luego comience el airdrop a través de la página de ejecución del airdrop. "
+    },
+    "create": {
+      "control": "¿Cómo creo un NFT?",
+      "panel": "Esta herramienta le permite crear un NFT con su cuenta de Bitshares. "
+    },
+    "edit": {
+      "control": "¿Cómo edito un NFT?",
+      "panel": "Esta herramienta permite al emisor/propietario de un NFT editar sus NFT. "
+    },
+    "draft": {
+      "control": "¿Qué son los giros NFT?",
+      "panel": "Puede guardar su progreso en la página 'Crear NFT', lo que le permite trabajar en NFT planificados a lo largo del tiempo. "
+    },
+    "issue": {
+      "control": "¿Cómo puedo emitir un NFT en cuentas individuales?",
+      "panel": "Puede emitir un NFT en cuentas individuales utilizando la página 'Emitir NFT'. "
+    },
+    "airdrop": {
+      "control": "¿Cómo envío mi NFT emitido a muchas cuentas?",
+      "panel": "Puede crear fácilmente airdrops NFT a gran escala utilizando la herramienta Bitshares Airdrop, esta herramienta está vinculada en el pie de página de la aplicación."
+    },
+    "beet": {
+      "control": "¿Qué es la billetera Beet?",
+      "panel": "La billetera BEET es una billetera criptográfica de múltiples cadenas de bloques, se utiliza para manejar de forma segura la autenticación y la transmisión de transacciones en la red."
+    },
+    "blockchains": {
+      "control": "¿Qué cadenas de bloques son compatibles?",
+      "panel": "Actualmente, solo se admite la cadena de bloques de Bitshares; sin embargo, esta herramienta es completamente de código abierto en github."
+    },
+    "title": "Preguntas frecuentes"
+  }

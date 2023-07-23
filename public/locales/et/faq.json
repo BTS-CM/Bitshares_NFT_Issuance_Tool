@@ -1,0 +1,35 @@
+{
+    "how_airdrop": {
+      "control": "Kuidas õhutilku sooritada?",
+      "panel": "Tõmmake plokiahela piletid, arvutage airdrop ploki numbri alusel, kontrollige analüüsilehel airdropi sisu ja alustage seejärel airdropi täitmislehe kaudu. "
+    },
+    "create": {
+      "control": "Kuidas luua NFT-d?",
+      "panel": "See tööriist võimaldab teil luua oma Bitsharesi kontoga NFT. "
+    },
+    "edit": {
+      "control": "Kuidas muuta NFT-d?",
+      "panel": "See tööriist võimaldab NFT väljaandjal/omanikul oma NFT-sid redigeerida. "
+    },
+    "draft": {
+      "control": "Mis on NFT mustandid?",
+      "panel": "Saate salvestada oma edusammud lehel \"NFT loomine\", mis võimaldab teil aja jooksul kavandatud NFT-dega töötada. "
+    },
+    "issue": {
+      "control": "Kuidas ma saan individuaalsetele kontodele NFT-d väljastada?",
+      "panel": "Saate individuaalsetele kontodele NFT-d väljastada, kasutades lehte „NFT väljastamine”. "
+    },
+    "airdrop": {
+      "control": "Kuidas saadan väljastatud NFT-d paljudele kontodele?",
+      "panel": "Bitshares Airdrop Tooli abil saate hõlpsasti luua suuremahulisi NFT õhupilte, see tööriist on lingitud rakenduse jaluses."
+    },
+    "beet": {
+      "control": "Mis on Beet rahakott?",
+      "panel": "BEET rahakott on mitme plokiahelaga krüptorahakott, mida kasutatakse autentimise ja tehingute võrguedastuse turvaliseks haldamiseks."
+    },
+    "blockchains": {
+      "control": "Milliseid plokiahelaid toetatakse?",
+      "panel": "Praegu toetatakse ainult Bitsharesi plokiahelat, kuid see tööriist on Githubis täielikult avatud lähtekoodiga."
+    },
+    "title": "Korduma kippuvad küsimused"
+  }

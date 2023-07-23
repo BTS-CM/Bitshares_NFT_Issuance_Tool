@@ -1,0 +1,27 @@
+{
+    "create": {
+      "environment": "NFT를 생성하려는 블록체인을 선택합니다.",
+      "offline": "자산을 생성하려면 노드를 구성하십시오!",
+      "account": "NFT를 생성할 계정을 선택하세요.",
+      "images": "NFT용 이미지 제공"
+    },
+    "edit": {
+      "environment": "NFT를 편집하려는 블록체인을 선택합니다.",
+      "offline": "NFT를 편집하려면 노드를 구성하십시오!",
+      "account": "NFT를 편집할 계정을 선택합니다.",
+      "asset": "편집할 자산을 선택합니다."
+    },
+    "issue": {
+      "environment": "NFT를 발행할 블록체인을 선택하십시오.",
+      "offline": "NFT를 발행하려면 노드를 구성하십시오!",
+      "account": "NFT를 발행할 계정을 선택하십시오."
+    },
+    "upgrade": {
+      "environment": "계정을 업그레이드할 블록체인을 선택하십시오.",
+      "offline": "계정을 업그레이드하려면 노드를 구성하십시오!",
+      "account": "어떤 계정을 업그레이드하시겠습니까?"
+    },
+    "load": {
+      "environment": "NFT 초안을 로드하려는 블록체인을 선택합니다."
+    }
+  }

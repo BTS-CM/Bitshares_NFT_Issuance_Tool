@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "เมนู",
+      "label": "เมนูหลัก",
+      "home": "บ้าน",
+      "language": "ภาษา",
+      "createNFT": "สร้างเอ็นเอฟที",
+      "editNFT": "แก้ไข NFT",
+      "loadDraft": "โหลดแบบร่าง",
+      "issueNFT": "ออก NFT",
+      "upgradeAccount": "อัปเกรดบัญชี",
+      "faq": "คำถามที่พบบ่อย",
+      "changeNodes": "เปลี่ยนโหนด"
+    }
+  }

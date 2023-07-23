@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "Cardápio",
+      "label": "Menu principal",
+      "home": "Lar",
+      "language": "Linguagem",
+      "createNFT": "Criar NFT",
+      "editNFT": "Editar NFT",
+      "loadDraft": "Carregar rascunho",
+      "issueNFT": "Emitir NFT",
+      "upgradeAccount": "Atualizar conta",
+      "faq": "Perguntas frequentes",
+      "changeNodes": "Alterar nós"
+    }
+  }

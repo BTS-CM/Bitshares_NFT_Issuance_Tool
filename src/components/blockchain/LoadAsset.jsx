@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import {
   Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { appStore, identitiesStore } from '../../lib/states';
+import { appStore, identitiesStore, tempStore } from '../../lib/states';
 
 export default function LoadAsset(properties) {
   const { t, i18n } = useTranslation();
-  const setMode = appStore((state) => state.setMode);
   const drafts = identitiesStore((state) => state.drafts);
-  const setInitialValues = appStore((state) => state.setInitialValues);
   const eraseDraft = identitiesStore((state) => state.eraseDraft);
-  const setAssetImages = appStore((state) => state.setAssetImages);
-
-  function goBack() {
-    setMode();
-  }
+  const setAssetImages = tempStore((state) => state.setAssetImages);
+  const setInitialValues = tempStore((state) => state.setInitialValues);
 
   let topText;
   if (!drafts || !drafts.length) {
@@ -42,18 +38,19 @@ export default function LoadAsset(properties) {
   const buttonList = drafts && drafts.length
     ? drafts.map((initialValues) => (
       <Group spacing="xs" key={`button.${initialValues.values.symbol}`}>
-        <Button
-          compact
-          sx={{ margin: '2px' }}
-          variant="outline"
-          onClick={() => {
-            setMode('create');
-            setInitialValues(initialValues.values);
-            setAssetImages(initialValues.asset_images);
-          }}
-        >
-          {initialValues.values.symbol}
-        </Button>
+        <Link style={{ textDecoration: 'none' }} to="/createNFT/edit">
+          <Button
+            compact
+            sx={{ margin: '2px' }}
+            variant="outline"
+            onClick={() => {
+              setInitialValues(initialValues.values);
+              setAssetImages(initialValues.asset_images);
+            }}
+          >
+            {initialValues.values.symbol}
+          </Button>
+        </Link>
         <Button
           compact
           variant="outline"
@@ -78,16 +75,15 @@ export default function LoadAsset(properties) {
           </SimpleGrid>
         </Box>
       </Paper>
-      <Button
-        mt="sm"
-        compact
-        sx={{ marginTop: '15px' }}
-        onClick={() => {
-          goBack();
-        }}
-      >
-        {t('blockchain:loadAsset.back')}
-      </Button>
+      <Link style={{ textDecoration: 'none' }} to="/">
+        <Button
+          mt="sm"
+          compact
+          sx={{ marginTop: '15px' }}
+        >
+          {t('blockchain:loadAsset.back')}
+        </Button>
+      </Link>
     </Col>
   );
 }

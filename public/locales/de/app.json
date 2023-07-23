@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "Speisekarte",
+      "label": "Hauptmenü",
+      "home": "Heim",
+      "language": "Sprache",
+      "createNFT": "NFT erstellen",
+      "editNFT": "NFT bearbeiten",
+      "loadDraft": "Entwurf laden",
+      "issueNFT": "NFT ausgeben",
+      "upgradeAccount": "Konto aktualisieren",
+      "faq": "FAQ",
+      "changeNodes": "Knoten ändern"
+    }
+  }

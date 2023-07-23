@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   TextInput,
   Checkbox,
@@ -24,7 +25,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 
-import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import { appStore, beetStore, identitiesStore, tempStore } from '../../lib/states';
 import { getPermissions, getFlags, getFlagBooleans } from '../../lib/permissions';
 import { broadcastOperation } from '../../lib/broadcasts';
 import { generateDeepLink } from '../../lib/generate';
@@ -35,25 +36,22 @@ function openLink() {
 
 export default function Wizard(properties) {
   const { t, i18n } = useTranslation();
-  const { userID } = properties;
+  const { userID, mode } = properties;
 
-  const accountType = appStore((state) => state.accountType);
-  const memo = appStore((state) => state.memo);
-
-  const connection = beetStore((state) => state.connection);
-  const asset = appStore((state) => state.asset);
-  const asset_images = appStore((state) => state.asset_images);
-
-  const initialFormValues = appStore((state) => state.initialValues);
-
-  const back = appStore((state) => state.back);
+  const account = tempStore((state) => state.account);
+  const accountType = tempStore((state) => state.accountType);
+  const memo = tempStore((state) => state.memo);
+  const asset = tempStore((state) => state.asset);
+  const asset_images = tempStore((state) => state.asset_images);
+  const initialFormValues = tempStore((state) => state.initialValues);
+  const setChangingImages = tempStore((state) => state.setChangingImages);
 
   const environment = appStore((state) => state.environment);
-  const mode = appStore((state) => state.mode);
-  const wsURL = appStore((state) => state.nodes[0]);
+  const nodes = appStore((state) => state.nodes);
+  const wsURL = nodes[environment][0];
 
+  const connection = beetStore((state) => state.connection);
   const setDrafts = identitiesStore((state) => state.setDrafts);
-  const setChangingImages = appStore((state) => state.setChangingImages);
 
   const [broadcastResult, setBroadcastResult] = useState();
   const [inProgress, setInProgress] = useState(false);
@@ -294,7 +292,7 @@ export default function Wizard(properties) {
         try {
           generatedLocalContents = await generateDeepLink(
             'nft_creator',
-            environment === "production" ? "BTS" : "BTS_TEST",
+            environment === "bitshares" ? "BTS" : "BTS_TEST",
             wsURL,
             mode === 'create'
               ? 'asset_create'
@@ -549,14 +547,11 @@ export default function Wizard(properties) {
         }
 
               <br />
-              <Button
-                variant="light"
-                onClick={() => {
-                  back();
-                }}
-              >
-                {t('blockchain:wizard.back')}
-              </Button>
+              <Link style={{ textDecoration: 'none' }} to="/">
+                <Button variant="light">
+                  {t('blockchain:wizard.back')}
+                </Button>
+              </Link>
             </span>
           )
           : null
@@ -587,13 +582,11 @@ export default function Wizard(properties) {
                   >
                     {t('blockchain:wizard.form.spec')}
                   </Button>
-                  <Button
-                    onClick={() => {
-                      back();
-                    }}
-                  >
-                    {t('blockchain:wizard.back')}
-                  </Button>
+                  <Link style={{ textDecoration: 'none' }} to="/">
+                    <Button variant="light">
+                      {t('blockchain:wizard.back')}
+                    </Button>
+                  </Link>
                 </Paper>
               </Col>
               <Col span={12} key="ImageDetails">
@@ -1112,14 +1105,14 @@ export default function Wizard(properties) {
                     </Text>
                     <form
                       onSubmit={
-                  form.onSubmit((values) => saveForm(values))
-                }
+                        form.onSubmit((values) => saveForm(values))
+                      }
                     >
                       {
-                  form.values.symbol
-                    ? <Button mt="sm" compact type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
-                    : <Button mt="sm" compact disabled type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
-                }
+                        form.values.symbol
+                          ? <Button mt="sm" compact type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
+                          : <Button mt="sm" compact disabled type="submit">{t('blockchain:wizard.form.saveBtn')}</Button>
+                      }
                     </form>
                     <Modal
                       opened={modalOpened}
@@ -1189,18 +1182,16 @@ export default function Wizard(properties) {
                           action: mode === 'create'
                             ? t('blockchain:wizard.form.broadcastActionCreate')
                             : t('blockchain:wizard.form.broadcastActionUpdate'),
-                          network: environment === 'production' ? 'Bitshares' : 'BTS Testnet',
+                          network: environment === 'bitshares' ? 'Bitshares' : 'BTS Testnet',
                         },
                       )
                     }
                 </Text>
-                <Button
-                  onClick={() => {
-                    back();
-                  }}
-                >
-                  {t('blockchain:wizard.back')}
-                </Button>
+                <Link style={{ textDecoration: 'none' }} to="/">
+                  <Button variant="light">
+                    {t('blockchain:wizard.back')}
+                  </Button>
+                </Link>
               </Paper>
             </Col>
           )

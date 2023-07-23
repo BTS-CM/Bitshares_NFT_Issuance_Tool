@@ -1,0 +1,35 @@
+{
+    "how_airdrop": {
+      "control": "Hvordan udfører jeg en airdrop?",
+      "panel": "Hent blockchain-billetterne, beregn et airdrop mod et bloknummer, bekræft indholdet af airdrop på analysesiden, og begynd derefter airdrop via airdrop-udførelsessiden. "
+    },
+    "create": {
+      "control": "Hvordan opretter jeg en NFT?",
+      "panel": "Dette værktøj giver dig mulighed for at oprette en NFT med din Bitshares-konto. "
+    },
+    "edit": {
+      "control": "Hvordan redigerer jeg en NFT?",
+      "panel": "Dette værktøj gør det muligt for udstederen/ejeren af ​​en NFT at redigere deres NFT'er. "
+    },
+    "draft": {
+      "control": "Hvad er NFT-udkast?",
+      "panel": "Du kan gemme dine fremskridt på siden 'Opret NFT', så du kan arbejde på planlagte NFT'er over tid. "
+    },
+    "issue": {
+      "control": "Hvordan kan jeg udstede en NFT på individuelle konti?",
+      "panel": "Du kan udstede en NFT på individuelle konti ved at bruge siden 'Udsted NFT'. "
+    },
+    "airdrop": {
+      "control": "Hvordan sender jeg min udstedte NFT til mange konti?",
+      "panel": "Du kan nemt oprette store NFT-airdrop ved hjælp af Bitshares Airdrop-værktøjet, dette værktøj er linket i applikationens sidefod."
+    },
+    "beet": {
+      "control": "Hvad er Beet-pungen?",
+      "panel": "BEET-pungen er en multi blockchain-crypto-pung, den bruges til sikkert at håndtere godkendelse og netværksudsendelse af transaktioner."
+    },
+    "blockchains": {
+      "control": "Hvilke blockchains understøttes?",
+      "panel": "I øjeblikket understøttes kun Bitshares blockchain, men dette værktøj er fuldt open source på github."
+    },
+    "title": "Ofte stillede spørgsmål"
+  }

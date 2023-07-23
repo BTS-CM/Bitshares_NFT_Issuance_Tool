@@ -1,0 +1,72 @@
+{
+  "title": "Trasmissione alla blockchain",
+  "askBEET": "Inizia a trasmettere a BEET",
+  "menu": {
+    "title": "Come vuoi procedere?",
+    "beet": "BARBABIETOLA",
+    "deeplink": "Collegamento diretto",
+    "local": "File locale",
+    "json": "Visualizza JSON",
+    "qr": "QR Code",
+    "back": "Torna indietro"
+  },
+  "beet": {
+    "text": "Operazione pronta per la trasmissione al portafoglio BEET",
+    "init": "Pronto a comunicare con BEET"
+  },
+  "qr": {
+    "ecl": "Livello di correzione degli errori",
+    "size": "Dimensione del codice QR",
+    "padding": "Imbottitura",
+    "style": "Stile punto",
+    "bgc": "Colore di sfondo",
+    "fgc": "Colore di primo piano"
+  },
+  "deeplink": {
+    "noDL": {
+      "title": "Tramite deeplink crudo di barbabietola",
+      "step1": "Avvia il portafoglio BEET e vai a \"Raw Link\" nel menu.",
+      "step2": "Da questa pagina è possibile consentire tutte le operazioni o consentire solo l'operazione {{opNum}} '{{opName}}' (quindi fare clic su Salva).",
+      "step3": "Una volta che \"Pronto per i collegamenti grezzi\" viene visualizzato in Beet, invia questa richiesta.",
+      "label": "Inserisci il tuo ID account",
+      "btn": "Genera deeplink non elaborato"
+    },
+    "DL": {
+      "title": "Deeplink non elaborato generato",
+      "step1": "Il tuo deeplink BEET è stato generato, fai clic sul pulsante per procedere.",
+      "step2": "Verrà visualizzato un prompt BEET, verificare i contenuti quindi approvare il prompt di creazione del ticket.",
+      "step3": "Vai alla pagina \"Recupera ticket\" per scaricare il tuo ticket per l'analisi.",
+      "beetBTN": "Trasmesso a BEET",
+      "back": "Indietro"
+    }
+  },
+  "local": {
+    "noGen": {
+      "title": "Tramite caricamento file locale",
+      "step1": "1. Avvia il portafoglio BEET e vai a \"Locale\" nel menu.",
+      "step2": "2. In questa pagina consentire tutto o consentire solo il funzionamento {{opNum}} '{{opName}}'.",
+      "step3": "3. Una volta nella pagina di caricamento locale, fare clic sul pulsante in basso per procedere.",
+      "btn": "Genera file JSON airdrop"
+    },
+    "generated": {
+      "title": "File JSON locale generato",
+      "step1": "1. Il tuo file JSON locale è stato generato, fai clic sul pulsante per scaricarlo.",
+      "step2": "2. Dalla pagina BEET Local, carica il file JSON, dovrebbe apparire un prompt.",
+      "step3": "3. Verificare il contenuto del prompt prima di approvare le operazioni.",
+      "beetBTN": "Scarica il file JSON"
+    }
+  },
+  "JSON": {
+    "view": "Visualizza JSON"
+  },
+  "outcomes": {
+    "success": {
+      "text": "Trasmissione riuscita alla blockchain!",
+      "btn": "Vicino"
+    },
+    "failure": {
+      "text": "Il prompt non è riuscito a trasmettere alla blockchain.",
+      "btn": "Riprova"
+    }
+  }
+}

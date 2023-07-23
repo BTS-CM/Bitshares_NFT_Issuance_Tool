@@ -1,0 +1,27 @@
+{
+    "create": {
+      "environment": "Vælg den blockchain, du vil oprette en NFT på.",
+      "offline": "For at oprette et aktiv skal du konfigurere dine noder!",
+      "account": "Vælg den konto, du vil oprette en NFT med.",
+      "images": "Giv billederne til din NFT"
+    },
+    "edit": {
+      "environment": "Vælg den blockchain, du vil redigere en NFT på.",
+      "offline": "For at redigere en NFT skal du konfigurere dine noder!",
+      "account": "Vælg den konto, du vil redigere en NFT med.",
+      "asset": "Vælg det aktiv, du vil redigere."
+    },
+    "issue": {
+      "environment": "Vælg den blockchain, du vil udstede en NFT på.",
+      "offline": "For at udstede en NFT skal du konfigurere dine noder!",
+      "account": "Vælg den konto, du vil udstede en NFT med."
+    },
+    "upgrade": {
+      "environment": "Vælg den blockchain, du vil opgradere din konto på.",
+      "offline": "For at opgradere din konto skal du konfigurere dine noder!",
+      "account": "Hvilken konto vil du opgradere?"
+    },
+    "load": {
+      "environment": "Vælg den blockchain, du vil indlæse et NFT-udkast til."
+    }
+  }

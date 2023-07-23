@@ -1,0 +1,27 @@
+{
+    "create": {
+      "environment": "Escolha o blockchain no qual você deseja criar um NFT.",
+      "offline": "Para criar um ativo, configure seus nós!",
+      "account": "Escolha a conta com a qual deseja criar um NFT.",
+      "images": "Forneça as imagens para o seu NFT"
+    },
+    "edit": {
+      "environment": "Escolha o blockchain no qual você deseja editar um NFT.",
+      "offline": "Para editar um NFT, configure seus nós!",
+      "account": "Escolha a conta com a qual deseja editar um NFT.",
+      "asset": "Selecione o ativo que deseja editar."
+    },
+    "issue": {
+      "environment": "Escolha a blockchain na qual deseja emitir uma NFT.",
+      "offline": "Para emitir uma NFT, por favor, configure seus nós!",
+      "account": "Escolha a conta com a qual deseja emitir uma NFT."
+    },
+    "upgrade": {
+      "environment": "Escolha o blockchain no qual você deseja atualizar sua conta.",
+      "offline": "Para atualizar sua conta, configure seus nós!",
+      "account": "Qual conta você deseja atualizar?"
+    },
+    "load": {
+      "environment": "Escolha o blockchain para o qual deseja carregar um rascunho NFT."
+    }
+  }

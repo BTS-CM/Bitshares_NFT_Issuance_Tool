@@ -1,0 +1,15 @@
+{
+    "menu": {
+        "btn": "Menu",
+        "label": "Main menu",
+        "home": "Home",
+        "language": "Language",
+        "createNFT": "Create NFT",
+        "editNFT": "Edit NFT",
+        "loadDraft": "Load draft",
+        "issueNFT": "Issue NFT",
+        "upgradeAccount": "Upgrade account",
+        "faq": "FAQ",
+        "changeNodes": "Change nodes"
+    }
+}

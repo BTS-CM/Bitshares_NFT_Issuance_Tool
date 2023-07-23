@@ -1,0 +1,35 @@
+{
+    "title": "Velkommen til Bitshares NFT-udstedelsesværktøjet!",
+    "desc": "Følgende funktioner er tilgængelige for Bitshares blockchains!",
+    "footer": "For at få fuld brug af det tilgængelige funktionssæt i dette værktøj, er Bitshares BEET multiwallet påkrævet.",
+    "grid": {
+      "createNFT": {
+        "title": "Opret en ny NFT",
+        "desc": "Opret en ny NFT på Bitshares blockchain"
+      },
+      "editNFT": {
+        "title": "Rediger en eksisterende NFT",
+        "desc": "Rediger en eksisterende NFT på Bitshares blockchain"
+      },
+      "issueNFT": {
+        "title": "Udsted en NFT",
+        "desc": "Udsted en NFT på Bitshares blockchain"
+      },
+      "load": {
+        "title": "Indlæs et udkast til NFT",
+        "desc": "Fortsæt med at oprette en NFT fra en kladde"
+      },
+      "upgrade": {
+        "title": "Opgrader konto",
+        "desc": "Køb et livstidsmedlemskab"
+      },
+      "faq": {
+        "title": "Ofte stillede spørgsmål",
+        "desc": "Lær mere om NFT'er, Bitshares blockchain og BEET multiwallet"
+      },
+      "nodes": {
+        "title": "Konfigurerbare noder",
+        "desc": "Skift mellem blockchain noder"
+      }
+    }
+  }

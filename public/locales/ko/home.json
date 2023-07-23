@@ -1,0 +1,35 @@
+{
+    "title": "Bitshares NFT 발행 도구에 오신 것을 환영합니다!",
+    "desc": "다음 기능은 Bitshares 블록체인에서 사용할 수 있습니다!",
+    "footer": "이 도구에서 사용할 수 있는 기능 세트를 최대한 활용하려면 Bitshares BEET 다중 지갑이 필요합니다.",
+    "grid": {
+      "createNFT": {
+        "title": "새 NFT 만들기",
+        "desc": "Bitshares 블록체인에서 새로운 NFT 생성"
+      },
+      "editNFT": {
+        "title": "기존 NFT 편집",
+        "desc": "Bitshares 블록체인에서 기존 NFT 편집"
+      },
+      "issueNFT": {
+        "title": "NFT 발행",
+        "desc": "Bitshares 블록체인에서 NFT 발행"
+      },
+      "load": {
+        "title": "초안 NFT 로드",
+        "desc": "초안에서 NFT 만들기 계속하기"
+      },
+      "upgrade": {
+        "title": "업그레이드 계정",
+        "desc": "평생회원권 구매"
+      },
+      "faq": {
+        "title": "자주 묻는 질문",
+        "desc": "NFT, Bitshares 블록체인 및 BEET 다중 지갑에 대해 자세히 알아보십시오."
+      },
+      "nodes": {
+        "title": "구성 가능한 노드",
+        "desc": "블록체인 노드 간 전환"
+      }
+    }
+  }

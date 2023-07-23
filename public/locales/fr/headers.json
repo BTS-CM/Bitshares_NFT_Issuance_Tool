@@ -1,0 +1,27 @@
+{
+    "create": {
+      "environment": "Choisissez la blockchain sur laquelle vous souhaitez créer un NFT.",
+      "offline": "Pour créer un actif, veuillez configurer vos nœuds !",
+      "account": "Choisissez le compte avec lequel vous souhaitez créer un NFT.",
+      "images": "Fournissez les images pour votre NFT"
+    },
+    "edit": {
+      "environment": "Choisissez la blockchain sur laquelle vous souhaitez modifier un NFT.",
+      "offline": "Pour modifier un NFT, veuillez configurer vos nœuds !",
+      "account": "Choisissez le compte avec lequel vous souhaitez modifier un NFT.",
+      "asset": "Sélectionnez l'actif que vous souhaitez modifier."
+    },
+    "issue": {
+      "environment": "Choisissez la blockchain sur laquelle vous souhaitez émettre un NFT.",
+      "offline": "Pour émettre un NFT, veuillez configurer vos nœuds !",
+      "account": "Choisissez le compte avec lequel vous souhaitez émettre un NFT."
+    },
+    "upgrade": {
+      "environment": "Choisissez la blockchain sur laquelle vous souhaitez mettre à niveau votre compte.",
+      "offline": "Pour mettre à jour votre compte, veuillez configurer vos nœuds !",
+      "account": "Quel compte souhaitez-vous mettre à niveau ?"
+    },
+    "load": {
+      "environment": "Choisissez la blockchain pour laquelle vous souhaitez charger un brouillon NFT."
+    }
+  }

@@ -2,8 +2,8 @@ import { Apis } from 'bitsharesjs-ws';
 import config from '../config/config.json';
 
 const _nodes = {
-  BTS: config.BTS.nodeList.map((node) => node.url),
-  BTS_TEST: config.BTS_TEST.nodeList.map((node) => node.url),
+  BTS: config.bitshares.nodeList.map((node) => node.url),
+  BTS_TEST: config.bitshares_testnet.nodeList.map((node) => node.url),
 };
 
 /**

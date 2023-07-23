@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Group,
@@ -17,18 +18,19 @@ import {
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 
-import { appStore, beetStore } from '../../lib/states';
+import { appStore, beetStore, tempStore } from '../../lib/states';
 import { generateObject, broadcastOperation } from '../../lib/broadcasts';
 import { generateDeepLink } from '../../lib/generate';
 
 export default function SelectAsset(properties) {
   const { t, i18n } = useTranslation();
-  const back = appStore((state) => state.back);
 
-  const asset = appStore((state) => state.asset);
-  const wsURL = appStore((state) => state.nodes[0]);
-  const accountType = appStore((state) => state.accountType);
+  const asset = tempStore((state) => state.asset);
+  const accountType = tempStore((state) => state.accountType);
+
   const environment = appStore((state) => state.environment);
+  const nodes = appStore((state) => state.nodes);
+  const wsURL = nodes[environment][0];
 
   const connection = beetStore((state) => state.connection);
 
@@ -69,7 +71,7 @@ export default function SelectAsset(properties) {
       try {
         generatedLocalContents = await generateDeepLink(
           'nft_creator',
-          environment === "production" ? "BTS" : "BTS_TEST",
+          environment === "bitshares" ? "BTS" : "BTS_TEST",
           wsURL,
           'asset_issue',
           [operation],
@@ -85,10 +87,6 @@ export default function SelectAsset(properties) {
         setInProgress(false);
       }
     }
-  }
-
-  function goBack() {
-    back();
   }
 
   const initialValues = {
@@ -136,7 +134,7 @@ export default function SelectAsset(properties) {
                   <Text size="md">
                     {t(
                       'blockchain:issueNFT.form.success',
-                      { network: environment === 'production' ? 'Bitshares' : 'Bitshares (Testnet)' },
+                      { network: environment === 'bitshares' ? 'Bitshares' : 'Bitshares (Testnet)' },
                     )}
                   </Text>
                 </Paper>
@@ -163,7 +161,7 @@ export default function SelectAsset(properties) {
                   </Radio.Group>
                 </Center>
               </Col>
-              )
+            )
             : null
         }
         {
@@ -296,16 +294,15 @@ export default function SelectAsset(properties) {
             : null
         }
       </Paper>
-      <Button
-        mt="sm"
-        compact
-        variant="light"
-        onClick={() => {
-          goBack();
-        }}
-      >
-        {t('blockchain:issueNFT.form.back')}
-      </Button>
+      <Link style={{ textDecoration: 'none' }} to="/">
+        <Button
+          mt="sm"
+          compact
+          variant="light"
+        >
+          {t('blockchain:issueNFT.form.back')} 2
+        </Button>
+      </Link>
     </Col>
   );
 }

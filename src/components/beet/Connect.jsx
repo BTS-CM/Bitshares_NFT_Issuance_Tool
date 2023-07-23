@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Box,
@@ -10,16 +11,15 @@ import {
   Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import { appStore, beetStore, identitiesStore, tempStore } from '../../lib/states';
 
 export default function Connect(properties) {
   const { t, i18n } = useTranslation();
   const connect = beetStore((state) => state.connect);
   const setIdentity = beetStore((state) => state.setIdentity);
 
-  const setMode = appStore((state) => state.setMode);
-  const setAccountType = appStore((state) => state.setAccountType);
-  const chosenAccountMemo = appStore((state) => state.setMode);
+  const setAccountType = tempStore((state) => state.setAccountType);
+  const chosenAccountMemo = tempStore((state) => state.setMode);
 
   const environment = appStore((state) => state.environment);
   const setEnvironment = appStore((state) => state.setEnvironment);
@@ -32,7 +32,6 @@ export default function Connect(properties) {
   const [inProgress, setInProgress] = useState(false);
 
   function back() {
-    setMode();
     setAccountType();
     setEnvironment();
   }
@@ -103,7 +102,10 @@ export default function Connect(properties) {
     setInProgress(false);
   }
 
-  const relevantChain = environment === 'production' ? 'BTS' : 'BTS_TEST';
+  const relevantChain = environment === 'bitshares' ? 'BTS' : 'BTS_TEST';
+
+  console.log({identities})
+
   const relevantIdentities = identities.filter((x) => x.chain === relevantChain);
 
   const rows = relevantIdentities
@@ -173,15 +175,17 @@ export default function Connect(properties) {
               {t('beet:connect.newBtn')}
             </Button>
             <br />
-            <Button
-              variant="subtle"
-              compact
-              onClick={() => {
-                back();
-              }}
-            >
-              {t('beet:connect.back')}
-            </Button>
+            <Link style={{ textDecoration: 'none' }} to="/">
+              <Button
+                variant="subtle"
+                compact
+                onClick={() => {
+                  back();
+                }}
+              >
+                {t('beet:connect.back')}
+              </Button>
+            </Link>
           </Box>
         </Paper>
       </Col>
@@ -205,13 +209,17 @@ export default function Connect(properties) {
             >
               {t('beet:connect.beetConnect')}
             </Button>
-            <Button
-              onClick={() => {
-                back();
-              }}
-            >
-              {t('beet:connect.back')}
-            </Button>
+            <Link style={{ textDecoration: 'none' }} to="/">
+              <Button
+                variant="subtle"
+                compact
+                onClick={() => {
+                  back();
+                }}
+              >
+                {t('beet:connect.back')}
+              </Button>
+            </Link>
           </Box>
         </Paper>
       </Col>,

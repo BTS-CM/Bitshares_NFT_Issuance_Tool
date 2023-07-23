@@ -1,0 +1,35 @@
+{
+    "how_airdrop": {
+      "control": "Come eseguo un lancio aereo?",
+      "panel": "Recupera i ticket blockchain, calcola un airdrop rispetto a un numero di blocco, verifica il contenuto dell'airdrop nella pagina di analisi, quindi inizia l'airdrop tramite la pagina di esecuzione dell'airdrop. "
+    },
+    "create": {
+      "control": "Come faccio a creare un NFT?",
+      "panel": "Questo strumento ti consente di creare un NFT con il tuo account Bitshares. "
+    },
+    "edit": {
+      "control": "Come faccio a modificare un NFT?",
+      "panel": "Questo strumento consente all'emittente/proprietario di un NFT di modificare i propri NFT. "
+    },
+    "draft": {
+      "control": "Cosa sono le bozze NFT?",
+      "panel": "Puoi salvare i tuoi progressi nella pagina \"Crea NFT\", permettendoti di lavorare su NFT pianificati nel tempo. "
+    },
+    "issue": {
+      "control": "Come posso emettere un NFT su conti individuali?",
+      "panel": "Puoi emettere un NFT su singoli account utilizzando la pagina \"Emetti NFT\". "
+    },
+    "airdrop": {
+      "control": "Come faccio a inviare il mio NFT emesso a più account?",
+      "panel": "Puoi facilmente creare airdrop NFT su larga scala utilizzando lo strumento Airdrop di Bitshares, questo strumento è collegato nel piè di pagina dell'applicazione."
+    },
+    "beet": {
+      "control": "Cos'è il portafoglio Beet?",
+      "panel": "Il portafoglio BEET è un portafoglio crittografico multi blockchain, utilizzato per gestire in modo sicuro l'autenticazione e la trasmissione in rete delle transazioni."
+    },
+    "blockchains": {
+      "control": "Quali blockchain sono supportate?",
+      "panel": "Attualmente è supportata solo la blockchain di Bitshares, tuttavia questo strumento è completamente open source su github."
+    },
+    "title": "Domande frequenti"
+  }

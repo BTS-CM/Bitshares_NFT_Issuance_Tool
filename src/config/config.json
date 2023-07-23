@@ -1,5 +1,5 @@
 {
-    "BTS": {
+    "bitshares": {
         "coreSymbol": "BTS",
         "name": "BitShares",
         "chainId": "4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8",
@@ -14,9 +14,6 @@
                 "url": "wss://nexus01.co.uk/ws"
             },
             {
-                "url": "wss://api.dex.trading/"
-            },
-            {
                 "url": "wss://api.bitshares.bhuz.info/ws"
             },
             {
@@ -24,7 +21,7 @@
             }
         ]
     },
-    "BTS_TEST": {
+    "bitshares_testnet": {
         "coreSymbol": "TEST",
         "name": "BitShares",
         "testnet": true,
@@ -41,9 +38,16 @@
             },
             {
                 "url": "wss://testnet.bitshares.im/ws"
-            },
+            }
+        ]
+    },
+    "tusc": {
+        "coreSymbol": "TUSC",
+        "name": "The Universal Settlement Coin",
+        "chainId": "eb938e2a955e39e335120d0a99f3b9f8c04a9ed5690275ea5037d6bbadfc6cf3",
+        "nodeList": [
             {
-                "url": "https://eu.nodes.testnet.bitshares.ws/"
+                "url": "wss://api.cryptotusc.com"
             }
         ]
     }

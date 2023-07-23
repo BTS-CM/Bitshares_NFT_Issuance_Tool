@@ -1,37 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Text,
   Container,
-  Center,
-  Group,
   Grid,
   Col,
-  Paper,
   Button,
   Divider,
   Image,
+  Menu,
+  ScrollArea,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
-import { appStore, beetStore, identitiesStore } from './lib/states';
+import {
+  Link,
+  Routes,
+  Route,
+} from 'react-router-dom';
 
-import Environment from './components/setup/Environment';
-import Settings from './components/setup/Settings';
-import AccountMode from './components/setup/AccountMode';
-import Loading from './components/setup/Loading';
-import Offline from './components/setup/Offline';
-import Offchain from './components/images/Offchain';
-import SelectAsset from './components/blockchain/SelectAsset';
-import LoadAsset from './components/blockchain/LoadAsset';
-import Wizard from './components/blockchain/Wizard';
+import {
+  HiOutlineQuestionMarkCircle,
+  HiOutlineHome,
+  HiWifi,
+  HiOutlineIdentification,
+  HiOutlineDocumentAdd,
+  HiOutlineUserAdd,
+  HiOutlineScissors,
+  HiOutlinePlus,
+  HiOutlineWifi,
+} from "react-icons/hi";
 
-import IssueNFT from './components/blockchain/IssueNFT';
+import {
+  appStore,
+  beetStore,
+  identitiesStore,
+  localePreferenceStore,
+} from './lib/states';
+
+import Home from "./pages/Home";
+import Upgrade from './pages/Upgrade';
+import Faq from './pages/Faq';
+import Nodes from './pages/Nodes';
+import Create from './pages/Create';
+import Edit from './pages/Edit';
+import Load from './pages/Load';
+import Issue from './pages/Issue';
+import Settings from './pages/Settings';
 
 import './App.css';
 
 /**
  * Tell electron to open a pre-approved external URL
- * @param {String} loc 
+ * @param {String} loc
  */
 function openURL(loc) {
   if (loc === 'gallery') {
@@ -40,6 +59,8 @@ function openURL(loc) {
     window.electron.openURL('viewer');
   } else if (loc === 'airdrop') {
     window.electron.openURL('airdrop');
+  } else if (loc === 'beet') {
+    window.electron.openURL('beet');
   }
 }
 
@@ -47,136 +68,184 @@ function App() {
   const { t, i18n } = useTranslation();
 
   const environment = appStore((state) => state.environment);
-  const setEnvironment = appStore((state) => state.setEnvironment);
-
-  const mode = appStore((state) => state.mode);
-  const setMode = appStore((state) => state.setMode);
-
-  function openSettings() {
-    setMode('settings');
-  }
-
-  const initialValues = appStore((state) => state.initialValues);
-
-  const account = appStore((state) => state.account);
-  const setAccount = appStore((state) => state.setAccount);
-  const setAccountType = appStore((state) => state.setAccountType);
-
-  const connection = beetStore((state) => state.connection);
-
-  const nodes = appStore((state) => state.nodes);
-  const setNodes = appStore((state) => state.setNodes);
-
-  const changing_images = appStore((state) => state.changing_images);
-  const asset = appStore((state) => state.asset);
-  const asset_images = appStore((state) => state.asset_images);
-
-  const isLinked = beetStore((state) => state.isLinked);
-  const identity = beetStore((state) => state.identity);
-
-  const setIdentities = identitiesStore((state) => state.setIdentities);
-  const storeConnection = identitiesStore((state) => state.storeConnection);
 
   const resetApp = appStore((state) => state.reset);
   const resetBeet = beetStore((state) => state.reset);
-  const resetNodes = appStore((state) => state.reset);
+  const identity = beetStore((state) => state.identity);
+  const isLinked = beetStore((state) => state.isLinked);
+
+  const setIdentities = identitiesStore((state) => state.setIdentities);
+
+  const changeLocale = localePreferenceStore((state) => state.changeLocale);
+  const locale = localePreferenceStore((state) => state.locale);
 
   function reset() {
     resetApp();
     resetBeet();
   }
 
-  const [loadingNodes, setLoadingNodes] = useState(false);
-
-  useEffect(() => {
-    async function fetchData() {
-      if (environment && (!nodes || !nodes.length)) {
-        setLoadingNodes(true);
-        try {
-          await setNodes();
-        } catch (error) {
-          console.log(error);
-        }
-        setLoadingNodes(false);
-      }
-    }
-
-    fetchData();
-  }, [environment, nodes]);
-
-  useEffect(() => {
-    if (nodes && nodes.length) {
-      setLoadingNodes(false);
-    }
-  }, [nodes]);
-
   useEffect(() => {
     if (isLinked && identity) {
       setIdentities(identity);
     }
   }, [isLinked, identity]);
- 
-  let initPrompt;
-  if (!environment) {
-    initPrompt = <Environment />;
-  } else if (loadingNodes) {
-    initPrompt = <Loading />;
-  } else if ((!loadingNodes && !nodes) || !nodes.length) {
-    initPrompt = <Offline />;
-  } else if (!mode) {
-    initPrompt = (
-      <AccountMode
-        backCallback={() => {
-          setMode();
-          setEnvironment();
-          resetNodes();
-          setAccount();
-          setAccountType();
-          resetBeet();
-        }}
-      />
-    );
-  } else if (mode === 'load' && !initialValues) {
-    initPrompt = <LoadAsset />;
-  } else if ((mode === 'edit' || mode === 'issue') && !asset) {
-    const userID = account ?? identity.requested.account.id;
-    initPrompt = <SelectAsset userID={userID} />;
-  } else if (mode === 'issue' && asset) {
-    const userID = account ?? identity.requested.account.id;
-    initPrompt = <IssueNFT userID={userID} />;
-  } else if (mode === 'settings') {
-    initPrompt = <Settings />;
-  } else if ((mode === 'create' && !asset_images) || changing_images === true) {
-    initPrompt = <Offchain />;
-  } else if (asset_images) {
-    const userID = account ?? identity.requested.account.id;
-    initPrompt = <Wizard userID={userID} />;
-  } else {
-    initPrompt = <Text size="md">{t('setup:app.error')}</Text>;
+
+  /**
+   * Set the i18n locale
+   * @param {String} newLocale
+   */
+  function setLanguage(newLocale) {
+    try {
+      i18n.changeLanguage(newLocale);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+
+    try {
+      changeLocale(newLocale);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   let caption;
   if (environment) {
-    caption = environment === 'production' ? 'Bitshares' : 'Testnet BTS';
+    caption = environment === 'bitshares' ? 'Bitshares' : 'Testnet BTS';
   }
+
+  const languages = [
+    { value: 'en', label: 'English' },
+    { value: 'da', label: 'Dansk' },
+    { value: 'de', label: 'Deutsche' },
+    { value: 'et', label: 'Eesti' },
+    { value: 'es', label: 'Español' },
+    { value: 'fr', label: 'Français' },
+    { value: 'it', label: 'Italiano' },
+    { value: 'ja', label: '日本語' },
+    { value: 'ko', label: '한국어' },
+    { value: 'pt', label: 'Português' },
+    { value: 'th', label: 'ไทย' },
+  ];
+
+  const localeItems = languages.map((lang) => (
+    <Menu.Item key={`lang_${lang.value}`} onClick={() => setLanguage(lang.value)}>
+      { lang.label }
+    </Menu.Item>
+  ));
+
+  /*
+  {isLinked ? (
+    <Button
+      variant="outline"
+      color="dark"
+      sx={{ marginTop: '15px', marginBottom: '5px' }}
+      onClick={() => {
+        reset();
+      }}
+    >
+      {t('setup:app.reset')}
+    </Button>
+  ) : null}
+  */
 
   return (
     <div className="App">
       <header className="App-header">
         <Container>
           <Grid key="about" grow>
-            <Col span={12}>
+            <Col mt="xl" ta="left" span={1}>
+              <Menu shadow="md" width={200} position="right-start">
+                <Menu.Target>
+                  <Button>
+                    {t("app:menu.btn")}
+                  </Button>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Label>{t("app:menu.label")}</Menu.Label>
+                  <Link style={{ textDecoration: 'none' }} to="/">
+                    <Menu.Item icon={<HiOutlineHome />}>
+                      {t("app:menu.home")}
+                    </Menu.Item>
+                  </Link>
+                  <Menu.Divider />
+                  <Link style={{ textDecoration: 'none' }} to="./createNFT/create">
+                    <Menu.Item icon={<HiOutlinePlus />}>
+                      {t("app:menu.createNFT")}
+                    </Menu.Item>
+                  </Link>
+                  <Link style={{ textDecoration: 'none' }} to="./editNFT">
+                    <Menu.Item icon={<HiOutlineScissors />}>
+                      {t("app:menu.editNFT")}
+                    </Menu.Item>
+                  </Link>
+                  <Link style={{ textDecoration: 'none' }} to="./load">
+                    <Menu.Item icon={<HiOutlineDocumentAdd />}>
+                      {t("app:menu.loadDraft")}
+                    </Menu.Item>
+                  </Link>
+                  <Link style={{ textDecoration: 'none' }} to="./issueNFT">
+                    <Menu.Item icon={<HiOutlineUserAdd />}>
+                      {t("app:menu.issueNFT")}
+                    </Menu.Item>
+                  </Link>
+                  <Link style={{ textDecoration: 'none' }} to="./upgrade">
+                    <Menu.Item icon={<HiOutlineIdentification />}>
+                      {t("app:menu.upgradeAccount")}
+                    </Menu.Item>
+                  </Link>
+                  <Menu.Divider />
+                  <Link style={{ textDecoration: 'none' }} to="./faq">
+                    <Menu.Item icon={<HiOutlineQuestionMarkCircle />}>
+                      {t("app:menu.faq")}
+                    </Menu.Item>
+                  </Link>
+                  <Link style={{ textDecoration: 'none' }} to="./nodes">
+                    <Menu.Item icon={<HiWifi />}>
+                      {t("app:menu.changeNodes")}
+                    </Menu.Item>
+                  </Link>
+                </Menu.Dropdown>
+              </Menu>
+              <br />
+              <Menu shadow="md" mt="sm" width={200} position="right-start">
+                <Menu.Target>
+                  <Button compact>
+                    { languages.find((x) => x.value === locale).label }
+                  </Button>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <ScrollArea h={200}>
+                    { localeItems }
+                  </ScrollArea>
+                </Menu.Dropdown>
+              </Menu>
+            </Col>
+            <Col ta="Center" span={9}>
               <div style={{ width: 350, marginLeft: 'auto', marginRight: 'auto' }}>
                 <Image
                   radius="md"
-                  src="./logo2.png"
+                  src="/logo2.png"
                   alt="Bitshares logo"
                   caption={`${caption ?? ''} NFT Issuance tool`}
                 />
               </div>
             </Col>
 
-            {initPrompt}
+            <Col span={12}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/createNFT/:mode" element={<Create />} />
+                <Route path="/editNFT" element={<Edit />} />
+                <Route path="/load" element={<Load />} />
+                <Route path="/issueNFT" element={<Issue />} />
+                <Route path="/upgrade" element={<Upgrade />} />
+                <Route path="/faq" element={<Faq />} />
+                <Route path="/nodes" element={<Nodes />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </Col>
 
             <Col span={12}>
               <span>
@@ -190,6 +259,16 @@ function App() {
                   }}
                 >
                   NFTEA Gallery
+                </Button>
+                <Button
+                  variant="default"
+                  color="dark"
+                  sx={{ marginTop: '15px', marginRight: '5px' }}
+                  onClick={() => {
+                    openURL('beet');
+                  }}
+                >
+                  BEET wallet
                 </Button>
                 <Button
                   variant="default"
@@ -212,28 +291,16 @@ function App() {
                   NFT Viewer
                 </Button>
                 {environment ? (
-                  <Button
-                    variant="outline"
-                    color="dark"
-                    sx={{ marginTop: '15px', marginRight: '5px', marginBottom: '5px' }}
-                    onClick={() => {
-                      openSettings();
-                    }}
-                  >
-                    {t('setup:settings.settings')}
-                  </Button>
-                ) : null}
-                {isLinked ? (
-                  <Button
-                    variant="outline"
-                    color="dark"
-                    sx={{ marginTop: '15px', marginBottom: '5px' }}
-                    onClick={() => {
-                      reset();
-                    }}
-                  >
-                    {t('setup:app.reset')}
-                  </Button>
+                  <Link style={{ textDecoration: 'none' }} to="/settings">
+                    <Button
+                      variant="outline"
+                      color="dark"
+                      sx={{ marginTop: '15px', marginRight: '5px', marginBottom: '5px' }}
+                      href="/settings"
+                    >
+                      {t('setup:settings.settings')}
+                    </Button>
+                  </Link>
                 ) : null}
               </span>
             </Col>

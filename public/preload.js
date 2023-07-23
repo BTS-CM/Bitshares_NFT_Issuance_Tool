@@ -99,10 +99,20 @@ window.electron = {
     const translations = {};
     const languages = ['en', 'da', 'de', 'et', 'es', 'fr', 'it', 'ja', 'ko', 'pt', 'th'];
     const pages = [
+      'app',
+      'accountSearch',
       'beet',
+      'beetModal',
       'blockchain',
+      'headers',
+      'faq',
+      'getAccount',
+      'home',
       'images',
+      'modal',
+      'nodes',
       'setup',
+      'upgrade',
     ];
     languages.forEach((language) => {
       const localPages = {};

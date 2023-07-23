@@ -1,0 +1,35 @@
+{
+    "how_airdrop": {
+      "control": "Comment effectuer un airdrop ?",
+      "panel": "Récupérez les tickets blockchain, calculez un largage par rapport à un numéro de bloc, vérifiez le contenu du largage dans la page d'analyse, puis commencez le largage via la page d'exécution du largage. "
+    },
+    "create": {
+      "control": "Comment créer un NFT ?",
+      "panel": "Cet outil vous permet de créer un NFT avec votre compte Bitshares. "
+    },
+    "edit": {
+      "control": "Comment modifier un NFT ?",
+      "panel": "Cet outil permet à l'émetteur/propriétaire d'un NFT de modifier ses NFT. "
+    },
+    "draft": {
+      "control": "Que sont les brouillons NFT ?",
+      "panel": "Vous pouvez enregistrer votre progression sur la page \"Créer un NFT\", ce qui vous permet de travailler sur les NFT planifiés au fil du temps. "
+    },
+    "issue": {
+      "control": "Comment puis-je émettre un NFT sur des comptes individuels ?",
+      "panel": "Vous pouvez émettre un NFT sur des comptes individuels en utilisant la page \"Émettre un NFT\". "
+    },
+    "airdrop": {
+      "control": "Comment puis-je envoyer mon NFT émis à plusieurs comptes ?",
+      "panel": "Vous pouvez facilement créer des parachutages NFT à grande échelle à l'aide de l'outil Bitshares Airdrop, cet outil est lié dans le pied de page de l'application."
+    },
+    "beet": {
+      "control": "Qu'est-ce que le portefeuille Beet ?",
+      "panel": "Le portefeuille BEET est un portefeuille crypto multi blockchain, il est utilisé pour gérer en toute sécurité l'authentification et la diffusion réseau des transactions."
+    },
+    "blockchains": {
+      "control": "Quelles chaînes de blocs sont prises en charge ?",
+      "panel": "Actuellement, seule la blockchain Bitshares est prise en charge, mais cet outil est entièrement open source sur github."
+    },
+    "title": "Questions fréquemment posées"
+  }

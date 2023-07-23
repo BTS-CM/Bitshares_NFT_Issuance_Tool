@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "Menu",
+      "label": "Menu principal",
+      "home": "Maison",
+      "language": "Langue",
+      "createNFT": "Créer NFT",
+      "editNFT": "Modifier NFT",
+      "loadDraft": "Charger le brouillon",
+      "issueNFT": "Émission NFT",
+      "upgradeAccount": "Améliorer le compte",
+      "faq": "FAQ",
+      "changeNodes": "Changer de nœuds"
+    }
+  }

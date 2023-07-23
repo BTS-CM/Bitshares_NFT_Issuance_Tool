@@ -1,0 +1,27 @@
+{
+    "create": {
+      "environment": "Wählen Sie die Blockchain aus, auf der Sie ein NFT erstellen möchten.",
+      "offline": "Um ein Asset zu erstellen, konfigurieren Sie bitte Ihre Knoten!",
+      "account": "Wählen Sie das Konto aus, mit dem Sie einen NFT erstellen möchten.",
+      "images": "Stellen Sie die Bilder für Ihr NFT bereit"
+    },
+    "edit": {
+      "environment": "Wählen Sie die Blockchain aus, auf der Sie ein NFT bearbeiten möchten.",
+      "offline": "Um einen NFT zu bearbeiten, konfigurieren Sie bitte Ihre Knoten!",
+      "account": "Wählen Sie das Konto aus, mit dem Sie einen NFT bearbeiten möchten.",
+      "asset": "Wählen Sie das Asset aus, das Sie bearbeiten möchten."
+    },
+    "issue": {
+      "environment": "Wählen Sie die Blockchain aus, auf der Sie einen NFT ausgeben möchten.",
+      "offline": "Um ein NFT auszustellen, konfigurieren Sie bitte Ihre Knoten!",
+      "account": "Wählen Sie das Konto aus, mit dem Sie einen NFT ausstellen möchten."
+    },
+    "upgrade": {
+      "environment": "Wählen Sie die Blockchain aus, auf der Sie Ihr Konto aktualisieren möchten.",
+      "offline": "Um Ihr Konto zu aktualisieren, konfigurieren Sie bitte Ihre Knoten!",
+      "account": "Welches Konto möchten Sie aktualisieren?"
+    },
+    "load": {
+      "environment": "Wählen Sie die Blockchain aus, für die Sie einen NFT-Entwurf laden möchten."
+    }
+  }

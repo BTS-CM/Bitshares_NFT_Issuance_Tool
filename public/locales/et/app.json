@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "Menüü",
+      "label": "Peamenüü",
+      "home": "Kodu",
+      "language": "Keel",
+      "createNFT": "Looge NFT",
+      "editNFT": "Redigeeri NFT-d",
+      "loadDraft": "Laadi mustand",
+      "issueNFT": "NFT väljaandmine",
+      "upgradeAccount": "Täiendage kontot",
+      "faq": "KKK",
+      "changeNodes": "Muuda sõlme"
+    }
+  }

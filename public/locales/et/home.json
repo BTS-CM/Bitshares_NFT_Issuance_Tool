@@ -1,0 +1,35 @@
+{
+    "title": "Tere tulemast kasutama Bitsharesi NFT väljastamise tööriista!",
+    "desc": "Bitsharesi plokiahelate jaoks on saadaval järgmised funktsioonid!",
+    "footer": "Selle tööriista funktsioonide täielikuks kasutamiseks on vaja Bitshares BEET multirahakotti.",
+    "grid": {
+      "createNFT": {
+        "title": "Looge uus NFT",
+        "desc": "Looge Bitsharesi plokiahelas uus NFT"
+      },
+      "editNFT": {
+        "title": "Muutke olemasolevat NFT-d",
+        "desc": "Muutke olemasolevat NFT-d Bitsharesi plokiahelas"
+      },
+      "issueNFT": {
+        "title": "Väljasta NFT",
+        "desc": "Väljastage Bitsharesi plokiahelas NFT"
+      },
+      "load": {
+        "title": "Laadige NFT mustand",
+        "desc": "Jätkake mustandist NFT loomist"
+      },
+      "upgrade": {
+        "title": "Täiendage kontot",
+        "desc": "Ostke eluaegne liikmesus"
+      },
+      "faq": {
+        "title": "Korduma kippuvad küsimused",
+        "desc": "Lisateavet NFT-de, Bitsharesi plokiahela ja BEET-i multirahakoti kohta"
+      },
+      "nodes": {
+        "title": "Konfigureeritavad sõlmed",
+        "desc": "Vahetage plokiahela sõlmede vahel"
+      }
+    }
+  }

@@ -1,0 +1,35 @@
+{
+    "title": "Bitshares NFT発行ツールへようこそ！",
+    "desc": "Bitshares ブロックチェーンでは次の機能が利用可能です。",
+    "footer": "このツールで利用可能な機能セットを最大限に活用するには、Bitshares BEET マルチウォレットが必要です。",
+    "grid": {
+      "createNFT": {
+        "title": "新しいNFTを作成する",
+        "desc": "Bitshares ブロックチェーン上に新しい NFT を作成する"
+      },
+      "editNFT": {
+        "title": "既存のNFTを編集する",
+        "desc": "Bitshares ブロックチェーン上の既存の NFT を編集する"
+      },
+      "issueNFT": {
+        "title": "NFTを発行する",
+        "desc": "Bitshares ブロックチェーンで NFT を発行する"
+      },
+      "load": {
+        "title": "ドラフトNFTをロードする",
+        "desc": "ドラフトから NFT の作成を続ける"
+      },
+      "upgrade": {
+        "title": "アカウントをアップグレードする",
+        "desc": "生涯メンバーシップを購入する"
+      },
+      "faq": {
+        "title": "よくある質問",
+        "desc": "NFT、Bitshares ブロックチェーン、BEET マルチウォレットについて詳しく学ぶ"
+      },
+      "nodes": {
+        "title": "構成可能なノード",
+        "desc": "ブロックチェーンノード間の切り替え"
+      }
+    }
+  }

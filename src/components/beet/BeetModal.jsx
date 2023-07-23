@@ -1,0 +1,431 @@
+/* eslint-disable max-len */
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Text,
+  Loader,
+  Accordion,
+  JsonInput,
+  Modal,
+  Select,
+  Button,
+  Group,
+  ColorInput,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useParams } from "react-router-dom";
+
+import {
+  appStore, tempStore, beetStore,
+} from '../../lib/states';
+import { beetBroadcast, generateDeepLink } from '../../lib/generate';
+
+import GetAccount from './GetAccount';
+
+export default function BeetModal(properties) {
+  const { t, i18n } = useTranslation();
+  const params = useParams();
+  const { value } = properties; // 'bitshares'
+  const { opContents } = properties; // [{op}, ...]
+  const { opType } = properties; // submit to blockchain
+  const { opNum } = properties; // include in i18n
+  const { opName } = properties; // include in i18n
+  const { appName } = properties; // include in deeplink/local
+  const { requestedMethods } = properties; // avoid bugged deeplinks
+  const { filename } = properties; // for local json file
+
+  const [deepLink, setDeepLink] = useState();
+  const [deepLinkItr, setDeepLinkItr] = useState(0);
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const connection = beetStore((state) => state.connection);
+  const identity = beetStore((state) => state.identity);
+  const reset = beetStore((state) => state.reset);
+
+  const account = tempStore((state) => state.account);
+
+  const [tx, setTX] = useState();
+  const [inProgress, setInProgress] = useState(false);
+
+  const [outcome, setOutcome] = useState();
+  const [method, setMethod] = useState();
+
+  const nodes = appStore((state) => state.nodes);
+  const currentNodes = nodes[value];
+
+  let assetName = "1.3.0";
+  let relevantChain = "bitshares";
+  if (value === 'bitshares') {
+    assetName = "BTS";
+    relevantChain = 'BTS';
+  } else if (value === 'bitshares_testnet') {
+    assetName = "TEST";
+    relevantChain = 'BTS_TEST';
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      setTX(opContents);
+
+      let payload;
+      try {
+        payload = await generateDeepLink(
+          appName,
+          relevantChain,
+          currentNodes[0],
+          opType,
+          opContents,
+        );
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+
+      if (payload && payload.length) {
+        setDeepLink(payload);
+      }
+    }
+
+    if (deepLinkItr && deepLinkItr > 0) {
+      fetchData();
+    }
+  }, [deepLinkItr]);
+
+  async function broadcast() {
+    setInProgress(true);
+    setOutcome();
+    let response;
+    try {
+      response = await beetBroadcast(
+        connection,
+        relevantChain,
+        currentNodes[0],
+        opType,
+        opContents,
+      );
+    } catch (error) {
+      console.log(error);
+      setInProgress(false);
+      setOutcome("FAILURE");
+      return;
+    }
+
+    setOutcome("SUCCESS");
+    setInProgress(false);
+  }
+
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={() => {
+          setDeepLink();
+          close();
+          setOutcome();
+          setTX();
+          setMethod();
+          setInProgress();
+          reset();
+        }}
+        title={t("modal:title")}
+      >
+        {
+          inProgress
+            ? <Loader size="xs" variant="dots" />
+            : null
+        }
+        {
+          !account
+            ? <GetAccount basic token={value} env={value} />
+            : null
+        }
+        {
+          account && !method
+            ? (
+              <>
+                <Text>
+                  {t("beetModal:prompt")}
+                </Text>
+                <Group mt="sm">
+                  {
+                    requestedMethods && requestedMethods.includes("BEET")
+                      ? <Button compact onClick={() => setMethod("BEET")}>BEET</Button>
+                      : null
+                  }
+                  { // Won't work for large airdrops due to 2k url char limit in chromium
+                    requestedMethods && requestedMethods.includes("DEEPLINK")
+                      ? (
+                        <Button compact onClick={() => setMethod("DEEPLINK")}>
+                          {t("beetModal:buttons.deeplink")}
+                        </Button>
+                      )
+                      : null
+                  }
+                  {
+                    requestedMethods && requestedMethods.includes("LOCAL")
+                      ? (
+                        <Button compact onClick={() => setMethod("LOCAL")}>
+                          {t("beetModal:buttons.local")}
+                        </Button>
+                      )
+                      : null
+                  }
+                  {
+                    requestedMethods && requestedMethods.includes("JSON")
+                      ? (
+                        <Button compact onClick={() => setMethod("JSON")}>
+                          {t("beetModal:buttons.json")}
+                        </Button>
+                      )
+                      : null
+                  }
+                </Group>
+              </>
+            )
+            : null
+        }
+        {
+          account && outcome && outcome === "SUCCESS"
+            ? (
+              <>
+                <Text>
+                  {t("beetModal:success")}
+                </Text>
+                <Button onClick={() => {
+                  setDeepLink();
+                  close();
+                  setTX();
+                  setMethod();
+                  setInProgress();
+                  reset();
+                }}
+                >
+                  {t("beetModal:close")}
+                </Button>
+              </>
+            )
+            : null
+        }
+        {
+          account && outcome && outcome === "FAILURE"
+            ? (
+              <>
+                <Text>
+                  {t("beetModal:failure")}
+                </Text>
+                <Button
+                  onClick={() => {
+                    setOutcome();
+                    reset();
+                  }}
+                >
+                  {t("beetModal:buttons.retry")}
+                </Button>
+              </>
+            )
+            : null
+        }
+        {
+          account && method && method === "BEET" && !identity
+            ? (
+              <GetAccount beetOnly token={value ?? null} env={value ?? null} />
+            )
+            : null
+        }
+        {
+          account && method && method === "BEET" && connection && identity && !outcome
+            ? (
+              <>
+                <Text>
+                  {t("beetModal:ready")}
+                </Text>
+                <Text>{identity.chain}</Text>
+                <Button mt="sm" onClick={async () => await broadcast()}>
+                  {t("modal:deeplink.DL.beetBTN")}
+                </Button>
+              </>
+            )
+            : null
+        }
+        {
+          account && method && method === "DEEPLINK" && !deepLink && !inProgress
+            ? (
+              <>
+                <Text>{t("modal:deeplink.noDL.title")}</Text>
+                <Text m="sm" fz="xs">
+                  {t("modal:deeplink.noDL.step1")}
+                  <br />
+                  {t("modal:deeplink.noDL.step2", { opNum, opName })}
+                  <br />
+                  {t("modal:deeplink.noDL.step3")}
+                </Text>
+                <Button
+                  mt="md"
+                  onClick={() => setDeepLinkItr(deepLinkItr + 1)}
+                >
+                  {t("modal:deeplink.noDL.btn")}
+                </Button>
+              </>
+            )
+            : null
+        }
+        {
+          account && method && method === "DEEPLINK" && deepLink
+            ? (
+              <>
+                <Text>{t("modal:deeplink.DL.title")}</Text>
+                <Text fz="xs">
+                  1.
+                  {' '}
+                  {t("modal:deeplink.DL.step1")}
+                  <br />
+                  2.
+                  {' '}
+                  {t("modal:deeplink.DL.step2")}
+                  <br />
+                  3.
+                  {' '}
+                  {t("modal:deeplink.DL.step3")}
+                </Text>
+                <a href={`rawbeet://api?chain=${relevantChain}&request=${deepLink}`}>
+                  <Button m="xs">
+                    {t("modal:deeplink.DL.beetBTN")}
+                  </Button>
+                </a>
+              </>
+            )
+            : null
+        }
+        {
+          account && method && method === "LOCAL" && !deepLink && !inProgress
+            ? (
+              <>
+                <Text>{t("modal:local.noGen.title")}</Text>
+                <Text m="sm" fz="xs">
+                  {t("modal:local.noGen.step1")}
+                  <br />
+                  {t("modal:local.noGen.step2", { opNum, opName })}
+                  <br />
+                  {t("modal:local.noGen.step3")}
+                </Text>
+                <Button
+                  mt="md"
+                  onClick={() => setDeepLinkItr(deepLinkItr + 1)}
+                >
+                  {t("modal:local.noGen.btn")}
+                </Button>
+              </>
+            )
+            : null
+        }
+        {
+          account && method && method === "LOCAL" && deepLink
+            ? (
+              <>
+                <Text>{t("modal:local.generated.title")}</Text>
+                <Text fz="xs">
+                  {t("modal:local.generated.step1")}
+                  <br />
+                  {t("modal:local.generated.step2")}
+                  <br />
+                  {t("modal:local.generated.step3")}
+                </Text>
+                <a
+                  href={`data:text/json;charset=utf-8,${deepLink}`}
+                  download={filename}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button mt="md">
+                    {t("modal:local.generated.beetBTN")}
+                  </Button>
+                </a>
+              </>
+            )
+            : null
+        }
+        {
+          account && method && method === "JSON" && !tx
+            ? (
+              <Button
+                mt="md"
+                onClick={() => setDeepLinkItr(deepLinkItr + 1)}
+              >
+                {t("modal:local.noGen.btn")}
+              </Button>
+            )
+            : null
+        }
+        {
+          account && method && method === "JSON" && tx
+            ? (
+              <Accordion mt="xs">
+                <Accordion.Item key="json" value="operation_json">
+                  <Accordion.Control>
+                    {t("modal:JSON.view")}
+                  </Accordion.Control>
+                  <Accordion.Panel style={{ backgroundColor: '#FAFAFA' }}>
+                    <JsonInput
+                      placeholder="Textarea will autosize to fit the content"
+                      defaultValue={JSON.stringify(tx)}
+                      validationError="Invalid JSON"
+                      formatOnBlur
+                      autosize
+                      minRows={4}
+                      maxRows={15}
+                    />
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
+            )
+            : null
+        }
+        <br />
+        {
+        method
+          ? (
+            <Button
+              mt="sm"
+              compact
+              variant="outline"
+              onClick={() => {
+                setMethod();
+                setDeepLink();
+                setInProgress();
+                reset();
+                setOutcome();
+              }}
+            >
+              {t("beetModal:buttons.back")}
+            </Button>
+          )
+          : null
+        }
+      </Modal>
+      <Group position="center">
+        <Button style={{ marginTop: '20px' }} onClick={open}>
+          {
+            opType === "ticket_create"
+              ? t("beetModal:askBEET.create")
+              : null
+          }
+          {
+            opType === "account_upgrade"
+              ? t("beetModal:askBEET.upgrade")
+              : null
+          }
+          {
+            opType === "transfer"
+              ? t("beetModal:askBEET.airdrop")
+              : null
+          }
+          {
+            opType === "override_transfer"
+              ? t("beetModal:askBEET.override_transfer")
+              : null
+          }
+        </Button>
+      </Group>
+    </>
+  );
+}

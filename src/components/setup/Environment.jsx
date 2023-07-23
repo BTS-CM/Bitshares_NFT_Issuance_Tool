@@ -19,24 +19,24 @@ export default function Mode(properties) {
               {t('setup:environment.header')}
             </Text>
             <Button
-              sx={{ marginTop: '15px', marginRight: '5px', marginLeft: '5px' }}
-              onClick={() => {
-                setEnvironment('testnet');
-              }}
-            >
-              {t('setup:environment.testnet')}
-              {' '}
-              (BTS_TEST)
-            </Button>
-            <Button
               sx={{ marginTop: '15px', marginRight: '5px' }}
               onClick={() => {
-                setEnvironment('production');
+                setEnvironment('bitshares');
               }}
             >
               {t('setup:environment.production')}
               {' '}
               (BTS)
+            </Button>
+            <Button
+              sx={{ marginTop: '15px', marginRight: '5px', marginLeft: '5px' }}
+              onClick={() => {
+                setEnvironment('bitshares_testnet');
+              }}
+            >
+              {t('setup:environment.testnet')}
+              {' '}
+              (BTS_TEST)
             </Button>
           </span>
         </Box>

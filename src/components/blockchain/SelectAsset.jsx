@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import {
   Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { appStore } from '../../lib/states';
+import { appStore, tempStore } from '../../lib/states';
 
 export default function SelectAsset(properties) {
   const { t, i18n } = useTranslation();
-  const setAsset = appStore((state) => state.setAsset);
-  const setMode = appStore((state) => state.setMode);
   const changeURL = appStore((state) => state.changeURL);
 
-  const fetchIssuedAssets = appStore((state) => state.fetchIssuedAssets);
-  const clearAssets = appStore((state) => state.clearAssets);
+  const assets = tempStore((state) => state.assets);
+  const nonNFTs = tempStore((state) => state.nonNFTs);
 
-  const assets = appStore((state) => state.assets);
-  const nonNFTs = appStore((state) => state.nonNFTs);
+  const fetchIssuedAssets = tempStore((state) => state.fetchIssuedAssets);
+  const clearAssets = tempStore((state) => state.clearAssets);
+  const setAsset = tempStore((state) => state.setAsset);
 
   const { userID } = properties;
   const [tries, setTries] = useState(0);
@@ -24,11 +24,6 @@ export default function SelectAsset(properties) {
     const newTries = tries + 1;
     clearAssets();
     setTries(newTries);
-  }
-
-  function goBack() {
-    setMode();
-    clearAssets();
   }
 
   /**
@@ -87,37 +82,49 @@ export default function SelectAsset(properties) {
 
   const buttonList = assets
     ? assets.map((asset) => (
-      <Button
-        compact
-        sx={{ margin: '2px' }}
-        variant="outline"
-        key={`button.${asset.id}`}
-        onClick={() => {
-          chosenAsset(asset);
-        }}
+      <Link
+        style={{ textDecoration: 'none' }}
+        to="/createNFT/edit"
+        key={`buttonLink.${asset.id}`}
       >
-        {asset.symbol}
-        :
-        {asset.id}
-      </Button>
+        <Button
+          compact
+          sx={{ margin: '2px' }}
+          variant="outline"
+          key={`button.${asset.id}`}
+          onClick={() => {
+            chosenAsset(asset);
+          }}
+        >
+          {asset.symbol}
+          :
+          {asset.id}
+        </Button>
+      </Link>
     ))
     : null;
 
   const normalAssetList = nonNFTs
     ? nonNFTs.map((asset) => (
-      <Button
-        compact
-        sx={{ margin: '2px' }}
-        variant="outline"
-        key={`button.${asset.id}`}
-        onClick={() => {
-          chosenAsset(asset);
-        }}
+      <Link
+        style={{ textDecoration: 'none' }}
+        to="/createNFT/edit"
+        key={`buttonLink.${asset.id}`}
       >
-        {asset.symbol}
-        :
-        {asset.id}
-      </Button>
+        <Button
+          compact
+          sx={{ margin: '2px' }}
+          variant="outline"
+          key={`button.${asset.id}`}
+          onClick={() => {
+            chosenAsset(asset);
+          }}
+        >
+          {asset.symbol}
+          :
+          {asset.id}
+        </Button>
+      </Link>
     ))
     : null;
 
@@ -155,16 +162,6 @@ export default function SelectAsset(properties) {
           </Button>
         </Box>
       </Paper>
-      <Button
-        mt="sm"
-        compact
-        sx={{ marginTop: '15px' }}
-        onClick={() => {
-          goBack();
-        }}
-      >
-        {t('blockchain:selectAsset.back')}
-      </Button>
     </Col>
   );
 }

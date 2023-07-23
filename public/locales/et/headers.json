@@ -1,0 +1,27 @@
+{
+    "create": {
+      "environment": "Valige plokiahel, millega soovite NFT-d luua.",
+      "offline": "Vara loomiseks konfigureerige oma sõlmed!",
+      "account": "Valige konto, millega soovite NFT-d luua.",
+      "images": "Esitage oma NFT jaoks pildid"
+    },
+    "edit": {
+      "environment": "Valige plokiahel, milles soovite NFT-d redigeerida.",
+      "offline": "NFT redigeerimiseks konfigureerige oma sõlmed!",
+      "account": "Valige konto, millega soovite NFT-d redigeerida.",
+      "asset": "Valige vara, mida soovite muuta."
+    },
+    "issue": {
+      "environment": "Valige plokiahel, millele soovite NFT-d väljastada.",
+      "offline": "NFT väljastamiseks konfigureerige oma sõlmed!",
+      "account": "Valige konto, millega soovite NFT-i väljastada."
+    },
+    "upgrade": {
+      "environment": "Valige plokiahel, mille kaudu soovite oma kontot täiendada.",
+      "offline": "Konto täiendamiseks konfigureerige oma sõlmed!",
+      "account": "Millist kontot soovite uuendada?"
+    },
+    "load": {
+      "environment": "Valige plokiahel, mille jaoks soovite NFT mustandi laadida."
+    }
+  }

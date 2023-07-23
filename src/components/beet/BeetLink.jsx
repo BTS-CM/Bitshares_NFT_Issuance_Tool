@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button, Group, Box, Text, Divider, Loader, Col, Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
-import { appStore, beetStore } from '../../lib/states';
+import { appStore, beetStore, identitiesStore } from '../../lib/states';
 
 export default function BeetLink(properties) {
   const { t, i18n } = useTranslation();
@@ -15,14 +16,10 @@ export default function BeetLink(properties) {
   const setConnection = beetStore((state) => state.setConnection);
   const setAuthenticated = beetStore((state) => state.setAuthenticated);
 
+  const identity = beetStore((state) => state.identity);
+  const setIdentities = identitiesStore((state) => state.setIdentities);
+
   const [inProgress, setInProgress] = useState(false);
-
-  function back() {
-    setConnection();
-    setAuthenticated();
-    setMode();
-  }
-
   /*
    * After connection attempt to link app to Beet client
    */
@@ -69,14 +66,17 @@ export default function BeetLink(properties) {
       <Paper padding="sm" shadow="xs">
         <Box mx="auto" sx={{ padding: '10px' }}>
           {linkContents}
-          <Button
-            sx={{ marginTop: '15px', marginRight: '5px' }}
-            onClick={() => {
-              back();
-            }}
-          >
-            {t('beet:beetlink.backButton')}
-          </Button>
+          <Link style={{ textDecoration: 'none' }} to="/">
+            <Button
+              sx={{ marginTop: '15px', marginRight: '5px' }}
+              onClick={() => {
+                setConnection();
+                setAuthenticated();
+              }}
+            >
+              {t('beet:beetlink.backButton')}
+            </Button>
+          </Link>
         </Box>
       </Paper>
     </Col>

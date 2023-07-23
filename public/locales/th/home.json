@@ -1,0 +1,35 @@
+{
+    "title": "ยินดีต้อนรับสู่เครื่องมือออก Bitshares NFT!",
+    "desc": "คุณสมบัติต่อไปนี้มีให้สำหรับบล็อกเชนของ Bitshares!",
+    "footer": "เพื่อใช้ชุดคุณสมบัติที่มีอยู่ในเครื่องมือนี้อย่างเต็มที่ จำเป็นต้องใช้ Bitshares BEET multiwallet",
+    "grid": {
+      "createNFT": {
+        "title": "สร้าง NFT ใหม่",
+        "desc": "สร้าง NFT ใหม่บน Bitshares blockchain"
+      },
+      "editNFT": {
+        "title": "แก้ไข NFT ที่มีอยู่",
+        "desc": "แก้ไข NFT ที่มีอยู่ใน Bitshares blockchain"
+      },
+      "issueNFT": {
+        "title": "ออก NFT",
+        "desc": "ออก NFT บน Bitshares blockchain"
+      },
+      "load": {
+        "title": "โหลดฉบับร่าง NFT",
+        "desc": "สร้าง NFT ต่อจากฉบับร่าง"
+      },
+      "upgrade": {
+        "title": "อัปเกรดบัญชี",
+        "desc": "ซื้อสมาชิกตลอดชีพ"
+      },
+      "faq": {
+        "title": "คำถามที่พบบ่อย",
+        "desc": "เรียนรู้เพิ่มเติมเกี่ยวกับ NFT, Bitshares blockchain และ BEET multiwallet"
+      },
+      "nodes": {
+        "title": "โหนดที่กำหนดค่าได้",
+        "desc": "สลับไปมาระหว่างโหนด blockchain"
+      }
+    }
+  }

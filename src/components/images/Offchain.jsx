@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Textarea,
   Button,
@@ -18,7 +19,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { TbArrowNarrowRight, TbForms } from "react-icons/tb";
 
-import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import {
+  appStore, tempStore, beetStore, identitiesStore,
+} from '../../lib/states';
 
 function openURL(target) {
   window.electron.openURL(target);
@@ -26,13 +29,12 @@ function openURL(target) {
 
 export default function Offchain(properties) {
   const { t, i18n } = useTranslation();
-  const setMode = appStore((state) => state.setMode);
-  const asset_images = appStore((state) => state.asset_images);
-  const setAssetImages = appStore((state) => state.setAssetImages);
   const theme = useMantineTheme();
 
-  const changing_images = appStore((state) => state.changing_images);
-  const setChangingImages = appStore((state) => state.setChangingImages);
+  const asset_images = tempStore((state) => state.asset_images);
+  const setAssetImages = tempStore((state) => state.setAssetImages);
+  const changing_images = tempStore((state) => state.changing_images);
+  const setChangingImages = tempStore((state) => state.setChangingImages);
 
   const [fileType, setFileType] = useState();
 
@@ -44,8 +46,6 @@ export default function Offchain(properties) {
   function goBack() {
     if (changing_images) {
       setChangingImages(false);
-    } else {
-      setMode();
     }
   }
 
@@ -271,13 +271,12 @@ export default function Offchain(properties) {
               <Table>
                 <thead>
                   <tr>
-                    <th style={{textAlign: 'center'}}>
+                    <th style={{ textAlign: 'center' }}>
                       File name
                     </th>
-                    <th style={{textAlign: 'center'}}>
+                    <th style={{ textAlign: 'center' }} colSpan={2}>
                       File type
                     </th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -392,16 +391,18 @@ export default function Offchain(properties) {
               </Button>
             </Box>
           </Paper>
-          <Button
-            mt="sm"
-            compact
-            sx={{ marginTop: '5px', marginLeft: '5px' }}
-            onClick={() => {
-              goBack();
-            }}
-          >
-            {t('images:offchain.back')}
-          </Button>
+          <Link style={{ textDecoration: 'none' }} to="/">
+            <Button
+              mt="sm"
+              compact
+              sx={{ marginTop: '5px', marginLeft: '5px' }}
+              onClick={() => {
+                goBack();
+              }}
+            >
+              {t('images:offchain.back')}
+            </Button>
+          </Link>
         </Col>
       )}
     </>

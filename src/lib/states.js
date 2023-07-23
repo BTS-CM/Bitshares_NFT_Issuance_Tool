@@ -11,6 +11,8 @@ import {
   fetchDynamicData,
 } from './stateQueries';
 
+import config from '../config/config.json';
+
 const localePreferenceStore = create(
   persist(
     (set, get) => ({
@@ -53,24 +55,31 @@ const identitiesStore = create(
           set({ storedConnections: currentConnections });
         }
       },
-      setIdentities: (identity) => {
-        if (!identity) {
+      setIdentities: (newIdentity) => {
+        if (!newIdentity) {
+          console.log("No identity provided");
           return;
         }
 
-        const currentIdentities = get().identities;
+        let currentIdentities = get().identities;
         if (
-          currentIdentities.find(
-            (id) => id.identityHash === identity.identityHash
-              && id.requested.account.id === identity.requested.account.id,
+          currentIdentities
+          && currentIdentities.length
+          && currentIdentities.find(
+            (existingIdentity) => existingIdentity.identityHash === newIdentity.identityHash
+              && existingIdentity.requested.account.id === newIdentity.requested.account.id,
           )
         ) {
           console.log('using existing identity');
           return;
         }
 
-        currentIdentities.push(identity);
-        set({ identities: currentIdentities });
+        if (!currentIdentities || !currentIdentities.length) {
+          set({ identities: [newIdentity] });
+        } else {
+          currentIdentities = [...currentIdentities, newIdentity];
+          set({ identities: currentIdentities });
+        }
       },
       removeIdentity: (accountID) => {
         if (!accountID) {
@@ -84,7 +93,9 @@ const identitiesStore = create(
         const currentDrafts = get().drafts;
 
         // search through currentDrafts for a draft with the same accountID in jsonData
-        const draftIndex = currentDrafts.findIndex((draft) => draft.values.symbol === values.symbol);
+        const draftIndex = currentDrafts.findIndex(
+          (draft) => draft.values.symbol === values.symbol,
+        );
         if (draftIndex !== -1) {
           // if found, replace the draft with the new one
           currentDrafts[draftIndex] = { values, asset_images };
@@ -113,184 +124,199 @@ const identitiesStore = create(
  * NFT_Viewer related
  */
 const appStore = create((set, get) => ({
+  nodes: {
+    bitshares: config.bitshares.nodeList.map((node) => node.url),
+    bitshares_testnet: config.bitshares_testnet.nodeList.map((node) => node.url),
+    tusc: config.tusc.nodeList.map((node) => node.url),
+  },
   environment: null,
-  mode: null,
-  nodes: null,
-  asset: null,
-  initialValues: null, // sending draft to wizard
-  account: null,
-  memo: null,
-  accountType: null,
-  asset_images: null,
-  changing_images: false,
-  asset_issuer: null,
-  asset_quantity: null,
-  assets: null,
-  nonNFTs: null,
   setEnvironment: (env) => set({ environment: env }),
-  setMode: (mode) => set({ mode }),
-  setNodes: async () => {
-    /**
-     * Testing then storing the bitshares nodes for blockchain queries
-     */
-    const env = get().environment;
-    if (!env) {
-      console.log('No env set');
-      return;
-    }
-
-    let response;
-    try {
-      response = await testNodes(env === 'production' ? 'BTS' : 'BTS_TEST');
-    } catch (error) {
-      console.log(error);
-    }
-
-    if (response) {
-      set({ nodes: await response });
+  replaceNodes: (env, nodes) => {
+    if (env === 'bitshares') {
+      set(async (state) => ({
+        nodes: { ...state.nodes, bitshares: nodes },
+      }));
+    } else if (env === 'bitshares_testnet') {
+      set(async (state) => ({
+        nodes: { ...state.nodes, bitshares_testnet: nodes },
+      }));
+    } else if (env === 'tusc') {
+      set(async (state) => ({
+        nodes: { ...state.nodes, tusc: nodes },
+      }));
     }
   },
-  setInitialValues: (initialValues) => set({ initialValues }),
-  setAsset: async (newAsset) => {
-    /**
-     * Store an asset & fetch relevant info
-     * @param {Object} newAsset
-     */
-    const node = get().nodes[0];
-    const changeURLFunc = appStore.getState().changeURL;
-    let dynamicData;
-    try {
-      dynamicData = await fetchDynamicData(node, newAsset, changeURLFunc);
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-
-    const description = newAsset
-                        && newAsset.options.description
-                        && newAsset.options.description.length
-      ? JSON.parse(newAsset.options.description)
-      : undefined;
-    const nft_object = description ? description.nft_object : undefined;
-
-    let images;
-    try {
-      images = await getImages(nft_object);
-    } catch (error) {
-      console.log(error);
-    }
-
-    set({
-      asset: newAsset,
-      asset_images: images ?? [],
-      asset_issuer: dynamicData.issuer,
-      asset_quantity: dynamicData.quantity,
-    });
-  },
-  setAccount: (newAccount) => set({ account: newAccount }),
-  chosenAccountMemo: (newMemo) => set({ memo: newMemo }),
-  setAccountType: (newAccountType) => set({ accountType: newAccountType }),
-  setAssetImages: (images) => set({ asset_images: images }),
-  fetchAssets: async (asset_ids) => {
-    /**
-     * Looking asset data from an array of IDs
-     * @param {Array} asset_ids
-     */
-    const node = get().nodes[0];
-    const changeURLFunc = get().changeURL;
-    let response;
-    try {
-      response = await fetchAssets(node, asset_ids, changeURLFunc);
-    } catch (error) {
-      console.log(error);
-    }
-
-    if (response) {
-      set({ assets: await response });
-    }
-  },
-  fetchIssuedAssets: async (accountID) => {
-    /**
-     * Fetching the assets issued by the provided account ID
-     * @param {String} accountID
-     */
-    const node = get().nodes[0];
-    const changeURLFunc = get().changeURL;
-    let response;
-    try {
-      response = await fetchIssuedAssets(node, accountID, changeURLFunc);
-    } catch (error) {
-      console.log(error);
-    }
-
-    if (!response || !response.length) {
-      set({ assets: [] });
-      return;
-    }
-
-    const normalAssets = [];
-    const filteredAssets = [];
-    for (let i = 0; i < response.length; i++) {
-      const asset = response[i];
-      const currentDescription = JSON.parse(asset.options.description);
-      const nft_object = currentDescription.nft_object ?? null;
-
-      if (!nft_object) {
-        normalAssets.push(asset);
-        continue;
-      }
-
-      filteredAssets.push(asset);
-    }
-
-    if (filteredAssets.length) {
-      set({ assets: filteredAssets });
-    }
-
-    if (normalAssets.length) {
-      set({ nonNFTs: normalAssets });
-    }
-  },
-  changeURL: () => {
+  changeURL: (env) => {
     /**
      * The current node url isn't healthy anymore
      * shift it to the back of the queue
+     * Replaces nodeFailureCallback
      */
     console.log('Changing primary node');
-    const nodesToChange = get().nodes;
+    const nodesToChange = get().nodes[env];
     nodesToChange.push(nodesToChange.shift()); // Moving misbehaving node to end
-    set({ nodes: nodesToChange });
+
+    if (env === 'bitshares') {
+      set(async (state) => ({
+        nodes: { ...state.nodes, bitshares: nodesToChange },
+      }));
+    } else if (env === 'bitshares_testnet') {
+      set(async (state) => ({
+        nodes: { ...state.nodes, bitshares_testnet: nodesToChange },
+      }));
+    } else if (env === 'tusc') {
+      set(async (state) => ({
+        nodes: { ...state.nodes, tusc: nodesToChange },
+      }));
+    }
   },
-  clearAssets: () => set({
-    assets: null,
-    nonNFTs: null,
-  }),
-  removeImages: () => set({
-    asset_images: null,
-  }),
-  setChangingImages: (newValue) => set({
-    changing_images: newValue,
-  }),
-  back: () => set({
-    mode: null,
-    asset: null,
-    initialValues: null,
-    asset_images: null,
-    asset_issuer: null,
-    asset_quantity: null,
-  }),
   reset: () => set({
     environment: null,
-    mode: null,
     nodes: null,
-    asset: null,
-    initialValues: null,
-    asset_issuer: null,
-    asset_quantity: null,
-    asset_order_book: null,
-    assets: null,
   }),
 }));
+
+/**
+ * Temporary store for the NFT Issuance Tool
+ */
+const tempStore = create(
+  (set, get) => ({
+    account: "",
+    asset: null,
+    asset_images: null,
+    initialValues: null,
+    changing_images: false,
+    memo: null,
+    asset_issuer: null,
+    asset_quantity: null,
+    accountType: null,
+    setAccount: (newAccount) => set({ account: newAccount }),
+    setInitialValues: (initialValues) => set({ initialValues }),
+    chosenAccountMemo: (newMemo) => set({ memo: newMemo }),
+    setAssetImages: (images) => set({ asset_images: images }),
+    setChangingImages: (newValue) => set({
+      changing_images: newValue,
+    }),
+    setAccountType: (type) => set({ accountType: type }),
+    removeImages: () => set({
+      asset_images: null,
+    }),
+    setAsset: async (newAsset) => {
+      /**
+       * Store an asset & fetch relevant info
+       * @param {Object} newAsset
+       */
+      const { environment, nodes, changeURL } = appStore.getState();
+      const node = nodes[environment][0];
+      let dynamicData;
+      try {
+        dynamicData = await fetchDynamicData(node, newAsset, changeURL);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+
+      const description = newAsset
+                          && newAsset.options.description
+                          && newAsset.options.description.length
+        ? JSON.parse(newAsset.options.description)
+        : undefined;
+      const nft_object = description ? description.nft_object : undefined;
+
+      let images;
+      try {
+        images = await getImages(nft_object);
+      } catch (error) {
+        console.log(error);
+      }
+
+      set({
+        asset: newAsset,
+        asset_images: images ?? [],
+        asset_issuer: dynamicData.issuer,
+        asset_quantity: dynamicData.quantity,
+      });
+    },
+    eraseAsset: () => set({
+      asset: null,
+      asset_images: null,
+      asset_issuer: null,
+      asset_quantity: null,
+    }),
+    clearAssets: () => set({
+      assets: null,
+      nonNFTs: null,
+    }),
+    fetchAssets: async (asset_ids) => {
+      /**
+       * Looking asset data from an array of IDs
+       * @param {Array} asset_ids
+       */
+      const { environment, nodes, changeURL } = appStore.getState();
+      const node = nodes[environment][0];
+      let response;
+      try {
+        response = await fetchAssets(node, asset_ids, changeURL);
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (response) {
+        set({ assets: await response });
+      }
+    },
+    fetchIssuedAssets: async (accountID) => {
+      /**
+       * Fetching the assets issued by the provided account ID
+       * @param {String} accountID
+       */
+      const { environment, nodes, changeURL } = appStore.getState();
+      const node = nodes[environment][0];
+      let response;
+      try {
+        response = await fetchIssuedAssets(node, accountID, changeURL);
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (!response || !response.length) {
+        set({ assets: [] });
+        return;
+      }
+
+      const normalAssets = [];
+      const filteredAssets = [];
+      for (let i = 0; i < response.length; i++) {
+        const asset = response[i];
+        const currentDescription = JSON.parse(asset.options.description);
+        const nft_object = currentDescription.nft_object ?? null;
+
+        if (!nft_object) {
+          normalAssets.push(asset);
+          continue;
+        }
+
+        filteredAssets.push(asset);
+      }
+
+      if (filteredAssets.length) {
+        set({ assets: filteredAssets });
+      }
+
+      if (normalAssets.length) {
+        set({ nonNFTs: normalAssets });
+      }
+    },
+    reset: () => set({
+      account: "",
+      initialValues: null,
+      changing_images: false,
+      asset: null,
+      asset_issuer: null,
+      asset_quantity: null,
+    }),
+  }),
+);
 
 /**
  * Beet wallet related
@@ -376,7 +402,7 @@ const beetStore = create((set, get) => ({
     let linkAttempt;
     try {
       linkAttempt = await link(
-        environment === 'production' ? 'BTS' : 'BTS_TEST',
+        environment === 'bitshares' ? 'BTS' : 'BTS_TEST',
         currentConnection,
       );
     } catch (error) {
@@ -410,7 +436,7 @@ const beetStore = create((set, get) => ({
     let linkAttempt;
     try {
       linkAttempt = await link(
-        environment === 'production' ? 'BTS' : 'BTS_TEST',
+        environment === 'bitshares' ? 'BTS' : 'BTS_TEST',
         currentConnection,
       );
     } catch (error) {
@@ -433,5 +459,5 @@ const beetStore = create((set, get) => ({
 }));
 
 export {
-  appStore, beetStore, identitiesStore, localePreferenceStore,
+  appStore, beetStore, identitiesStore, localePreferenceStore, tempStore,
 };

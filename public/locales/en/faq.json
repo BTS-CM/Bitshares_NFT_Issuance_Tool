@@ -1,0 +1,35 @@
+{
+    "how_airdrop": {
+        "control": "How do I perform an airdrop?",
+        "panel": "Fetch the blockchain tickets, calculate an airdrop against a block number, verify the contents of the airdrop in the analysis page, then begin airdropping via the airdrop execution page. This will submit batches of token transfers through the BEET multiwallet; if there are thousands of receipients it will likely take 10 or more batches."
+    },
+    "create": {
+        "control": "How do I create an NFT?",
+        "panel": "This tool enables you to create an NFT with your Bitshares account. Navigate to the 'Create NFT' page from the menu to proceed."
+    },
+    "edit": {
+        "control": "How do I edit an NFT?",
+        "panel": "This tool enables the issuer/owner of an NFT to edit their NFTs. Navigate to the 'Edit NFT' page from the menu to proceed."
+    },
+    "draft": {
+        "control": "What are NFT drafts?",
+        "panel": "You can save your progress in the 'Create NFT' page, enabling you to work on planned NFTs over time. Just click the 'Save Draft' button at the bottom of the 'create nft' page, the saved draft will be available on the 'Load draft' page."
+    },
+    "issue": {
+        "control": "How can I issue an NFT onto individual accounts?",
+        "panel": "You can issue an NFT onto individual accounts by using the 'Issue NFT' page. You will need to have the NFT in your account to issue it."
+    },
+    "airdrop": {
+        "control": "How do I send my issued NFT to many accounts?",
+        "panel": "You can easily create large scale NFT airdrops using the Bitshares Airdrop Tool, this tool is linked in the footer of the application."
+    },
+    "beet": {
+        "control": "What is the Beet wallet?",
+        "panel": "The BEET wallet is a multi blockchain crypto wallet, it's used to securely handle authentication and network broadcast of transactions."
+    },
+    "blockchains": {
+        "control": "Which blockchains are supported?",
+        "panel": "Currently only the Bitshares blockchain is supported, however this tool is fully open source on github."
+    },
+    "title": "Frequently Asked Questions"
+}

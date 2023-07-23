@@ -1,0 +1,27 @@
+{
+    "create": {
+        "environment": "Pick the blockchain you want to create an NFT on.",
+        "offline": "To create an asset please configure your nodes!",
+        "account": "Pick the account you want to create an NFT with.",
+        "images": "Provide the images for your NFT"
+    },
+    "edit": {
+        "environment": "Pick the blockchain you want to edit an NFT on.",
+        "offline": "To edit an NFT please configure your nodes!",
+        "account": "Pick the account you want to edit an NFT with.",
+        "asset": "Select the asset you want to edit."
+    },
+    "issue": {
+        "environment": "Pick the blockchain you want to issue an NFT on.",
+        "offline": "To issue an NFT please configure your nodes!",
+        "account": "Pick the account you want to issue an NFT with."
+    },
+    "upgrade": {
+        "environment": "Pick the blockchain you want to upgrade your account on.",
+        "offline": "To upgrade your account please configure your nodes!",
+        "account": "Which account do you want to upgrade?"
+    },
+    "load": {
+        "environment": "Pick the blockchain you want to load an NFT draft for."
+    }
+}

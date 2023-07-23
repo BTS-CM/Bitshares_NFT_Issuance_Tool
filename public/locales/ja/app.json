@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "メニュー",
+      "label": "メインメニュー",
+      "home": "家",
+      "language": "言語",
+      "createNFT": "NFTの作成",
+      "editNFT": "NFTの編集",
+      "loadDraft": "ドラフトをロードする",
+      "issueNFT": "NFTを発行する",
+      "upgradeAccount": "アカウントをアップグレードする",
+      "faq": "よくある質問",
+      "changeNodes": "ノードを変更する"
+    }
+  }

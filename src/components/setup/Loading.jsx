@@ -7,7 +7,6 @@ import { appStore } from '../../lib/states';
 
 export default function Offline(properties) {
   const { t, i18n } = useTranslation();
-  const setMode = appStore((state) => state.setMode);
 
   return (
     <Col span={12}>

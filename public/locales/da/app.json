@@ -1,0 +1,15 @@
+{
+    "menu": {
+      "btn": "Menu",
+      "label": "Hovedmenu",
+      "home": "Hjem",
+      "language": "Sprog",
+      "createNFT": "Opret NFT",
+      "editNFT": "Rediger NFT",
+      "loadDraft": "Indlæs udkast",
+      "issueNFT": "Udsted NFT",
+      "upgradeAccount": "Opgrader konto",
+      "faq": "FAQ",
+      "changeNodes": "Skift noder"
+    }
+  }

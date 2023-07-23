@@ -1,0 +1,35 @@
+{
+    "title": "¡Bienvenido a la herramienta de emisión de Bitshares NFT!",
+    "desc": "¡Las siguientes funciones están disponibles para las cadenas de bloques de Bitshares!",
+    "footer": "Para hacer un uso completo del conjunto de funciones disponible en esta herramienta, se requiere la billetera múltiple Bitshares BEET.",
+    "grid": {
+      "createNFT": {
+        "title": "Crear un nuevo NFT",
+        "desc": "Cree un nuevo NFT en la cadena de bloques de Bitshares"
+      },
+      "editNFT": {
+        "title": "Editar un NFT existente",
+        "desc": "Edite un NFT existente en la cadena de bloques de Bitshares"
+      },
+      "issueNFT": {
+        "title": "Emitir un NFT",
+        "desc": "Emita un NFT en la cadena de bloques de Bitshares"
+      },
+      "load": {
+        "title": "Cargar un borrador de NFT",
+        "desc": "Continuar creando una NFT a partir de un borrador"
+      },
+      "upgrade": {
+        "title": "Actualizar cuenta",
+        "desc": "Compra una membresía de por vida"
+      },
+      "faq": {
+        "title": "Preguntas frecuentes",
+        "desc": "Obtenga más información sobre las NFT, la cadena de bloques de Bitshares y la billetera múltiple BEET"
+      },
+      "nodes": {
+        "title": "Nodos configurables",
+        "desc": "Cambiar entre nodos de blockchain"
+      }
+    }
+  }

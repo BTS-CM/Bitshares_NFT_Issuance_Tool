@@ -10,14 +10,10 @@ import { appStore, beetStore, identitiesStore } from '../../lib/states';
 export default function BeetLink(properties) {
   const { t, i18n } = useTranslation();
   const environment = appStore((state) => state.environment);
-  const setMode = appStore((state) => state.setMode);
 
   const link = beetStore((state) => state.link);
   const setConnection = beetStore((state) => state.setConnection);
   const setAuthenticated = beetStore((state) => state.setAuthenticated);
-
-  const identity = beetStore((state) => state.identity);
-  const setIdentities = identitiesStore((state) => state.setIdentities);
 
   const [inProgress, setInProgress] = useState(false);
   /*

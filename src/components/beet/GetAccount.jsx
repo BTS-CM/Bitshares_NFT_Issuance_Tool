@@ -50,10 +50,6 @@ export default function GetAccount(properties) {
     assetName = "TEST";
     relevantChain = 'BTS_TEST';
     titleName = "Bitshares (Testnet)";
-  } else if (env === 'tusc' || params.env === 'tusc') {
-    assetName = "TUSC";
-    relevantChain = 'TUSC';
-    titleName = "TUSC";
   }
 
   useEffect(() => {

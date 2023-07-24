@@ -121,60 +121,90 @@ const identitiesStore = create(
 );
 
 /**
- * NFT_Viewer related
+ * Global app settings
  */
-const appStore = create((set, get) => ({
-  nodes: {
-    bitshares: config.bitshares.nodeList.map((node) => node.url),
-    bitshares_testnet: config.bitshares_testnet.nodeList.map((node) => node.url),
-    tusc: config.tusc.nodeList.map((node) => node.url),
-  },
-  environment: null,
-  setEnvironment: (env) => set({ environment: env }),
-  replaceNodes: (env, nodes) => {
-    if (env === 'bitshares') {
-      set(async (state) => ({
-        nodes: { ...state.nodes, bitshares: nodes },
-      }));
-    } else if (env === 'bitshares_testnet') {
-      set(async (state) => ({
-        nodes: { ...state.nodes, bitshares_testnet: nodes },
-      }));
-    } else if (env === 'tusc') {
-      set(async (state) => ({
-        nodes: { ...state.nodes, tusc: nodes },
-      }));
-    }
-  },
-  changeURL: (env) => {
-    /**
-     * The current node url isn't healthy anymore
-     * shift it to the back of the queue
-     * Replaces nodeFailureCallback
-     */
-    console.log('Changing primary node');
-    const nodesToChange = get().nodes[env];
-    nodesToChange.push(nodesToChange.shift()); // Moving misbehaving node to end
+const appStore = create(
+  persist(
+    (set, get) => ({
+      environment: null,
+      nodes: {
+        bitshares: config.bitshares.nodeList.map((node) => node.url),
+        bitshares_testnet: config.bitshares_testnet.nodeList.map((node) => node.url),
+      },
+      setEnvironment: (env) => set({ environment: env }),
+      setNodes: async () => {
+        const env = get().environment;
+        if (!env) {
+          console.log('No env set');
+          return;
+        }
 
-    if (env === 'bitshares') {
-      set(async (state) => ({
-        nodes: { ...state.nodes, bitshares: nodesToChange },
-      }));
-    } else if (env === 'bitshares_testnet') {
-      set(async (state) => ({
-        nodes: { ...state.nodes, bitshares_testnet: nodesToChange },
-      }));
-    } else if (env === 'tusc') {
-      set(async (state) => ({
-        nodes: { ...state.nodes, tusc: nodesToChange },
-      }));
-    }
-  },
-  reset: () => set({
-    environment: null,
-    nodes: null,
-  }),
-}));
+        let response;
+        try {
+          response = await testNodes(env === 'production' ? 'BTS' : 'BTS_TEST');
+        } catch (error) {
+          console.log(error);
+        }
+
+        if (response) {
+          set({ nodes: await response });
+        }
+      },
+      changeURL: (env) => {
+      /**
+       * The current node url isn't healthy anymore
+       * shift it to the back of the queue
+       * Replaces nodeFailureCallback
+       */
+        console.log('Changing primary node');
+        const nodesToChange = get().nodes[env];
+        nodesToChange.push(nodesToChange.shift()); // Moving misbehaving node to end
+
+        if (env === 'bitshares') {
+          set(async (state) => ({
+            nodes: { ...state.nodes, bitshares: nodesToChange },
+          }));
+        } else if (env === 'bitshares_testnet') {
+          set(async (state) => ({
+            nodes: { ...state.nodes, bitshares_testnet: nodesToChange },
+          }));
+        } else if (env === 'tusc') {
+          set(async (state) => ({
+            nodes: { ...state.nodes, tusc: nodesToChange },
+          }));
+        }
+      },
+      removeURL: (env, url) => {
+        let nodesToChange = get().nodes[env];
+        nodesToChange = nodesToChange.filter((x) => x !== url);
+
+        if (env === 'bitshares') {
+          set((state) => ({
+            nodes: { ...state.nodes, bitshares: nodesToChange },
+          }));
+        } else if (env === 'bitshares_testnet') {
+          set((state) => ({
+            nodes: { ...state.nodes, bitshares_testnet: nodesToChange },
+          }));
+        } else if (env === 'tusc') {
+          set((state) => ({
+            nodes: { ...state.nodes, tusc: nodesToChange },
+          }));
+        }
+      },
+      reset: () => set({
+        environment: null,
+        nodes: {
+          bitshares: config.bitshares.nodeList.map((node) => node.url),
+          bitshares_testnet: config.bitshares_testnet.nodeList.map((node) => node.url),
+        },
+      }),
+    }),
+    {
+      name: 'nodeStorage',
+    },
+  ),
+);
 
 /**
  * Temporary store for the NFT Issuance Tool
@@ -183,6 +213,7 @@ const tempStore = create(
   (set, get) => ({
     account: "",
     asset: null,
+    assets: null,
     asset_images: null,
     initialValues: null,
     changing_images: false,

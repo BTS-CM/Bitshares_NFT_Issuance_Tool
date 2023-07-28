@@ -44,7 +44,6 @@ import Create from './pages/Create';
 import Edit from './pages/Edit';
 import Load from './pages/Load';
 import Issue from './pages/Issue';
-import Settings from './pages/Settings';
 
 import './App.css';
 
@@ -53,14 +52,8 @@ import './App.css';
  * @param {String} loc
  */
 function openURL(loc) {
-  if (loc === 'gallery') {
-    window.electron.openURL('gallery');
-  } else if (loc === 'viewer') {
-    window.electron.openURL('viewer');
-  } else if (loc === 'airdrop') {
-    window.electron.openURL('airdrop');
-  } else if (loc === 'beet') {
-    window.electron.openURL('beet');
+  if (['gallery', 'viewer', 'airdrop', 'beet'].includes(loc)) {
+    window.electron.openURL(loc);
   }
 }
 
@@ -243,7 +236,6 @@ function App() {
                 <Route path="/upgrade" element={<Upgrade />} />
                 <Route path="/faq" element={<Faq />} />
                 <Route path="/nodes" element={<Nodes />} />
-                <Route path="/settings" element={<Settings />} />
               </Routes>
             </Col>
 
@@ -290,18 +282,6 @@ function App() {
                 >
                   NFT Viewer
                 </Button>
-                {environment ? (
-                  <Link style={{ textDecoration: 'none' }} to="/settings">
-                    <Button
-                      variant="outline"
-                      color="dark"
-                      sx={{ marginTop: '15px', marginRight: '5px', marginBottom: '5px' }}
-                      href="/settings"
-                    >
-                      {t('setup:settings.settings')}
-                    </Button>
-                  </Link>
-                ) : null}
               </span>
             </Col>
           </Grid>

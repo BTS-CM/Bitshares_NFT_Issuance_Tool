@@ -8,7 +8,10 @@
     "noResultsHeader": "Keine ausgegebenen Vermögenswerte gefunden",
     "noResultsDesc": "Dieses Bitshares-Konto hat keine NFTs auf dem BTS DEX ausgegeben.",
     "notice": "Hinweis: Der Kauf und Besitz eines NFT auf dem BTS DEX gewährt Ihnen nicht automatisch NFT-Bearbeitungsrechte.",
-    "selection": "Wählen Sie den NFT aus, den Sie bearbeiten möchten",
+    "selection": {
+      "edit": "Wählen Sie den NFT aus, den Sie bearbeiten möchten",
+      "issue": "Wählen Sie den NFT aus, den Sie ausgeben möchten"
+    },
     "back": "Geh zurück",
     "refresh": "Aktualisierung",
     "nonNFT1": "Die folgenden Vermögenswerte sind noch keine NFTs",

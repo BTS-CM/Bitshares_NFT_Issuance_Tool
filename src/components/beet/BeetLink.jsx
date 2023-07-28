@@ -5,7 +5,7 @@ import {
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
-import { appStore, beetStore, identitiesStore } from '../../lib/states';
+import { appStore, beetStore, tempStore, identitiesStore } from '../../lib/states';
 
 export default function BeetLink(properties) {
   const { t, i18n } = useTranslation();
@@ -14,6 +14,8 @@ export default function BeetLink(properties) {
   const link = beetStore((state) => state.link);
   const setConnection = beetStore((state) => state.setConnection);
   const setAuthenticated = beetStore((state) => state.setAuthenticated);
+
+  const setAccountType = tempStore((state) => state.setAccountType);
 
   const [inProgress, setInProgress] = useState(false);
   /*
@@ -68,6 +70,7 @@ export default function BeetLink(properties) {
               onClick={() => {
                 setConnection();
                 setAuthenticated();
+                setAccountType();
               }}
             >
               {t('beet:beetlink.backButton')}

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import {
   Title,
@@ -148,7 +148,7 @@ export default function GetAccount(properties) {
                         setAuthenticated();
                       }}
                     >
-                      Go back
+                      {t('beet:beetlink.backButton')}
                     </Button>
                   </Center>
                 )

@@ -8,7 +8,10 @@
     "noResultsHeader": "Aucun actif émis trouvé",
     "noResultsDesc": "Ce compte Bitshares n'a émis aucun NFT sur le BTS DEX.",
     "notice": "Remarque : L'achat et la possession d'un NFT sur le BTS DEX ne vous accordent pas automatiquement les droits d'édition NFT.",
-    "selection": "Sélectionnez le NFT que vous souhaitez modifier",
+    "selection": {
+      "edit": "Sélectionnez le NFT que vous souhaitez modifier",
+      "issue": "Sélectionnez le NFT que vous souhaitez émettre"
+    },
     "back": "Retourner",
     "refresh": "Rafraîchir",
     "nonNFT1": "Les actifs suivants ne sont pas encore des NFT",

@@ -8,7 +8,10 @@
     "noResultsHeader": "발행된 자산이 없습니다.",
     "noResultsDesc": "이 Bitshares 계정은 BTS DEX에서 NFT를 발행하지 않았습니다.",
     "notice": "참고: BTS DEX에서 NFT를 구매하고 소유한다고 해서 자동으로 NFT 편집 권한이 부여되는 것은 아닙니다.",
-    "selection": "편집하려는 NFT를 선택합니다.",
+    "selection": {
+      "edit": "편집하려는 NFT를 선택합니다.",
+      "issue": "발행하려는 NFT를 선택하십시오"
+    },
     "back": "돌아가기",
     "refresh": "새로 고치다",
     "nonNFT1": "다음 자산은 아직 NFT가 아닙니다.",

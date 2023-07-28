@@ -5,7 +5,6 @@ import {
   Group,
   Box,
   Text,
-  Divider,
   SimpleGrid,
   Loader,
   Col,
@@ -19,10 +18,10 @@ import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 
 import { appStore, beetStore, tempStore } from '../../lib/states';
-import { generateObject, broadcastOperation } from '../../lib/broadcasts';
+import { broadcastOperation } from '../../lib/broadcasts';
 import { generateDeepLink } from '../../lib/generate';
 
-export default function SelectAsset(properties) {
+export default function IssueNFT(properties) {
   const { t, i18n } = useTranslation();
 
   const asset = tempStore((state) => state.asset);
@@ -300,7 +299,7 @@ export default function SelectAsset(properties) {
           compact
           variant="light"
         >
-          {t('blockchain:issueNFT.form.back')} 2
+          {t('blockchain:issueNFT.form.back')}
         </Button>
       </Link>
     </Col>

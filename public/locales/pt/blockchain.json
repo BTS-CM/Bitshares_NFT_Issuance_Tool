@@ -1,6 +1,6 @@
 {
   "accountSearch": {
-    "inputPrompt": "Insira o ID/nome da sua conta blockchain para continuar"
+    "inputPrompt": "Insira o ID/nome da sua conta blockchain para prosseguir"
   },
   "selectAsset": {
     "lookup": "Ativos de pesquisa emitidos por um usuário",
@@ -8,7 +8,10 @@
     "noResultsHeader": "Nenhum ativo emitido encontrado",
     "noResultsDesc": "Esta conta Bitshares não emitiu NFTs no BTS DEX.",
     "notice": "Nota: Comprar e possuir um NFT no BTS DEX não concede automaticamente a você direitos de edição de NFT.",
-    "selection": "Selecione a NFT que deseja editar",
+    "selection": {
+      "edit": "Selecione a NFT que deseja editar",
+      "issue": "Selecione a NFT que deseja emitir"
+    },
     "back": "Volte",
     "refresh": "Atualizar",
     "nonNFT1": "Os seguintes ativos ainda não são NFTs",
@@ -20,7 +23,7 @@
     "noAccount": "Essa conta não foi encontrada, verifique a entrada e tente novamente.",
     "searchResults": "Procurar Resultados",
     "loading": "Carregando...",
-    "invalidID": "ID de conta inválido - Deve começar com '1.2.' ",
+    "invalidID": "ID de conta inválida - Deve começar com '1.2.' ",
     "accountID": "ID da conta (por exemplo, 1.2.0)",
     "existingID": "Prossiga com um ID de conta existente da conta Beet vinculada?",
     "beetReq": "Buscar ID da conta da carteira Beet",
@@ -29,7 +32,7 @@
   "loadAsset": {
     "noHeader": "nada para editar",
     "noSubHeader": "Você ainda não salvou nenhum rascunho de NFT.",
-    "draftHeader": "Selecione o rascunho NFT que deseja editar",
+    "draftHeader": "Selecione o rascunho de NFT que deseja editar",
     "back": "Volte"
   },
   "wizard": {
@@ -44,7 +47,7 @@
       "poolTip": "Lembre-se também de retirar o pool de taxas do NFT após a criação.",
       "spec": "Especificação BTS NFT",
       "imgHeader": "Detalhes da imagem",
-      "qtyImages": "Este NFT contém atualmente o seguinte {{qty}} imagens:",
+      "qtyImages": "Este NFT atualmente contém o seguinte {{qty}} imagens:",
       "changeImages": "Alterar imagens",
       "issuerLabel": "Conta Bitshares usada para emissão de NFT",
       "symbolLabel": "símbolo de ativo",
@@ -54,7 +57,7 @@
       "snLabel": "Nome curto",
       "snPlaceholder": "Nome abreviado para DEX",
       "marketLabel": "Mercado",
-      "marketPlaceholder": "Ativo comercial primário, por exemplo ",
+      "marketPlaceholder": "Ativo de negociação primário, por exemplo ",
       "msLabel": "Fornecimento máximo",
       "precisionLabel": "Precisão do ativo (casas decimais)",
       "nftHeader": "detalhes NFT",
@@ -69,7 +72,7 @@
       "typeLabel": "tipo NFT",
       "typePlaceholder": "NFT/ARTE/VISUAL",
       "attestationLabel": "atestado NFT",
-      "attestationPlaceholder": "Um atestado referente a esta NFT",
+      "attestationPlaceholder": "Um atestado sobre esta NFT",
       "ackLabel": "Reconhecimentos NFT",
       "ackPlaceholder": "Quaisquer agradecimentos que você tenha que fazer",
       "holderLicenceLabel": "Licença de titulares de NFT",
@@ -86,7 +89,7 @@
       "cerbaLabel": "Valor base",
       "cerbaIDLabel": "ID do recurso básico",
       "cerqaLabel": "valor da cotação",
-      "cerqaIDLabel": "cotar id do ativo",
+      "cerqaIDLabel": "cotar ID do recurso",
       "permsHeader": "Permissões",
       "permsSubHeader": "Observação: desabilitar permissões é uma decisão permanente.",
       "disabledCMFPerm": "A permissão charge_market_fee foi desativada permanentemente.",
@@ -131,7 +134,7 @@
       "header": "Para emitir esta NFT, abra a carteira Beet e digitalize o código QR abaixo.",
       "back": "Volte",
       "progress": "Por favor, aguarde...",
-      "success": "Sua NFT foi emitida com sucesso no {{network}} blockchain!",
+      "success": "Emitiu com sucesso sua NFT no {{network}} blockchain!",
       "readyHeader": "Pronto para emitir NFTs na blockchain Bitshares!",
       "subHeader": "Preencha o formulário abaixo para prosseguir com a emissão da NFT.",
       "issueHeader": "Formulário de emissão de ativos",

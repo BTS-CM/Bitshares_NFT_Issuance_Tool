@@ -212,6 +212,7 @@ const appStore = create(
 const tempStore = create(
   (set, get) => ({
     account: "",
+    accountType: null,
     asset: null,
     assets: null,
     asset_images: null,
@@ -220,7 +221,6 @@ const tempStore = create(
     memo: null,
     asset_issuer: null,
     asset_quantity: null,
-    accountType: null,
     setAccount: (newAccount) => set({ account: newAccount }),
     setInitialValues: (initialValues) => set({ initialValues }),
     chosenAccountMemo: (newMemo) => set({ memo: newMemo }),
@@ -340,9 +340,13 @@ const tempStore = create(
     },
     reset: () => set({
       account: "",
+      accountType: null,
+      asset: null,
+      assets: null,
+      asset_images: null,
       initialValues: null,
       changing_images: false,
-      asset: null,
+      memo: null,
       asset_issuer: null,
       asset_quantity: null,
     }),
@@ -407,7 +411,8 @@ const beetStore = create((set, get) => ({
         connected.secret = storedConnection.secret;
         connected.id = storedConnection.next_identification;
         console.log('updated connected');
-
+        const { setAccountType } = tempStore.getState();
+        setAccountType("BEET");
         set({
           connection: connected,
           authenticated: true,
@@ -454,6 +459,15 @@ const beetStore = create((set, get) => ({
     } catch (error) {
       console.log(error);
     }
+
+    const { setAccount, setAccountType } = tempStore.getState();
+    try {
+      setAccount(currentConnection.identity.requested.account.id);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setAccountType("BEET");
 
     set({ isLinked: true, identity: currentConnection.identity });
   },

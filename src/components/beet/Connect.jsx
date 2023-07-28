@@ -80,6 +80,7 @@ export default function Connect(properties) {
     setIdentity(identity);
     chosenAccountMemo();
     setIdentities(identity);
+    setAccountType("BEET");
     setInProgress(false);
   }
 
@@ -103,9 +104,6 @@ export default function Connect(properties) {
   }
 
   const relevantChain = environment === 'bitshares' ? 'BTS' : 'BTS_TEST';
-
-  console.log({identities})
-
   const relevantIdentities = identities.filter((x) => x.chain === relevantChain);
 
   const rows = relevantIdentities

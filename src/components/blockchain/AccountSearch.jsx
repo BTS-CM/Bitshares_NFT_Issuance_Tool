@@ -8,8 +8,6 @@ import {
   Text,
   Loader,
   Col,
-  Alert,
-  Paper,
   SimpleGrid,
 } from '@mantine/core';
 import { TbInputSearch, TbArrowNarrowRight } from "react-icons/tb";
@@ -23,7 +21,9 @@ export default function AccountSearch(properties) {
   const theme = useMantineTheme();
 
   const setAccount = tempStore((state) => state.setAccount);
+  const setAccountType = tempStore((state) => state.setAccountType);
   const chosenAccountMemo = tempStore((state) => state.chosenAccountMemo);
+
   const environment = appStore((state) => state.environment);
   const nodes = appStore((state) => state.nodes);
 
@@ -158,6 +158,7 @@ export default function AccountSearch(properties) {
               key={`button.${result.name}`}
               onClick={() => {
                 chosenAccount(result.id);
+                setAccountType("MANUAL");
                 chosenAccountMemo(result.options.memo_key);
               }}
             >

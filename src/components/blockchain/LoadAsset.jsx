@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from "react-router-dom";
 import {
-  Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
+  Button, Group, Box, Text, SimpleGrid, Col, Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { appStore, identitiesStore, tempStore } from '../../lib/states';
+import { identitiesStore, tempStore } from '../../lib/states';
 
 export default function LoadAsset(properties) {
   const { t, i18n } = useTranslation();

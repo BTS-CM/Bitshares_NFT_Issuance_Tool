@@ -103,7 +103,7 @@ export default function Edit(properties) {
         <Title order={4}>
           {t('headers:edit.asset')}
         </Title>
-        <SelectAsset userID={account} />
+        <SelectAsset userID={account} location="edit" />
         <Button
           variant="outline"
           mt="sm"

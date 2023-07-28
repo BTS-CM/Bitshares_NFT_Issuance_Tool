@@ -98,7 +98,7 @@ export default function Issue(properties) {
   if (!asset) {
     return (
       <>
-        <SelectAsset userID={account} />
+        <SelectAsset userID={account} location="issue" />
         <Button
           onClick={() => {
             setAccount();

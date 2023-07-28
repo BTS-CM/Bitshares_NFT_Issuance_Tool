@@ -1,7 +1,7 @@
 import {
   Button, Box, Text, Col, Paper,
 } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { appStore } from '../../lib/states';

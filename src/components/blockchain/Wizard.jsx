@@ -17,7 +17,6 @@ import {
   Radio,
   Center,
   JsonInput,
-  Accordion,
   Loader,
   SimpleGrid,
   CopyButton,

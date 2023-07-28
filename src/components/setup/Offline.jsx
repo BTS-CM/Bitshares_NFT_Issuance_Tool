@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from "react-router-dom";
 import {
   Button, Box, Text, Col, Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { appStore } from '../../lib/states';
 
 export default function Offline(properties) {
   const { t, i18n } = useTranslation();

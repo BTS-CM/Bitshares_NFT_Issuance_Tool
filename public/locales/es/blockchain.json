@@ -8,7 +8,10 @@
     "noResultsHeader": "No se encontraron activos emitidos",
     "noResultsDesc": "Esta cuenta de Bitshares no ha emitido ningún NFT en BTS DEX.",
     "notice": "Nota: Comprar y poseer un NFT en BTS DEX no le otorga automáticamente derechos de edición de NFT.",
-    "selection": "Seleccione el NFT que desea editar",
+    "selection": {
+      "edit": "Seleccione el NFT que desea editar",
+      "issue": "Seleccione el NFT que desea emitir"
+    },
     "back": "Regresa",
     "refresh": "Actualizar",
     "nonNFT1": "Los siguientes activos aún no son NFT",
@@ -97,7 +100,7 @@
       "poaLabel": "El propietario del activo puede transferirse el activo a sí mismo (override_authority)",
       "disabledTR": "El permiso transfer_restricted se inhabilitó permanentemente.",
       "trLabel": "El propietario del recurso debe aprobar todas las transferencias (transfer_restricted)",
-      "disabledDC": "El permiso disabled_confidential se deshabilitó de forma permanente.",
+      "disabledDC": "El permiso disabled_confidential se deshabilitó permanentemente.",
       "dcLabel": "Deshabilitar transacciones confidenciales (disable_confidential)",
       "flagsHeader": "banderas",
       "flagsSubHeader": "Si un permiso relacionado arriba está habilitado, estas banderas se pueden cambiar en cualquier momento.",

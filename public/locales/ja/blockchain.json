@@ -8,7 +8,10 @@
     "noResultsHeader": "発行済み資産が見つかりません",
     "noResultsDesc": "この Bitshares アカウントは BTS DEX で NFT を発行していません。",
     "notice": "注: BTS DEX で NFT を購入して所有しても、NFT 編集権限は自動的に付与されません。",
-    "selection": "編集したいNFTを選択します",
+    "selection": {
+      "edit": "編集したいNFTを選択します",
+      "issue": "発行したいNFTを選択します"
+    },
     "back": "戻る",
     "refresh": "リフレッシュ",
     "nonNFT1": "以下のアセットはまだNFT化されていません",

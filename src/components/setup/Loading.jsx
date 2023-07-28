@@ -1,9 +1,8 @@
 import {
   Loader, Box, Text, Col, Paper,
 } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { appStore } from '../../lib/states';
 
 export default function Offline(properties) {
   const { t, i18n } = useTranslation();

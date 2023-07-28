@@ -7,10 +7,8 @@ import {
   Accordion,
   JsonInput,
   Modal,
-  Select,
   Button,
   Group,
-  ColorInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useParams } from "react-router-dom";

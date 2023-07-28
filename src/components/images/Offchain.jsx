@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Textarea,
   Button,
   Group,
   Box,
   Table,
   Text,
-  Divider,
   Col,
   Paper,
   Radio,
@@ -20,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { TbArrowNarrowRight, TbForms } from "react-icons/tb";
 
 import {
-  appStore, tempStore, beetStore, identitiesStore,
+  tempStore,
 } from '../../lib/states';
 
 function openURL(target) {
@@ -136,6 +134,7 @@ export default function Offchain(properties) {
                   <Accordion.Panel>
                     <Group>
                       <Radio value="PNG" label="PNG" />
+                      <Radio value="WEBP" label="WEBP" />
                       <Radio value="JPEG" label="JPEG" />
                       <Radio value="GIF" label="GIF" />
                       <Radio value="TIFF" label="TIFF" />

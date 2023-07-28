@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from "react-router-dom";
 import {
-  Button, Group, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
+  Button, Box, Text, Divider, SimpleGrid, Loader, Col, Paper,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { appStore, tempStore } from '../../lib/states';
 
 export default function SelectAsset(properties) {
   const { t, i18n } = useTranslation();
+
+  const { location } = properties;
+
   const changeURL = appStore((state) => state.changeURL);
 
   const assets = tempStore((state) => state.assets);
@@ -74,19 +77,18 @@ export default function SelectAsset(properties) {
     topText = (
       <span>
         <Text size="md">
-          {t('blockchain:selectAsset.selection')}
+          {t(`blockchain:selectAsset.selection.${location}`)}
         </Text>
       </span>
     );
   }
 
-  const buttonList = assets
-    ? assets.map((asset) => (
-      <Link
-        style={{ textDecoration: 'none' }}
-        to="/createNFT/edit"
-        key={`buttonLink.${asset.id}`}
-      >
+  const buttonList = useMemo(() => {
+    if (!assets) {
+      return [];
+    }
+    return assets.map((asset) => {
+      const assetBtn = (
         <Button
           compact
           sx={{ margin: '2px' }}
@@ -100,17 +102,27 @@ export default function SelectAsset(properties) {
           :
           {asset.id}
         </Button>
-      </Link>
-    ))
-    : null;
+      );
+      return location === 'edit'
+        ? (
+          <Link
+            style={{ textDecoration: 'none' }}
+            to="/createNFT/edit"
+            key={`buttonLink.${asset.id}`}
+          >
+            {assetBtn}
+          </Link>
+        )
+        : assetBtn;
+    });
+  }, [assets]);
 
-  const normalAssetList = nonNFTs
-    ? nonNFTs.map((asset) => (
-      <Link
-        style={{ textDecoration: 'none' }}
-        to="/createNFT/edit"
-        key={`buttonLink.${asset.id}`}
-      >
+  const normalAssetList = useMemo(() => {
+    if (!assets) {
+      return [];
+    }
+    return nonNFTs.map((asset) => {
+      const assetBtn = (
         <Button
           compact
           sx={{ margin: '2px' }}
@@ -124,9 +136,20 @@ export default function SelectAsset(properties) {
           :
           {asset.id}
         </Button>
-      </Link>
-    ))
-    : null;
+      );
+      return location === 'edit'
+        ? (
+          <Link
+            style={{ textDecoration: 'none' }}
+            to="/createNFT/edit"
+            key={`buttonLink.${asset.id}`}
+          >
+            {assetBtn}
+          </Link>
+        )
+        : assetBtn;
+    });
+  }, [nonNFTs]);
 
   return (
     <Col span={12}>

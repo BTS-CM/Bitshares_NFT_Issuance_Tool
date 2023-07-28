@@ -8,7 +8,10 @@
         "noResultsHeader": "No issued assets found",
         "noResultsDesc": "This Bitshares account hasn't issued any NFTs on the BTS DEX.",
         "notice": "Note: Buying and owning an NFT on the BTS DEX doesn't automatically grant you NFT editing rights.",
-        "selection": "Select the NFT you wish to edit",
+        "selection": {
+            "edit": "Select the NFT you wish to edit",
+            "issue": "Select the NFT you wish to issue"
+        },
         "back": "Go back",
         "refresh": "Refresh",
         "nonNFT1": "The following assets are not yet NFTs",
